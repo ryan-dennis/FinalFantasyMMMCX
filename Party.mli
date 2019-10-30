@@ -12,6 +12,7 @@ type spell
 (** Represents the type of the charcater's stats (record)*)
 type stats
 
+(** Represents the type of the characters sprite to be displeys (string list list)*)
 type sprite 
 
 (** [get_spells t] is the list of spells of [t] *)
