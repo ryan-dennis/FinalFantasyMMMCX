@@ -1,0 +1,50 @@
+{
+  "start": {
+    "id": "Sephiroth",
+    "dialogue": "It's Sephiroth!"
+  },
+  "battles": [
+    {
+      "id": "Sephiroth",
+      "stats": {
+        "hp": 10,
+        "agility": 10,
+        "defense": 10,
+        "strength": 10,
+        "hit rate": 100,
+        "weaknesses": "",
+        "resistances": ""
+      },
+      "dialogue": "You've defeated Sephiroth!",
+      "next boss": "Mutability"
+    },
+    {
+      "id": "Mutability",
+      "stats": {
+        "hp": 10,
+        "agility": 10,
+        "defense": 10,
+        "strength": 10,
+        "hit rate": 100,
+        "weaknesses": "",
+        "resistances": ""
+      },
+      "dialogue": "You've defeated Mutability!",
+      "next boss": "Clarkson"
+    },
+    {
+      "id": "Clarkson",
+      "stats": {
+        "hp": 10,
+        "agility": 10,
+        "defense": 10,
+        "strength": 10,
+        "hit rate": 100,
+        "weaknesses": "",
+        "resistances": ""
+      },
+      "dialogue": "You've defeated Clarkson!",
+      "next boss": ""
+    }
+  ]
+}

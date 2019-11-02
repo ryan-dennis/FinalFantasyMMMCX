@@ -1,0 +1,1 @@
+type element = Fire | Ice | Lightning | Poison | Status
