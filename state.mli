@@ -18,12 +18,12 @@ val get_health : string -> t -> int
 val get_magic_points : string -> t -> int 
 
 (** [get_current_boss t] is the boss being fought against in [t] *)
-val get_current_boss : t -> string 
+val get_current_boss : t -> Gauntlet.boss_id
 
 (** [get_turnovert] is the turnorder in [t] *)
 val get_turnorder : t -> string list
 
 (** [get_next_boss t] is the next_boss to be played of [t] *)
-val get_next_boss: t -> string 
+val get_next_boss: t -> Gauntlet.boss_id 
 
 
