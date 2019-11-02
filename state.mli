@@ -26,10 +26,14 @@ val get_turnorder : t -> string list
 (** [get_next_boss t] is the next_boss to be played of [t] *)
 val get_next_boss: t -> Gauntlet.boss_id 
 
+val get_party: t -> string list
+
 val set_health: string-> int-> t -> t
 
 val set_magic_points: string-> int -> t->t
 
 val check_alive: t -> bool 
+
+val is_dead: t->string-> bool 
 
 
