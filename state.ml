@@ -25,7 +25,18 @@ let rec get_party_mp gtl party acc =
 
 let get_bs gtl boss = (boss_stats gtl boss).hp 
 
+
 let init_state gtl party boss = 
   {health = (boss, get_bs gtl boss)::(get_party_health gtl party []);
    magic_points = get_party_mp gtl party [] ;
    turnorder = []; current_boss =boss; next_boss = next gtl boss}
+
+let rec health_helper name lst = 
+  match lst with 
+  | [] -> raise (UnknownCharacter name)
+  | (n,i)::t -> if n=name then i else health_helper name t 
+
+let get_health name t = health_helper name t.health  
+
+
+
