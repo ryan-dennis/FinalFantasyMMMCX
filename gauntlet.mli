@@ -8,7 +8,15 @@ type boss_id = string
 type sprite = string list
 
 (** The type of boss stats. *)
-type stats
+type stats = {
+  hp : int;
+  ag : int;
+  def : int;
+  str : int;
+  hit : int;
+  weak : string list;
+  resist : string list
+}
 
 (** Raised when an unknown boss is encountered. *)
 exception UnknownBoss of boss_id
@@ -26,17 +34,14 @@ val start_boss : t -> boss_id
 (** [start_dlg g] is the opening dialogue in gauntlet [g]. *)
 val start_dialogue : t -> string
 
-(** [name g b] is the name of boss [b] in gauntlet [g]. *)
-val name : t -> boss_id -> string
+(** [boss_stats g b] is the stats of boss [b] in gauntlet [g]. *)
+val boss_stats : t -> boss_id -> stats
 
-(** [stats g b] is the stats of boss [b] in gauntlet [g]. *)
-val stats : t -> boss_id -> stats
+(** [boss_sprite g b] is the sprite of boss [b] in gauntlet [g]. *)
+val boss_sprite : t -> boss_id -> string list
 
-(** [sprite g b] is the sprite of boss [b] in gauntlet [g]. *)
-val sprite : t -> boss_id -> string list
-
-(** [spells g b] is the list of spells of boss [b] in gauntlet [g]. *)
-val spells : t -> boss_id -> string list
+(** [boss_spells g b] is the list of spells of boss [b] in gauntlet [g]. *)
+val boss_spells : t -> boss_id -> string list
 
 (** [next g b] is the next boss after [b] in gauntlet [g]. *)
 val next : t -> boss_id -> boss_id

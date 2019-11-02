@@ -1,4 +1,4 @@
-MODULES= party command state main authors
+MODULES= party gauntlet command state main authors
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
