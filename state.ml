@@ -4,7 +4,7 @@ open Party
 open Command 
 open Gauntlet 
 
-(** turnorder function; remove from turnorder function; *)
+(**reset function; *)
 
 (** Represents the state of the game beinf played *)
 type t = {
@@ -38,6 +38,14 @@ let rec party_helper (lst: Party.t list) acc =
   | [] -> acc
   | x::t -> party_helper t (get_name x::acc)
 
+let shuffle lst  =
+  QCheck.Gen.(generate1 (shuffle_l lst))
+
+let generate_turnorder party name = 
+  let lst = name::party in 
+  shuffle lst 
+
+
 (** [init state gtl party] initializes the first state of the game. Every 
     Party memeber has full health and magic points as well as the boss. The
     turnover is the official turnover including all 4 players. Current boss is the 
@@ -47,7 +55,8 @@ let init_state gtl party =
   let boss = start_boss gtl in
   {health = (boss, get_bs gtl boss)::(get_party_health party []);
    magic_points = get_party_mp party [] ; party = party_helper party [] ;
-   turnorder = []; current_boss =boss; next_boss = next gtl boss}
+   turnorder = generate_turnorder (party_helper party []) boss; 
+   current_boss =boss; next_boss = next gtl boss}
 
 (** [helper name lst] is the health of [name] of the character in 
     [lst] or raises UnknownCharacter if not in [lst] *)
@@ -75,11 +84,11 @@ let set_magic_points name num t =
   {health = t.health;magic_points = helper2 name num t.magic_points [];
    turnorder= t.turnorder; party=t.party;current_boss=t.current_boss;next_boss=t.next_boss}
 
-(* let rec remover_from_t nam lst acc = 
-   match lst with 
-   | [] -> acc 
-   |    *)
-
+let rec remove_from_t name lst acc = 
+  match lst with 
+  | [] -> acc 
+  | x::t -> if x=name then remove_from_t name t acc else 
+      x::(remove_from_t name t acc)  
 
 (** [get_magic_points name t] is the magic point of [name] in 
     state [t] *)
