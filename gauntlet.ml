@@ -17,12 +17,25 @@ type stats = {
   resist : string list
 }
 
+(** The type of magic. *)
+type magic = {
+  spell_chance : int;
+  spell_list : string list
+}
+
+(** The type of special. *)
+type special = {
+  skill_chance : int;
+  skill_list : string list
+}
+
 (** The type of boss. *)
 type boss = {
   id : boss_id;
   stats : stats;
   sprite : string list;
-  spells : string list;
+  magic : magic;
+  special : special;
   boss_dlg : string;
   next : string
 }
@@ -56,6 +69,20 @@ let stats_of_json j = {
   resist = j |> member "resistances" |> to_list |> List.map to_string;
 }
 
+(** [magic_of_json j] is the magic abilities of a boss in the gauntlet [j]
+    represents. *)
+let magic_of_json j = {
+  spell_chance = j |> member "spell chance" |> to_int;
+  spell_list = j |> member "spell list" |> to_list |> List.map to_string
+}
+
+(** [special_of_json j] is the special abilities of a boss in the gauntlet [j]
+    represents. *)
+let special_of_json j = {
+  skill_chance = j |> member "skill chance" |> to_int;
+  skill_list = j |> member "skill list" |> to_list |> List.map to_string
+}
+
 (** [check_sprite sprite] is [sprite] if it is a valid sprite (each line is
     80 characters) and raises InvaludSprite otherwise. *)
 let check_sprite sprite =
@@ -72,7 +99,8 @@ let boss_of_json j = {
   id = j |> member "id" |> to_string;
   stats = j |> member "stats" |> stats_of_json;
   sprite = j |> member "sprite" |> to_list |> List.map to_string;
-  spells = j |> member "spells" |> to_list |> List.map to_string;
+  magic = j |> member "magic" |> magic_of_json;
+  special = j |> member "special" |> special_of_json;
   boss_dlg = j |> member "dialogue" |> to_string;
   next = j |> member "next boss" |> to_string
 }
@@ -100,8 +128,17 @@ let boss_stats glt b =
 let boss_sprite glt b =
   (find_boss glt b).sprite
 
+let boss_spell_chance glt b =
+  (find_boss glt b).magic.spell_chance
+
 let boss_spells glt b =
-  (find_boss glt b).spells
+  (find_boss glt b).magic.spell_list
+
+let boss_skill_chance glt b =
+  (find_boss glt b).special.skill_chance
+
+let boss_skills glt b =
+  (find_boss glt b).special.skill_list
 
 let next glt b =
   (find_boss glt b).next

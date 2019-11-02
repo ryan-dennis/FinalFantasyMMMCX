@@ -48,8 +48,17 @@ val boss_stats : t -> boss_id -> stats
 (** [boss_sprite g b] is the sprite of boss [b] in gauntlet [g]. *)
 val boss_sprite : t -> boss_id -> string list
 
+(** [boss_spell_chance g b] is the spell chance of boss [b] in gauntlet [g]. *)
+val boss_spell_chance : t -> boss_id -> int
+
 (** [boss_spells g b] is the list of spells of boss [b] in gauntlet [g]. *)
 val boss_spells : t -> boss_id -> string list
+
+(** [boss_skill_chance g b] is the skill chance of boss [b] in gauntlet [g]. *)
+val boss_skill_chance : t -> boss_id -> int
+
+(** [boss_skills g b] is the list of skills of boss [b] in gauntlet [g]. *)
+val boss_skills : t -> boss_id -> string list
 
 (** [next g b] is the next boss after [b] in gauntlet [g]. *)
 val next : t -> boss_id -> boss_id
