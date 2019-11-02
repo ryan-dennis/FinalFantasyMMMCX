@@ -111,5 +111,5 @@ let rec find_character n lst =
     in [lst]*)
 let rec add lst acc  = 
   match lst with 
-  | [] -> acc
+  | [] -> List.rev acc
   | x::t -> add t ((find_character x get_characters)::acc)
