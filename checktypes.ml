@@ -1,6 +1,6 @@
 module type PartySig = sig 
   type t 
-  type sprite = (string list) list
+  type sprite = string list
   type spell = string
   type stat
   exception UnknownCharacter of string

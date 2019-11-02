@@ -4,7 +4,7 @@
 
 type spell = string 
 
-type sprite = (string list) list 
+type sprite = string list 
 
 type stat = {
   str : int; 
@@ -52,7 +52,7 @@ let fighter = {
   stats = {str = 20; agl = 5; int = 1; vit = 45; mp = 0; hit_percent = 10; m_def = 15; fight_def = 20};
   weapon = "Sun sword";
   spells = [];
-  sprite = [[]];
+  sprite = [];
 }
 
 (** Charcter Thief *)
@@ -61,7 +61,7 @@ let thief = {
   stats = {str = 5; agl = 10; int = 5; vit = 35; mp = 15; hit_percent = 5; m_def = 15; fight_def=15};
   weapon = "Dragon sword";
   spells = ["FIRE"; "ICE"];
-  sprite = [[]];
+  sprite = [];
 }
 
 (** Charcter Black Belt *)
@@ -70,7 +70,7 @@ let black_belt = {
   stats = {str = 5; agl = 5; int = 5; vit = 53; mp = 0; hit_percent = 5; m_def = 10; fight_def = 25};
   weapon = "Fists";
   spells = [];
-  sprite = [[]];
+  sprite = [];
 }
 
 
@@ -80,7 +80,7 @@ let red_mage = {
   stats = {str = 10; agl = 10; int = 10; vit = 35; mp = 20; hit_percent = 7; m_def = 20; fight_def = 15};
   weapon = "Fists";
   spells = ["FIR2";"ICE";"LIT2"];
-  sprite = [[]];
+  sprite = [];
 }
 
 (** Charcter White Mage *)
@@ -89,7 +89,7 @@ let white_mage = {
   stats = {str = 5; agl = 5; int = 15; vit = 38; mp = 25; hit_percent = 5; m_def = 20; fight_def = 15};
   weapon = "Silver Hammer";
   spells = ["LIT2";"ICE3";"LIT"];
-  sprite = [[]];
+  sprite = [];
 }
 
 (** Charcter Black Mage *)
@@ -98,7 +98,7 @@ let black_mage = {
   stats = {str = 1; agl = 10; int = 20; vit = 26; mp = 25; hit_percent = 5; m_def = 20; fight_def = 15};
   weapon = "Mage staff";
   spells = ["ICE3";"FIR2";"FIRE"];
-  sprite = [[]];
+  sprite = [];
 }
 
 (** [get_characters] is the character list of all characters of the game *)

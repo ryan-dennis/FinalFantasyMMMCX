@@ -13,7 +13,7 @@ type spell = string
 type stat
 
 (** Represents the type of the characters sprite to be displeys (string list list)*)
-type sprite = (string list) list
+type sprite = string list
 
 (** Exception of an unknown character name  *)
 exception UnknownCharacter of string 
