@@ -41,6 +41,11 @@ let get_weapon {name;stats;weapon;spells;sprite} = weapon
 (** [get_sprite c] is the sprite of character [c] *)
 let get_sprite {name;stats;weapon;spells;sprite} = sprite
 
+(** [get_name c] is the name of character [c] *)
+let get_name (c:character) = 
+  match c with 
+  | {name;_} -> name 
+
 (** Charcter fighter *)
 let fighter = {
   name = "fighter"; 

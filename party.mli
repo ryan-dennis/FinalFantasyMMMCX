@@ -33,6 +33,9 @@ val get_weapon: t -> string
 (** [get_sprite t] is the sprite of character [t]*)
 val get_sprite: t -> sprite 
 
+(** [get_name t] is the name of [t] *)
+val get_name: t -> string 
+
 (** [add lst acc] is the character list [acc] of the charcaters with names in 
     [lst]. Raises UnknownCharcter if the name in the [lst] is not a valid
     charcter name *)

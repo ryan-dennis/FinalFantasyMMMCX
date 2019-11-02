@@ -11,6 +11,7 @@ module type PartySig = sig
   val get_weapon: t -> string
   val add : string list -> t list -> t list
   val get_sprite: t -> sprite 
+  val get_name: t -> string 
 
 end 
 
