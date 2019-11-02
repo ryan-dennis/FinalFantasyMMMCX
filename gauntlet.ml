@@ -88,3 +88,4 @@ let start_battle glt =
   | h::t -> h.id
 
 let next_battle glt b =
+  failwith ""
