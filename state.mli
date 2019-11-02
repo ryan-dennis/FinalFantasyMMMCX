@@ -9,6 +9,21 @@ open Gauntlet
 type t 
 
 (** [init_state] returns the initial state of the game *)
-val init_state : Gauntlet.t -> Party.t list -> boss_id -> t  
+val init_state : Gauntlet.t -> Party.t list -> t  
+
+(** [get_health s t] is the health of [s] in [t] *)
+val get_health : string -> t -> int  
+
+(** [get_magic_points s t] is the mp of [s] in [t] *)
+val get_magic_points : string -> t -> int 
+
+(** [get_current_boss t] is the boss being fought against in [t] *)
+val get_current_boss : t -> string 
+
+(** [get_turnovert] is the turnorder in [t] *)
+val get_turnorder : t -> string list
+
+(** [get_next_boss t] is the next_boss to be played of [t] *)
+val get_next_boss: t -> string 
 
 

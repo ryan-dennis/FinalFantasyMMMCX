@@ -9,7 +9,7 @@ exception InvalidSprite of sprite
 
 type stats = {
   hp : int;
-  ag : int;
+  agl : int;
   def : int;
   str : int;
   hit : int;
@@ -48,7 +48,7 @@ let start_of_json j = {
 (** [stats_of_json j] is the stats of a boss in the gauntlet [j] represents. *)
 let stats_of_json j = {
   hp = j |> member "hp" |> to_int;
-  ag = j |> member "agility" |> to_int;
+  agl = j |> member "agility" |> to_int;
   def = j |> member "defense" |> to_int;
   str = j |> member "strength" |> to_int;
   hit = j |> member "hit rate" |> to_int;

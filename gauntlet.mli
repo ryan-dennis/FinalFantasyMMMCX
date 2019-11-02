@@ -18,7 +18,7 @@ type sprite = string list
 (** The type of boss stats. *)
 type stats = {
   hp : int;
-  ag : int;
+  agl : int;
   def : int;
   str : int;
   hit : int;
