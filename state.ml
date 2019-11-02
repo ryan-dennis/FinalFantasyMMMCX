@@ -53,13 +53,45 @@ let rec helper name lst =
     state [t]  *)
 let get_health name t = helper name t.health  
 
+(**[helper2 name num lst acc] *)
+let rec helper2 name num lst acc = 
+  match lst with 
+  | [] -> acc
+  | (n,i)::t -> if n = name then helper2 name num t ((name,num)::acc)
+    else helper2 name num t acc     
+
+let set_health name num t = 
+  {health = helper2 name num t.health [];magic_points = t.magic_points;
+   turnorder= t.turnorder;current_boss=t.current_boss;next_boss=t.next_boss}
+
+let set_magic_points name num t = 
+  {health = t.health;magic_points = helper2 name num t.magic_points [];
+   turnorder= t.turnorder;current_boss=t.current_boss;next_boss=t.next_boss}
+
+
+(** [get_magic_points name t] is the magic point of [name] in 
+    state [t] *)
 let get_magic_points name t = helper name t.magic_points
 
+(** [get_current_boss t] is the current boss played against in state [t] *)
 let get_current_boss t = t.current_boss
 
+(** [get_turnorder t] is the turnorder being played in state [t] *)
 let get_turnorder t = t.turnorder
 
+(** [get_next_boss t]  *)
 let get_next_boss t = t.next_boss
+
+let rec alive_helper lst (bool:bool) boss = 
+  match lst with 
+  | [] -> bool 
+  | (n,i)::t -> if n = boss then alive_helper t bool boss 
+    else if i > 0 then alive_helper t false boss else alive_helper t bool boss 
+
+
+let check_alive t = 
+  alive_helper t.health true t.current_boss
+
 
 
 
