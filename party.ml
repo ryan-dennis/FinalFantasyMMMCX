@@ -2,11 +2,6 @@
     weapons, spells, and sprite. As well as a method to get all characters and adding 
     for adding into a party. *)
 
-(** Question: Is vitality suppose to act like HP and be a constant start or should 
-    I have both Vitality and HP? 
-    Question: Does magoc points vary with each spell or are we doing general for all 
-    spells you can use them until you run out of MP*)
-
 type spell = string 
 
 type sprite = (string list) list 
@@ -15,13 +10,13 @@ type stat = {
   str : int; 
   agl : int; 
   int : int;
-  vit : int; (** Treating like just HP for right now. Doing HP plus one Vit *)
+  vit : int; 
   mp : int;
-  hit_percent : int; (** float or int?*)
-  (* absorb : Not in the website.. what is this?*)
+  hit_percent : int; 
+  m_def : int;
+  fight_def : int;  
 }
 
-(** Question: Are we only doing the weapon or also armor and shield?*)
 type character = {
   name : string; 
   stats : stat; 
@@ -49,7 +44,7 @@ let get_sprite {name;stats;weapon;spells;sprite} = sprite
 (** Charcter fighter *)
 let fighter = {
   name = "fighter"; 
-  stats = {str = 20; agl = 5; int = 1; vit = 45; mp = 0; hit_percent = 10};
+  stats = {str = 20; agl = 5; int = 1; vit = 45; mp = 0; hit_percent = 10; m_def = 15; fight_def = 20};
   weapon = "Sun sword";
   spells = [];
   sprite = [[]];
@@ -58,55 +53,51 @@ let fighter = {
 (** Charcter Thief *)
 let thief = {
   name = "thief"; 
-  stats = {str = 5; agl = 10; int = 5; vit = 35; mp = 0; hit_percent = 5};
+  stats = {str = 5; agl = 10; int = 5; vit = 35; mp = 15; hit_percent = 5; m_def = 15; fight_def=15};
   weapon = "Dragon sword";
-  spells = [];
+  spells = ["fire ball"; "blizzard"];
   sprite = [[]];
 }
 
 (** Charcter Black Belt *)
 let black_belt = {
   name = "black belt"; 
-  stats = {str = 5; agl = 5; int = 5; vit = 53; mp = 0; hit_percent = 5};
+  stats = {str = 5; agl = 5; int = 5; vit = 53; mp = 0; hit_percent = 5; m_def = 10; fight_def = 25};
   weapon = "Fists";
   spells = [];
   sprite = [[]];
 }
 
-(**Question: Does not say how many MP they start with so I just made up a number.. *)
-(** I gave them all fire ice and lightning spells for now because those 
-    are the 3 spells we wanted done by MS2. I will add poison and Status and change 
-    the three spells for each character around accordingly in MS3 *)
 
 (** Charcter Red Mage *)    
 let red_mage = {
   name = "red mage"; 
-  stats = {str = 10; agl = 10; int = 10; vit = 35; mp = 20; hit_percent = 7};
+  stats = {str = 10; agl = 10; int = 10; vit = 35; mp = 20; hit_percent = 7; m_def = 20; fight_def = 15};
   weapon = "Fists";
-  spells = ["fire";"ice";"lightning"];
+  spells = ["fire blast";"blizzard";"thundara"];
   sprite = [[]];
 }
 
 (** Charcter White Mage *)
 let white_mage = {
   name = "white mage"; 
-  stats = {str = 5; agl = 5; int = 15; vit = 38; mp = 25; hit_percent = 5};
+  stats = {str = 5; agl = 5; int = 15; vit = 38; mp = 25; hit_percent = 5; m_def = 20; fight_def = 15};
   weapon = "Silver Hammer";
-  spells = ["ice";"fire";"lightning"];
+  spells = ["shara";"blizzaga";"thunder"];
   sprite = [[]];
 }
 
 (** Charcter Black Mage *)
-let balck_mage = {
+let black_mage = {
   name = "black mage"; 
-  stats = {str = 1; agl = 10; int = 20; vit = 26; mp = 25; hit_percent = 5};
+  stats = {str = 1; agl = 10; int = 20; vit = 26; mp = 25; hit_percent = 5; m_def = 20; fight_def = 15};
   weapon = "Mage staff";
-  spells = ["lightning";"fire";"ice"];
+  spells = ["blizzaga";"fire blast";"thunga"];
   sprite = [[]];
 }
 
 (** [get_characters] is the character list of all characters of the game *)
-let get_characters = [fighter;thief; black_belt; red_mage; white_mage; balck_mage]
+let get_characters = [fighter;thief; black_belt; red_mage; white_mage; black_mage]
 
 (** [find_character n lst] is the character in [lst] with name [n] or 
     raises exception UnknownCharcter of [n] if no charcaters have name [n]*)
