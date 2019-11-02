@@ -7,25 +7,33 @@
     {
       "id": "Chaos",
       "stats": {
-        "hp": 10,
-        "agility": 15,
-        "defense": 20,
-        "strength": 25,
-        "hit rate": 100,
+        "hp": 2000,
+        "agility": 100,
+        "defense": 100,
+        "strength": 100,
+        "hit rate": 200,
         "weaknesses": [],
         "resistances": [
           "ICE"
         ]
       },
       "sprite": [],
-      "spells": [
-        "ICE3",
-        "LIT3",
-        "FIR3",
-        "ICE2",
-        "INFERNO",
-        "SWIRL"
-      ],
+      "magic": {
+        "spell chance": 64,
+        "spell list": [
+          "ICE3",
+          "LIT3",
+          "FIR3",
+          "ICE2"
+        ]
+      },
+      "special": {
+        "skill chance": 64,
+        "skill list": [
+          "INFERNO",
+          "SWIRL"
+        ]
+      },
       "dialogue": "You've defeated Chaos!",
       "next boss": "Mutability"
     },
@@ -41,7 +49,14 @@
         "resistances": []
       },
       "sprite": [],
-      "spells": [],
+      "magic": {
+        "spell chance": 0,
+        "spell list": []
+      },
+      "special": {
+        "skill chance": 0,
+        "skill list": []
+      },
       "dialogue": "You've defeated Mutability!",
       "next boss": "Clarkson"
     },
@@ -57,7 +72,14 @@
         "resistances": []
       },
       "sprite": [],
-      "spells": [],
+      "magic": {
+        "spell chance": 0,
+        "spell list": []
+      },
+      "special": {
+        "skill chance": 0,
+        "skill list": []
+      },
       "dialogue": "You've defeated Clarkson!",
       "next boss": ""
     }
