@@ -1,11 +1,11 @@
 open Yojson.Basic.Util
 
 type boss_id = string
+type sprite = string list
 
-type element = Fire | Ice | Lightning | Poison | Status
+exception UnknownBoss of boss_id
 
-exception Unknown_Boss of boss_id
-exception Unknown_Element of string
+exception InvalidSprite of sprite
 
 type stats = {
   hp : int;
@@ -13,14 +13,16 @@ type stats = {
   def : int;
   str : int;
   hit : int;
-  weak : element list;
-  resist : element list
+  weak : string list;
+  resist : string list
 }
 
 (** The type of boss. *)
 type boss = {
   id : boss_id;
   stats : stats;
+  sprite : string list;
+  spells : string list;
   boss_dlg : string;
   next : string
 }
@@ -33,18 +35,8 @@ type start = {
 
 type t = {
   start : start;
-  battles : boss list
+  bosses : boss list
 }
-
-(** [to_element e] is the element of a boss's weaknesses or resistances as
-    type element. *)
-let to_element = function
-  | "fire" -> Fire
-  | "ice" -> Ice
-  | "lightning" -> Lightning
-  | "poison" -> Poison
-  | "status" -> Status
-  | el -> raise (Unknown_Element el)
 
 (** [start_of_json j] is the starting information in the gauntlet [j]
     represents. *)
@@ -53,10 +45,6 @@ let start_of_json j = {
   start_dlg = j |> member "dialogue" |> to_string
 }
 
-(** [element_of_json j] is a magic element in the gauntlet [j] represents. *)
-let element_of_json j =
-  j |> member "magic" |> to_string |> to_element
-
 (** [stats_of_json j] is the stats of a boss in the gauntlet [j] represents. *)
 let stats_of_json j = {
   hp = j |> member "hp" |> to_int;
@@ -64,27 +52,62 @@ let stats_of_json j = {
   def = j |> member "def" |> to_int;
   str = j |> member "str" |> to_int;
   hit = j |> member "hit" |> to_int;
-  weak = j |> member "weak" |> to_list |> List.map element_of_json;
-  resist = j |> member "resist" |> to_list |> List.map element_of_json;
+  weak = j |> member "weak" |> to_list |> List.map to_string;
+  resist = j |> member "resist" |> to_list |> List.map to_string;
 }
+
+(** [check_sprite sprite] is [sprite] if it is a valid sprite (each line is
+    80 characters) and raises InvaludSprite otherwise. *)
+let check_sprite sprite =
+  let rec valid = function
+    | [] -> true
+    | h::t -> if String.length h = 80 then valid t
+      else false
+  in
+  if valid sprite then sprite
+  else raise (InvalidSprite sprite)
 
 (** [boss_of_json j] is a boss in the gauntlet [j] represents. *)
 let boss_of_json j = {
   id = j |> member "id" |> to_string;
   stats = j |> member "stats" |> stats_of_json;
+  sprite = j |> member "sprite" |> to_list |> List.map to_string;
+  spells = j |> member "spells" |> to_list |> List.map to_string;
   boss_dlg = j |> member "dialogue" |> to_string;
   next = j |> member "next" |> to_string
 }
 
 let from_json json = {
   start = json |> member "start" |> start_of_json;
-  battles = json |> member "battles" |> to_list |> List.map boss_of_json
+  bosses = json |> member "bosses" |> to_list |> List.map boss_of_json
 }
 
+let start_boss glt =
+  glt.start.start_id
 
-let start_battle glt =
-  match glt with
-  | [] -> failwith "empty gauntlet"
-  | h::t -> h.id
+let start_dialogue glt =
+  glt.start.start_dlg
 
-let next_battle glt b =
+(** [find_boss glt b] is the boss in [glt] with the identifier [b]. *)
+let find_boss glt b =
+  match List.filter (fun x -> x.id = b) glt.bosses with
+  | [] -> raise (UnknownBoss b)
+  | h::t -> h
+
+let name glt b =
+  (find_boss glt b).id
+
+let stats glt b =
+  (find_boss glt b).stats
+
+let sprite glt b =
+  (find_boss glt b).sprite
+
+let spells glt b =
+  (find_boss glt b).spells
+
+let next glt b =
+  (find_boss glt b).next
+
+let dialogue glt b =
+  (find_boss glt b).boss_dlg

@@ -4,35 +4,42 @@ type t
 (** The type of boss. *)
 type boss_id = string
 
+(** The type of sprite. *)
+type sprite = string list
+
 (** The type of boss stats. *)
 type stats
-
-(** The type of magic element. *)
-type element
 
 (** Raised when an unknown boss is encountered. *)
 exception UnknownBoss of boss_id
 
-(** Raised when an unknown magic element is encountered. *)
-exception UnknownElement of string
+(** Raised when an invalid sprite is encountered. *)
+exception InvalidSprite of sprite
 
-(** [from_json json] is the gauntlet that [json] represents. *)
+(** [from_json j] is the gauntlet that [j] represents. *)
 val from_json : Yojson.Basic.t -> t
 
-(** [start_battle glt] is the identifier of the starting battle in gauntlet
-    [glt]. *)
-val start_battle : t -> boss_id
+(** [start_boss g] is the identifier of the starting boss in gauntlet
+    [g]. *)
+val start_boss : t -> boss_id
 
-val next_battle : t -> boss_id -> boss_id
+(** [start_dlg g] is the opening dialogue in gauntlet [g]. *)
+val start_dialogue : t -> string
 
-val get_desc : t -> boss_id -> string
+(** [name g b] is the name of boss [b] in gauntlet [g]. *)
+val name : t -> boss_id -> string
 
-val win_msg : t -> string
+(** [stats g b] is the stats of boss [b] in gauntlet [g]. *)
+val stats : t -> boss_id -> stats
 
-val get_boss_name : t -> boss_id -> string
+(** [sprite g b] is the sprite of boss [b] in gauntlet [g]. *)
+val sprite : t -> boss_id -> string list
 
-val get_boss_stats : t -> boss_id -> stats
+(** [spells g b] is the list of spells of boss [b] in gauntlet [g]. *)
+val spells : t -> boss_id -> string list
 
-val get_boss_sprite : t -> boss_id -> string list list
+(** [next g b] is the next boss after [b] in gauntlet [g]. *)
+val next : t -> boss_id -> boss_id
 
-val get_boss_spells : t -> boss_id -> (string * int) list
+(** [get_dlg g b] is the victory dialogue for boss [b] in gauntlet [g]. *)
+val dialogue : t -> boss_id -> string

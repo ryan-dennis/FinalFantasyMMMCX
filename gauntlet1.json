@@ -1,21 +1,30 @@
 {
   "start": {
-    "id": "Sephiroth",
-    "dialogue": "It's Sephiroth!"
+    "id": "Chaos",
+    "dialogue": "It's Chaos!"
   },
-  "battles": [
+  "bosses": [
     {
-      "id": "Sephiroth",
+      "id": "Chaos",
       "stats": {
         "hp": 10,
         "agility": 10,
         "defense": 10,
         "strength": 10,
         "hit rate": 100,
-        "weaknesses": "",
-        "resistances": ""
+        "weaknesses": [],
+        "resistances": []
       },
-      "dialogue": "You've defeated Sephiroth!",
+      "sprite": [],
+      "spells": [
+        "ICE3",
+        "LIT3",
+        "FIR3",
+        "ICE2",
+        "INFERNO",
+        "SWIRL"
+      ],
+      "dialogue": "You've defeated Chaos!",
       "next boss": "Mutability"
     },
     {
@@ -26,9 +35,11 @@
         "defense": 10,
         "strength": 10,
         "hit rate": 100,
-        "weaknesses": "",
-        "resistances": ""
+        "weaknesses": [],
+        "resistances": []
       },
+      "sprite": [],
+      "spells": [],
       "dialogue": "You've defeated Mutability!",
       "next boss": "Clarkson"
     },
@@ -40,9 +51,11 @@
         "defense": 10,
         "strength": 10,
         "hit rate": 100,
-        "weaknesses": "",
-        "resistances": ""
+        "weaknesses": [],
+        "resistances": []
       },
+      "sprite": [],
+      "spells": [],
       "dialogue": "You've defeated Clarkson!",
       "next boss": ""
     }
