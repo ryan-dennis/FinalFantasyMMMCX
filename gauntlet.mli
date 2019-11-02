@@ -1,3 +1,11 @@
+(** 
+   Representation of static gauntlet data.
+
+   This module represents the data stored in gauntlet files, including all the
+   bosses and their characteristics. It handles loading of that data from a
+   JSON file as well as querying the data.
+*)
+
 (** The abstract type of values representing gauntlets. *)
 type t
 
