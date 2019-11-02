@@ -48,12 +48,12 @@ let start_of_json j = {
 (** [stats_of_json j] is the stats of a boss in the gauntlet [j] represents. *)
 let stats_of_json j = {
   hp = j |> member "hp" |> to_int;
-  ag = j |> member "ag" |> to_int;
-  def = j |> member "def" |> to_int;
-  str = j |> member "str" |> to_int;
-  hit = j |> member "hit" |> to_int;
-  weak = j |> member "weak" |> to_list |> List.map to_string;
-  resist = j |> member "resist" |> to_list |> List.map to_string;
+  ag = j |> member "agility" |> to_int;
+  def = j |> member "defense" |> to_int;
+  str = j |> member "strength" |> to_int;
+  hit = j |> member "hit rate" |> to_int;
+  weak = j |> member "weaknesses" |> to_list |> List.map to_string;
+  resist = j |> member "resistances" |> to_list |> List.map to_string;
 }
 
 (** [check_sprite sprite] is [sprite] if it is a valid sprite (each line is
@@ -74,7 +74,7 @@ let boss_of_json j = {
   sprite = j |> member "sprite" |> to_list |> List.map to_string;
   spells = j |> member "spells" |> to_list |> List.map to_string;
   boss_dlg = j |> member "dialogue" |> to_string;
-  next = j |> member "next" |> to_string
+  next = j |> member "next boss" |> to_string
 }
 
 let from_json json = {
@@ -94,16 +94,13 @@ let find_boss glt b =
   | [] -> raise (UnknownBoss b)
   | h::t -> h
 
-let name glt b =
-  (find_boss glt b).id
-
-let stats glt b =
+let boss_stats glt b =
   (find_boss glt b).stats
 
-let sprite glt b =
+let boss_sprite glt b =
   (find_boss glt b).sprite
 
-let spells glt b =
+let boss_spells glt b =
   (find_boss glt b).spells
 
 let next glt b =
