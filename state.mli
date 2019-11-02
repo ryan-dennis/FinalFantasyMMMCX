@@ -9,6 +9,6 @@ open Gauntlet
 type t 
 
 (** [init_state] returns the initial state of the game *)
-val init_state : Gauntlet.t -> Party.t list -> string -> t  
+val init_state : Gauntlet.t -> Party.t list -> boss_id -> t  
 
 
