@@ -49,7 +49,7 @@ let get_name (c:character) =
 (** Charcter fighter *)
 let fighter = {
   name = "fighter"; 
-  stats = {str = 20; agl = 5; int = 1; vit = 45; mp = 0; hit_percent = 10; m_def = 15; fight_def = 20};
+  stats = {str = 69; agl = 43; int = 23; vit = 993; mp = 0; hit_percent = 157; m_def = 162; fight_def = 60};
   weapon = "Sun sword";
   spells = [];
   sprite = [];
@@ -58,7 +58,7 @@ let fighter = {
 (** Charcter Thief *)
 let thief = {
   name = "thief"; 
-  stats = {str = 5; agl = 10; int = 5; vit = 35; mp = 15; hit_percent = 5; m_def = 15; fight_def=15};
+  stats = {str = 42; agl = 46; int = 30; vit = 660; mp = 15; hit_percent = 103; m_def = 113; fight_def=51};
   weapon = "Dragon sword";
   spells = ["FIRE"; "ICE"];
   sprite = [];
@@ -67,7 +67,7 @@ let thief = {
 (** Charcter Black Belt *)
 let black_belt = {
   name = "black belt"; 
-  stats = {str = 5; agl = 5; int = 5; vit = 53; mp = 0; hit_percent = 5; m_def = 10; fight_def = 25};
+  stats = {str = 35; agl = 36; int = 35; vit = 69; mp = 0; hit_percent = 152; m_def = 206; fight_def = 43};
   weapon = "Fists";
   spells = [];
   sprite = [];
@@ -77,7 +77,7 @@ let black_belt = {
 (** Charcter Red Mage *)    
 let red_mage = {
   name = "red mage"; 
-  stats = {str = 10; agl = 10; int = 10; vit = 35; mp = 20; hit_percent = 7; m_def = 20; fight_def = 15};
+  stats = {str = 41; agl = 35; int = 40; vit = 591; mp = 20; hit_percent = 105; m_def = 118; fight_def = 51};
   weapon = "Fists";
   spells = ["FIR2";"ICE";"LIT2"];
   sprite = [];
@@ -86,7 +86,7 @@ let red_mage = {
 (** Charcter White Mage *)
 let white_mage = {
   name = "white mage"; 
-  stats = {str = 5; agl = 5; int = 15; vit = 38; mp = 25; hit_percent = 5; m_def = 20; fight_def = 15};
+  stats = {str = 30; agl = 30; int = 49; vit = 676; mp = 25; hit_percent = 54; m_def = 118; fight_def = 51};
   weapon = "Silver Hammer";
   spells = ["LIT2";"ICE3";"LIT"];
   sprite = [];
@@ -95,7 +95,7 @@ let white_mage = {
 (** Charcter Black Mage *)
 let black_mage = {
   name = "black mage"; 
-  stats = {str = 1; agl = 10; int = 20; vit = 26; mp = 25; hit_percent = 5; m_def = 20; fight_def = 15};
+  stats = {str = 23; agl = 32; int = 69; vit = 23; mp = 25; hit_percent = 54; m_def = 118; fight_def = 51};
   weapon = "Mage staff";
   spells = ["ICE3";"FIR2";"FIRE"];
   sprite = [];
