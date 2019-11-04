@@ -14,6 +14,8 @@ type t = {
   party : string list;
   current_boss: string;
   next_boss : string; 
+  current_fighter: string;
+  next_fighter: string 
 }
 
 (** [get_party_health gtl party acc] is [acc] with the (name,vit) of every
@@ -49,7 +51,6 @@ let generate_turnorder party name =
   let lst = name::party in 
   shuffle lst 
 
-
 (** [init state gtl party] initializes the first state of the game. Every 
     Party memeber has full health and magic points as well as the boss. The
     turnover is the official turnover including all 4 players. Current boss is the 
@@ -57,10 +58,11 @@ let generate_turnorder party name =
     if the party succeeds. *)
 let init_state gtl party = 
   let boss = start_boss gtl in
+  let t_order = generate_turnorder (party_helper party []) boss in 
   {health = (boss, get_bs gtl boss)::(get_party_health party []);
    magic_points = get_party_mp party [] ; party = party_helper party [] ;
-   turnorder = generate_turnorder (party_helper party []) boss; 
-   current_boss =boss; next_boss = next gtl boss}
+   turnorder = t_order; current_boss =boss; next_boss = next gtl boss; 
+   current_fighter = List.nth t_order 0; next_fighter = List.nth t_order 1}
 
 (** [helper name lst] is the health of [name] of the character in 
     [lst] or raises UnknownCharacter if not in [lst] *)
@@ -84,20 +86,30 @@ let rec helper2 name num lst acc =
 (** [set_health name num t] is [t] with the health of [name] set to [num] *)
 let set_health name num t = 
   {health = List.rev (helper2 name num t.health []);magic_points = t.magic_points;
-   turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss}
+   turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
+   current_fighter = t.current_fighter; next_fighter = t.next_fighter}
 
 (** [set_magic_points name num t] is [t] with the mp of [name] set to [num] *)
 let set_magic_points name num t = 
   {health = t.health;magic_points = List.rev (helper2 name num t.magic_points []);
-   turnorder= t.turnorder; party=t.party;current_boss=t.current_boss;next_boss=t.next_boss}
+   turnorder= t.turnorder; party=t.party;current_boss=t.current_boss;next_boss=t.next_boss;
+   current_fighter = t.current_fighter; next_fighter= t.next_fighter}
 
 (** [remove_from_t name lst acc] is [acc] with each element of [lst] in order 
     except with [name] removed.*)
-let rec remove_from_t name lst acc = 
+let rec remove_helper name lst acc = 
   match lst with 
   | [] -> acc 
-  | x::t -> if x=name then remove_from_t name t acc else 
-      x::(remove_from_t name t acc)  
+  | x::t -> if x=name then remove_helper name t acc else 
+      x::(remove_helper name t acc)  
+
+(**[remove_from_t name state] is [state] with [name] removed from the 
+   turnorder in [state] *)
+let remove_from_t name state = 
+  {health = state.health; magic_points = state.magic_points; 
+   turnorder = remove_helper name state.turnorder []; party = state.party; 
+   current_boss = state.current_boss; next_boss= state.next_boss; 
+   current_fighter = state.current_fighter;next_fighter= state.next_fighter}      
 
 (** [get_magic_points name t] is the magic point of [name] in 
     state [t] *)
@@ -114,6 +126,13 @@ let get_party t = t.party
 
 (** [get_next_boss t] is the next_boss to be played in state [t]  *)
 let get_next_boss t = t.next_boss
+
+(** [get_current_fighter t] is the name of the character or boss whose turn it 
+    currently is *)
+let get_current_fighter t = t.current_fighter
+
+(** [get_next_fighter t] is the name of the character or boss whose turn is next *)
+let get_next_fighter t = t.next_fighter
 
 (** [alive_helper lst bool boss] is [bool] if the at least one member of [lst] 
     excluding [boss] has a health > 0 *)
@@ -132,6 +151,24 @@ let check_alive t =
    0 *)
 let is_dead t name = 
   if (helper name t.health) <= 0 then true else false    
+
+(** [get_next name lst head] is [head] if [name] is the last element in [lst] else 
+    it is the element following [name] in [lst]  *)
+let rec get_next name lst head = 
+  match lst with 
+  | [] -> raise (UnknownCharacter name)
+  | x::y::t -> if name = x then y else get_next name (y::t) head
+  | x::t -> if name = x then head else get_next name t head 
+
+(**  [change_turns t] is [t] wiht the current fighter becoming the next fighter of 
+     [t] and the next_fighter is the next person in the turnorder after [t.next_fighter]
+     If the t has an empty turnorder this method will raise an exception. If the 
+     turnoder is of size one it current and next fighter will always be the sanme*)
+let change_turns t = 
+  {health = t.health; magic_points = t.magic_points; turnorder = t.turnorder;
+   party = t.party; current_boss = t.current_boss; next_boss = t.next_boss; 
+   current_fighter = t.next_fighter; 
+   next_fighter = get_next t.next_fighter t.turnorder (List.nth t.turnorder 0)}  
 
 
 
