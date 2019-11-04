@@ -84,11 +84,11 @@ let special_of_json j = {
 }
 
 (** [check_sprite sprite] is [sprite] if it is a valid sprite (each line is
-    80 characters) and raises InvaludSprite otherwise. *)
+    30 characters) and raises InvalidSprite otherwise. *)
 let check_sprite sprite =
   let rec valid = function
     | [] -> true
-    | h::t -> if String.length h = 80 then valid t
+    | h::t -> if String.length h = 30 then valid t
       else false
   in
   if valid sprite then sprite
