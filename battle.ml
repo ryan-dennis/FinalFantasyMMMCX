@@ -41,5 +41,7 @@ let boss_turn glt st =
   let c = boss_target glt st in
   let char = Party.find_character c Party.get_characters |> char_stats in
   let boss = cur_boss_stats glt st in
-  set_health c (get_health c st -
-                fight_dmg boss.hit boss.str char.agl char.fight_def)
+  let new_st = set_health c (get_health c st - fight_dmg boss.hit boss.str
+                               char.agl char.fight_def) in
+  if get_health c new_st > 0 then new_st
+  else remove_from_t c new_st
