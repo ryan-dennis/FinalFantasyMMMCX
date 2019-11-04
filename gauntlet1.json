@@ -8,11 +8,11 @@
     {
       "id": "Chaos",
       "stats": {
-        "hp": 2000,
-        "agility": 100,
-        "defense": 100,
-        "strength": 100,
-        "hit rate": 200,
+        "hp": 1000,
+        "agility": 50,
+        "defense": 50,
+        "strength": 50,
+        "hit rate": 100,
         "weaknesses": [],
         "resistances": [
           "ICE"
