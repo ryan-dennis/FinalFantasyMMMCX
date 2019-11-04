@@ -58,7 +58,7 @@ let gauntlet_tests = [
 
 let init = init_state glt1 [thief;red_mage;white_mage]
 let r_set = set_health "red mage" 25 init
-let b_set = set_health "Chaos" 1000 init
+let b_set = set_health "Chaos" 100 init
 let t = get_turnorder init
 let rem_red = remove_from_t "red mage" init
 let r = get_turnorder rem_red
@@ -75,15 +75,15 @@ let state_tests = [
   "Testing party is set correctly">:: 
   (fun _ -> assert_equal ["white mage";"red mage";"thief"] (get_party init));
   "Testing health was set correctly ">:: 
-  (fun _ -> assert_equal 35 (get_health "red mage" init));
+  (fun _ -> assert_equal 591 (get_health "red mage" init));
   "Testing set health works correctly">:: 
   (fun _ -> assert_equal 25 (get_health "red mage" r_set));
   "Testing get health for boss">:: 
-  (fun _ -> assert_equal 2000 (get_health "Chaos" init)); 
+  (fun _ -> assert_equal 1000 (get_health "Chaos" init)); 
   "Testing setting red mage health doesn't affect another character">::
-  (fun _ -> assert_equal 2000 (get_health "Chaos" init));
+  (fun _ -> assert_equal 1000 (get_health "Chaos" init));
   "Testing set on boss">:: 
-  (fun _ -> assert_equal 1000 (get_health "Chaos" b_set));
+  (fun _ -> assert_equal 100 (get_health "Chaos" b_set));
   "Testing size of init's turnorder">:: 
   (fun _ -> assert_equal 4 (List.length t));
   "Testing remove from turnorder">::
