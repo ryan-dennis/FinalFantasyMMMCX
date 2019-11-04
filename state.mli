@@ -56,4 +56,9 @@ val is_dead: t->string-> bool
 (** [change_turns t] is [t] with the current_fighter and next_fighter updated *)
 val change_turns : t -> t
 
+(** [reset_state gtl t] resets the state from the previous battle to revive all 
+    health and magic points; change the current boss to the next boss in the gauntlet
+    and create a new turnorder *)
+val reset_state: Gauntlet.t -> t -> t 
+
 

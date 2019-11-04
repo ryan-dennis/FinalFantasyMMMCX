@@ -170,6 +170,22 @@ let change_turns t =
    current_fighter = t.next_fighter; 
    next_fighter = get_next t.next_fighter t.turnorder (List.nth t.turnorder 0)}  
 
+(** [find_char lst acc] is the character list [acc] with the characters whose 
+    names are in [lst] in the order they are in [lst] *)
+let rec find_char lst acc = 
+  match lst with 
+  | [] -> acc
+  | x::t -> find_character x get_characters :: find_char t acc
+
+(** [reset_state gtl l] resets the state of all the players and the new battle 
+    with the next boss in [gtl] *)
+let reset_state gtl t = 
+  let init = init_state gtl (find_char t.party []) in 
+  {health = init.health; magic_points = init.magic_points; 
+   turnorder = init.turnorder; party = init.party; current_boss = t.next_boss; 
+   next_boss = next gtl t.next_boss; current_fighter = init.current_fighter; 
+   next_fighter = init.next_fighter}   
+
 
 
 
