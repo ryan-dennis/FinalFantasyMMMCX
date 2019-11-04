@@ -26,14 +26,22 @@ val get_turnorder : t -> string list
 (** [get_next_boss t] is the next_boss to be played of [t] *)
 val get_next_boss: t -> Gauntlet.boss_id 
 
+(**[get_party t] is the character names of the character's in the party [t] *)
 val get_party: t -> string list
 
+(** [set_health name num t] returns [t] with new health for [name] with
+    value [num] *)
 val set_health: string-> int-> t -> t
 
+(** [set_magic_points name num t] returns [t] with new mp for [name] with
+    value [num] *)
 val set_magic_points: string-> int -> t->t
 
+(** [check_alive t] returns true if at least one character in the party in 
+    state [t] is alive *)
 val check_alive: t -> bool 
 
+(** [is_dead] returns true if the character's health is less than or equal to zero *)
 val is_dead: t->string-> bool 
 
 
