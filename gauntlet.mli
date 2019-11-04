@@ -42,6 +42,9 @@ val start_boss : t -> boss_id
 (** [start_dlg g] is the opening dialogue in gauntlet [g]. *)
 val start_dialogue : t -> string
 
+(** [final g] is the idenitifier of the final boss in gauntlet [g]. *)
+val final : t -> boss_id
+
 (** [boss_stats g b] is the stats of boss [b] in gauntlet [g]. *)
 val boss_stats : t -> boss_id -> stats
 

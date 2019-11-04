@@ -3,6 +3,7 @@
     "id": "Chaos",
     "dialogue": "It's Chaos!"
   },
+  "final": "Clarkson",
   "bosses": [
     {
       "id": "Chaos",

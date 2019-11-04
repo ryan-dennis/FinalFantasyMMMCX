@@ -48,6 +48,7 @@ type start = {
 
 type t = {
   start : start;
+  final : boss_id;
   bosses : boss list
 }
 
@@ -107,6 +108,7 @@ let boss_of_json j = {
 
 let from_json json = {
   start = json |> member "start" |> start_of_json;
+  final = json |> member "final" |> to_string;
   bosses = json |> member "bosses" |> to_list |> List.map boss_of_json
 }
 
@@ -115,6 +117,9 @@ let start_boss glt =
 
 let start_dialogue glt =
   glt.start.start_dlg
+
+let final glt =
+  glt.final
 
 (** [find_boss glt b] is the boss in [glt] with the identifier [b]. *)
 let find_boss glt b =
