@@ -6,7 +6,7 @@ open Gauntlet
     to the enemy and party memebers but those will be implemented later. 
     State also will hold what the turn order is for the party memebers and enemy *)
 
-type t 
+type t
 
 (** [init_state] returns the initial state of the game *)
 val init_state : Gauntlet.t -> Party.t list -> t  
@@ -25,5 +25,15 @@ val get_turnorder : t -> string list
 
 (** [get_next_boss t] is the next_boss to be played of [t] *)
 val get_next_boss: t -> Gauntlet.boss_id 
+
+val get_party: t -> string list
+
+val set_health: string-> int-> t -> t
+
+val set_magic_points: string-> int -> t->t
+
+val check_alive: t -> bool 
+
+val is_dead: t->string-> bool 
 
 
