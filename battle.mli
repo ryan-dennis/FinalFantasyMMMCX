@@ -9,9 +9,11 @@
     attack on the enemy. *)
 val fight : Gauntlet.t -> State.t -> Party.t -> State.t
 
-val magic : State.t -> State.t
+(**
+   val magic : State.t -> State.t
 
-val drink : State.t -> State.t
+   val drink : State.t -> State.t
+*)
 
 (** [boss_turn glt st] is the new state after the boss during [st] from
     gauntlet [glt] takes its turn. *)

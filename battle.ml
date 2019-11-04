@@ -26,7 +26,8 @@ let fight glt st c =
   let char = char_stats c in
   let boss = cur_boss_stats glt st in
   set_health b (get_health b st -
-                fight_dmg char.hit_percent char.str boss.agl boss.def) st
+                fight_dmg char.hit_percent char.str boss.agl boss.def) st |>
+  change_turns
 
 (** [boss_target glt st] is the character in [glt] who is targeted by the
     current boss in [st]. *)
@@ -43,5 +44,5 @@ let boss_turn glt st =
   let boss = cur_boss_stats glt st in
   let new_st = set_health c (get_health c st - fight_dmg boss.hit boss.str
                                char.agl char.fight_def) st in
-  if get_health c new_st > 0 then new_st
-  else remove_from_t c new_st
+  if get_health c new_st > 0 then new_st |> change_turns
+  else remove_from_t c new_st |> change_turns
