@@ -18,8 +18,11 @@ let hit_roll hit agl =
     hit percent of [a_hit] and strength of [a_str] does to a defender with an
     agility of [d_agl] and defense of [d_def]. *)
 let fight_dmg a_hit a_str d_agl d_def =
+  let atk = a_str / 2 in
   if hit_roll a_hit d_agl = false then 0
-  else let atk = a_str / 2 in (Random.int atk) + atk - d_def
+  else let dmg = (Random.int atk) + atk - d_def in
+    if dmg < 0 then 0
+    else dmg
 
 let fight glt st c =
   let b = get_current_boss st in
@@ -42,7 +45,8 @@ let boss_turn glt st =
   let c = boss_target glt st in
   let char = Party.find_character c Party.get_characters |> char_stats in
   let boss = cur_boss_stats glt st in
-  let new_st = set_health c (get_health c st - fight_dmg boss.hit boss.str
-                               char.agl char.fight_def) st in
-  if get_health c new_st > 0 then new_st |> change_turns
+  let new_hp = get_health c st - fight_dmg boss.hit boss.str
+                 char.agl char.fight_def in
+  let new_st = set_health c new_hp st in
+  if new_hp > 0 then new_st |> change_turns
   else remove_from_t c new_st |> change_turns
