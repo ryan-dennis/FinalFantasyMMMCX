@@ -1,14 +1,16 @@
 open State
 
+(** To-do: # of hits/who takes damage/amount of damage should be available *)
+
 let weapon st =
-  let c = get_current_fighter st in
-  if c = "fighter" then 100 (**32*)
-  else if c = "thief" then 75 (**19*)
-  else if c = "black belt" then 100 (**30*)
-  else if c = "red mage" then 100 (**32*)
-  else if c = "white mage" then 50 (**12*)
-  else if c = "black mage" then 50 (**12*)
-  else failwith "nonexistent character"
+  match get_current_fighter st with
+  | "fighter" -> 100 (**32*)
+  | "thief" -> 75 (**19*)
+  | "black belt" -> 100 (**30*)
+  | "red mage" -> 100 (**32*)
+  | "white mage" -> 50 (**12*)
+  | "black mage" -> 50 (**12*)
+  | boss -> 0
 
 (** [char_stats c] is the stats of character [c]. *)
 let char_stats c = Party.get_stats c
