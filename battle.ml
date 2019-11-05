@@ -1,5 +1,15 @@
 open State
 
+let weapon st =
+  let c = get_current_fighter st in
+  if c = "fighter" then 100 (**32*)
+  else if c = "thief" then 75 (**19*)
+  else if c = "black belt" then 100 (**30*)
+  else if c = "red mage" then 100 (**32*)
+  else if c = "white mage" then 50 (**12*)
+  else if c = "black mage" then 50 (**12*)
+  else failwith "nonexistent character"
+
 (** [char_stats c] is the stats of character [c]. *)
 let char_stats c = Party.get_stats c
 
@@ -17,11 +27,11 @@ let hit_roll hit agl =
 (** [fight_dmg a_hit a_str d_agl d_def] is how much damage an attacker with a
     hit percent of [a_hit] and strength of [a_str] does to a defender with an
     agility of [d_agl] and defense of [d_def]. *)
-let fight_dmg a_hit a_str d_agl d_def =
-  let atk = a_str / 2 in
+let fight_dmg st a_hit a_str d_agl d_def =
+  let atk = (a_str / 2) + (weapon st) in
   if hit_roll a_hit d_agl = false then 0
   else let dmg = (Random.int atk) + atk - d_def in
-    if dmg < 0 then 0
+    if dmg <= 0 then 1
     else dmg
 
 let fight glt st c =
@@ -29,7 +39,7 @@ let fight glt st c =
   let char = char_stats c in
   let boss = cur_boss_stats glt st in
   set_health b (get_health b st -
-                fight_dmg char.hit_percent char.str boss.agl boss.def) st |>
+                fight_dmg st char.hit_percent char.str boss.agl boss.def) st |>
   change_turns
 
 (** [boss_target glt st] is the character in [glt] who is targeted by the
@@ -45,7 +55,7 @@ let boss_turn glt st =
   let c = boss_target glt st in
   let char = Party.find_character c Party.get_characters |> char_stats in
   let boss = cur_boss_stats glt st in
-  let new_hp = get_health c st - fight_dmg boss.hit boss.str
+  let new_hp = get_health c st - fight_dmg st boss.hit boss.str
                  char.agl char.fight_def in
   let new_st = set_health c new_hp st in
   if new_hp > 0 then new_st |> change_turns
