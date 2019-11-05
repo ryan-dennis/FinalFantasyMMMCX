@@ -1,4 +1,5 @@
-(** Display arranges the sprites and HUD information (like HP bars and moves
+(** Display arranges the sprites and game information (like HP bars and moves
     available) in an ASCII-based display. *)
 
-val frame : string
+(** [empty_frame] is the empty GUI frame. *)
+val empty_frame : string
