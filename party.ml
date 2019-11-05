@@ -30,16 +30,16 @@ type t = character
 exception UnknownCharacter of string
 
 (** [get_spells c] is the spell list of characater[c] *)
-let get_spells {name;stats;weapon;spells;sprite} = spells
+let get_spells c = c.spells
 
 (** [get_stats c] is the stats of character [c] *)
-let get_stats {name;stats;weapon;spells;sprite} = stats
+let get_stats c = c.stats
 
 (** [get_weapon c] is the weapon of character [c] *)
-let get_weapon {name;stats;weapon;spells;sprite} = weapon 
+let get_weapon c = c.weapon 
 
 (** [get_sprite c] is the sprite of character [c] *)
-let get_sprite {name;stats;weapon;spells;sprite} = sprite
+let get_sprite c = c.sprite
 
 (** [get_name c] is the name of character [c] *)
 let get_name (c:character) = 
@@ -50,7 +50,7 @@ let get_name (c:character) =
 let fighter = {
   name = "fighter"; 
   stats = {str = 69; agl = 43; int = 23; vit = 993; mp = 0; hit_percent = 157; m_def = 162; fight_def = 60};
-  weapon = "Sun sword";
+  weapon = "Sun Sword";
   spells = [];
   sprite = [];
 }
@@ -59,7 +59,7 @@ let fighter = {
 let thief = {
   name = "thief"; 
   stats = {str = 42; agl = 46; int = 30; vit = 660; mp = 15; hit_percent = 103; m_def = 113; fight_def=51};
-  weapon = "Dragon sword";
+  weapon = "Dragon Sword";
   spells = ["FIRE"; "ICE"];
   sprite = [];
 }
@@ -78,7 +78,7 @@ let black_belt = {
 let red_mage = {
   name = "red mage"; 
   stats = {str = 41; agl = 35; int = 40; vit = 591; mp = 20; hit_percent = 105; m_def = 118; fight_def = 51};
-  weapon = "Fists";
+  weapon = "Sun Sword";
   spells = ["FIR2";"ICE";"LIT2"];
   sprite = [];
 }

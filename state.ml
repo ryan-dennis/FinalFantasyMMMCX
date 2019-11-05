@@ -95,6 +95,15 @@ let set_magic_points name num t =
    turnorder= t.turnorder; party=t.party;current_boss=t.current_boss;next_boss=t.next_boss;
    current_fighter = t.current_fighter; next_fighter= t.next_fighter}
 
+
+(** [get_next name lst head] is [head] if [name] is the last element in [lst] else 
+    it is the element following [name] in [lst]  *)
+let rec get_next name lst head = 
+  match lst with 
+  | [] -> raise (UnknownCharacter name)
+  | x::y::t -> if name = x then y else get_next name (y::t) head
+  | x::t -> if name = x then head else get_next name t head    
+
 (** [remove_from_t name lst acc] is [acc] with each element of [lst] in order 
     except with [name] removed.*)
 let rec remove_helper name lst acc = 
@@ -103,13 +112,20 @@ let rec remove_helper name lst acc =
   | x::t -> if x=name then remove_helper name t acc else 
       x::(remove_helper name t acc)  
 
+(** [check before name t] is [name] if [name] is still in [t] else is the next
+    element in [t] after [before] *)
+let check before name t =  
+  if (List.mem name t) then name else 
+    get_next before t (List.nth t 0)
+
 (**[remove_from_t name state] is [state] with [name] removed from the 
    turnorder in [state] *)
 let remove_from_t name state = 
+  let t = remove_helper name state.turnorder [] in 
   {health = state.health; magic_points = state.magic_points; 
-   turnorder = remove_helper name state.turnorder []; party = state.party; 
-   current_boss = state.current_boss; next_boss= state.next_boss; 
-   current_fighter = state.current_fighter;next_fighter= state.next_fighter}      
+   turnorder = t; party = state.party; current_boss = state.current_boss; 
+   next_boss= state.next_boss; current_fighter = state.current_fighter;
+   next_fighter= (check state.current_fighter state.next_fighter t)}      
 
 (** [get_magic_points name t] is the magic point of [name] in 
     state [t] *)
@@ -151,14 +167,6 @@ let check_alive t =
    0 *)
 let is_dead t name = 
   if (helper name t.health) <= 0 then true else false    
-
-(** [get_next name lst head] is [head] if [name] is the last element in [lst] else 
-    it is the element following [name] in [lst]  *)
-let rec get_next name lst head = 
-  match lst with 
-  | [] -> raise (UnknownCharacter name)
-  | x::y::t -> if name = x then y else get_next name (y::t) head
-  | x::t -> if name = x then head else get_next name t head 
 
 (**  [change_turns t] is [t] wiht the current fighter becoming the next fighter of 
      [t] and the next_fighter is the next person in the turnorder after [t.next_fighter]
