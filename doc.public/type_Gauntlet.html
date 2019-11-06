@@ -1,0 +1,47 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Party" rel="Chapter" href="Party.html">
+<link title="Gauntlet" rel="Chapter" href="Gauntlet.html">
+<link title="Command" rel="Chapter" href="Command.html">
+<link title="State" rel="Chapter" href="State.html">
+<link title="Display" rel="Chapter" href="Display.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Authors" rel="Chapter" href="Authors.html"><title>Gauntlet</title>
+</head>
+<body>
+<code class="code"><span class="keyword">sig</span><br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;t<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;boss_id&nbsp;=&nbsp;string<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;sprite&nbsp;=&nbsp;string&nbsp;list<br>
+&nbsp;&nbsp;<span class="keyword">type</span>&nbsp;stats&nbsp;=&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;hp&nbsp;:&nbsp;int;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;agl&nbsp;:&nbsp;int;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;def&nbsp;:&nbsp;int;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mdef&nbsp;:&nbsp;int;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;:&nbsp;int;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;hit&nbsp;:&nbsp;int;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;weak&nbsp;:&nbsp;string&nbsp;list;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;resist&nbsp;:&nbsp;string&nbsp;list;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;<span class="keyword">exception</span>&nbsp;<span class="constructor">UnknownBoss</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id<br>
+&nbsp;&nbsp;<span class="keyword">exception</span>&nbsp;<span class="constructor">InvalidSprite</span>&nbsp;<span class="keyword">of</span>&nbsp;<span class="constructor">Gauntlet</span>.sprite<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;from_json&nbsp;:&nbsp;<span class="constructor">Yojson</span>.<span class="constructor">Basic</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.t<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;start_boss&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;start_dialogue&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;final&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;boss_stats&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.stats<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;boss_sprite&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;list<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;boss_spell_chance&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;boss_spells&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;list<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;boss_skill_chance&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;boss_skills&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;list<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;next&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;dialogue&nbsp;:&nbsp;<span class="constructor">Gauntlet</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Gauntlet</span>.boss_id&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+<span class="keyword">end</span></code></body></html>

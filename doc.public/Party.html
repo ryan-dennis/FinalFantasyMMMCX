@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link rel="next" href="Gauntlet.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Party" rel="Chapter" href="Party.html">
+<link title="Gauntlet" rel="Chapter" href="Gauntlet.html">
+<link title="Command" rel="Chapter" href="Command.html">
+<link title="State" rel="Chapter" href="State.html">
+<link title="Display" rel="Chapter" href="Display.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Authors" rel="Chapter" href="Authors.html"><title>Party</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Gauntlet.html" title="Gauntlet">Next</a>
+</div>
+<h1>Module <a href="type_Party.html">Party</a></h1>
+
+<pre><span id="MODULEParty"><span class="keyword">module</span> Party</span>: <code class="code">sig</code> <a href="Party.html">..</a> <code class="code">end</code></pre><div class="info module top">
+<div class="info-desc">
+<p>Contains the characters of the game including their stats, spells, and 
+    weapons. Also include the functions for adding 3 charcters
+    to a party.</p>
+</div>
+</div>
+<hr width="100%">
+
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> </pre>
+<div class="info ">
+<div class="info-desc">
+<p>The abtract type representing a charcacter. (record)</p>
+</div>
+</div>
+
+
+<pre><span id="TYPEspell"><span class="keyword">type</span> <code class="type"></code>spell</span> = <code class="type">string</code> </pre>
+<div class="info ">
+<div class="info-desc">
+<p>Represents the type of the charcater's spells.
+    Each character gets up to 3</p>
+</div>
+</div>
+
+
+<pre><code><span id="TYPEstat"><span class="keyword">type</span> <code class="type"></code>stat</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstat.str">str</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstat.agl">agl</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstat.int">int</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstat.vit">vit</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstat.mp">mp</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstat.hit_percent">hit_percent</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstat.m_def">m_def</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTstat.fight_def">fight_def</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+<div class="info-desc">
+<p>Represents the type of the charcater's stats (record)</p>
+</div>
+</div>
+
+
+<pre><span id="TYPEsprite"><span class="keyword">type</span> <code class="type"></code>sprite</span> = <code class="type">string list</code> </pre>
+<div class="info ">
+<div class="info-desc">
+<p>Represents the type of the characters sprite to be displeys (string list list)</p>
+</div>
+</div>
+
+
+<pre><span id="EXCEPTIONUnknownCharacter"><span class="keyword">exception</span> UnknownCharacter</span> <span class="keyword">of</span> <code class="type">string</code></pre>
+<div class="info ">
+<div class="info-desc">
+<p>Exception of an unknown character name</p>
+</div>
+</div>
+
+<pre><span id="VALget_spells"><span class="keyword">val</span> get_spells</span> : <code class="type"><a href="Party.html#TYPEt">t</a> -> <a href="Party.html#TYPEspell">spell</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_spells t</code> is the list of spells of <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_stats"><span class="keyword">val</span> get_stats</span> : <code class="type"><a href="Party.html#TYPEt">t</a> -> <a href="Party.html#TYPEstat">stat</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_stats t</code> is the list of stats of charcater <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_characters"><span class="keyword">val</span> get_characters</span> : <code class="type"><a href="Party.html#TYPEt">t</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_characters</code> is the character list of all possible characters</p>
+</div>
+</div>
+
+<pre><span id="VALget_weapon"><span class="keyword">val</span> get_weapon</span> : <code class="type"><a href="Party.html#TYPEt">t</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_weapon</code> is the weapon name the characater <code class="code">t</code> has</p>
+</div>
+</div>
+
+<pre><span id="VALget_sprite"><span class="keyword">val</span> get_sprite</span> : <code class="type"><a href="Party.html#TYPEt">t</a> -> <a href="Party.html#TYPEsprite">sprite</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_sprite t</code> is the sprite of character <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_name"><span class="keyword">val</span> get_name</span> : <code class="type"><a href="Party.html#TYPEt">t</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_name t</code> is the name of <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALfind_character"><span class="keyword">val</span> find_character</span> : <code class="type">string -> <a href="Party.html#TYPEt">t</a> list -> <a href="Party.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">find_character n lst</code> is the character with name <code class="code">n</code> in <code class="code">lst</code>. 
+    Raises UnknownCharacter if <code class="code">n</code> is not a valid name of a character</p>
+</div>
+</div>
+
+<pre><span id="VALadd"><span class="keyword">val</span> add</span> : <code class="type">string list -> <a href="Party.html#TYPEt">t</a> list -> <a href="Party.html#TYPEt">t</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">add lst acc</code> is the character list <code class="code">acc</code> of the charcaters with names in 
+    <code class="code">lst</code>. Raises UnknownCharcter if the name in the <code class="code">lst</code> is not a valid
+    charcter name</p>
+</div>
+</div>
+</body></html>

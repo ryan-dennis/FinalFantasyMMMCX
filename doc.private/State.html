@@ -1,0 +1,339 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Command.html">
+<link rel="next" href="Display.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Party" rel="Chapter" href="Party.html">
+<link title="Gauntlet" rel="Chapter" href="Gauntlet.html">
+<link title="Command" rel="Chapter" href="Command.html">
+<link title="State" rel="Chapter" href="State.html">
+<link title="Display" rel="Chapter" href="Display.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Authors" rel="Chapter" href="Authors.html"><title>State</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Command.html" title="Command">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Display.html" title="Display">Next</a>
+</div>
+<h1>Module <a href="type_State.html">State</a></h1>
+
+<pre><span id="MODULEState"><span class="keyword">module</span> State</span>: <code class="code">sig</code> <a href="State.html">..</a> <code class="code">end</code></pre><div class="info module top">
+<div class="info-desc">
+<p>State contains all of the temporary and changing information regarding the 
+    party members and the enemy.</p>
+</div>
+</div>
+<hr width="100%">
+<p>reset function;</p>
+
+<pre><code><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.health">health</span>&nbsp;: <code class="type">(string * int) list</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.magic_points">magic_points</span>&nbsp;: <code class="type">(string * int) list</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.turnorder">turnorder</span>&nbsp;: <code class="type">string list</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.party">party</span>&nbsp;: <code class="type">string list</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.current_boss">current_boss</span>&nbsp;: <code class="type">string</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.next_boss">next_boss</span>&nbsp;: <code class="type">string</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.current_fighter">current_fighter</span>&nbsp;: <code class="type">string</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.next_fighter">next_fighter</span>&nbsp;: <code class="type">string</code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+<div class="info-desc">
+<p>Represents the state of the game beinf played</p>
+</div>
+</div>
+
+
+<pre><span id="VALget_party_health"><span class="keyword">val</span> get_party_health</span> : <code class="type"><a href="Party.html#TYPEt">Party.t</a> list -> (string * int) list -> (string * int) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_party_health gtl party acc</code> is <code class="code">acc</code> with the (name,vit) of every
+    character in <code class="code">party</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_party_mp"><span class="keyword">val</span> get_party_mp</span> : <code class="type"><a href="Party.html#TYPEt">Party.t</a> list -> (string * int) list -> (string * int) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_party_health gtl party acc</code> is <code class="code">acc</code> with the (name,mp) of every
+    character in <code class="code">party</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_bs"><span class="keyword">val</span> get_bs</span> : <code class="type"><a href="Gauntlet.html#TYPEt">Gauntlet.t</a> -> <a href="Gauntlet.html#TYPEboss_id">Gauntlet.boss_id</a> -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_bs gtl boss</code> is the health of <code class="code">boss</code> in <code class="code">gtl</code></p>
+</div>
+</div>
+
+<pre><span id="VALparty_helper"><span class="keyword">val</span> party_helper</span> : <code class="type"><a href="Party.html#TYPEt">Party.t</a> list -> string list -> string list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">party_helper lst acc</code> is <code class="code">acc</code> with the name of every character in 
+    <code class="code">lst</code></p>
+</div>
+</div>
+
+<pre><span id="VALshuffle"><span class="keyword">val</span> shuffle</span> : <code class="type">'a list -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">shuffle lst</code> generates a random permutation of <code class="code">lst</code></p>
+</div>
+</div>
+
+<pre><span id="VALgenerate_turnorder"><span class="keyword">val</span> generate_turnorder</span> : <code class="type">'a list -> 'a -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">generate_turnorder party name</code> generates a random list including <code class="code">party</code> and <code class="code">name</code></p>
+</div>
+</div>
+
+<pre><span id="VALinit_state"><span class="keyword">val</span> init_state</span> : <code class="type"><a href="Gauntlet.html#TYPEt">Gauntlet.t</a> -> <a href="Party.html#TYPEt">Party.t</a> list -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">init state gtl party</code> initializes the first state of the game. Every 
+    Party memeber has full health and magic points as well as the boss. The
+    turnover is the official turnover including all 4 players. Current boss is the 
+    boss currently beinf played against and next boss is the boss to be played next 
+    if the party succeeds.</p>
+
+<p><code class="code">init_state</code> returns the initial state of the game</p>
+</div>
+</div>
+
+<pre><span id="VALhelper"><span class="keyword">val</span> helper</span> : <code class="type">string -> (string * 'a) list -> 'a</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">helper name lst</code> is the health of <code class="code">name</code> of the character in 
+    <code class="code">lst</code> or raises UnknownCharacter if not in <code class="code">lst</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_health"><span class="keyword">val</span> get_health</span> : <code class="type">string -> <a href="State.html#TYPEt">t</a> -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_health name t</code> is the health of chracter with name <code class="code">name</code> in 
+    state <code class="code">t</code></p>
+
+<p><code class="code">get_health s t</code> is the health of <code class="code">s</code> in <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALhelper2"><span class="keyword">val</span> helper2</span> : <code class="type">'a -> 'b -> ('a * 'b) list -> ('a * 'b) list -> ('a * 'b) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">helper2 name num lst acc</code> is <code class="code">acc</code> with each element of <code class="code">lst</code> but with 
+   <code class="code">num</code> of <code class="code">name</code> changed.</p>
+</div>
+</div>
+
+<pre><span id="VALset_health"><span class="keyword">val</span> set_health</span> : <code class="type">string -> int -> <a href="State.html#TYPEt">t</a> -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">set_health name num t</code> is <code class="code">t</code> with the health of <code class="code">name</code> set to <code class="code">num</code></p>
+
+<p><code class="code">set_health name num t</code> returns <code class="code">t</code> with new health for <code class="code">name</code> with
+    value <code class="code">num</code></p>
+</div>
+</div>
+
+<pre><span id="VALset_magic_points"><span class="keyword">val</span> set_magic_points</span> : <code class="type">string -> int -> <a href="State.html#TYPEt">t</a> -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">set_magic_points name num t</code> is <code class="code">t</code> with the mp of <code class="code">name</code> set to <code class="code">num</code></p>
+
+<p><code class="code">set_magic_points name num t</code> returns <code class="code">t</code> with new mp for <code class="code">name</code> with
+    value <code class="code">num</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_next"><span class="keyword">val</span> get_next</span> : <code class="type">string -> string list -> string -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_next name lst head</code> is <code class="code">head</code> if <code class="code">name</code> is the last element in <code class="code">lst</code> else 
+    it is the element following <code class="code">name</code> in <code class="code">lst</code></p>
+</div>
+</div>
+
+<pre><span id="VALremove_helper"><span class="keyword">val</span> remove_helper</span> : <code class="type">'a -> 'a list -> 'a list -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">remove_from_t name lst acc</code> is <code class="code">acc</code> with each element of <code class="code">lst</code> in order 
+    except with <code class="code">name</code> removed.</p>
+</div>
+</div>
+
+<pre><span id="VALcheck"><span class="keyword">val</span> check</span> : <code class="type">string -> string -> string list -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">check before name t</code> is <code class="code">name</code> if <code class="code">name</code> is still in <code class="code">t</code> else is the next
+    element in <code class="code">t</code> after <code class="code">before</code></p>
+</div>
+</div>
+
+<pre><span id="VALremove_from_t"><span class="keyword">val</span> remove_from_t</span> : <code class="type">string -> <a href="State.html#TYPEt">t</a> -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">remove_from_t name state</code> is <code class="code">state</code> with <code class="code">name</code> removed from the 
+   turnorder in <code class="code">state</code></p>
+
+<p><code class="code">remove_from_t name t </code> is <code class="code">t</code> with <code class="code">name</code> removed from turnorder</p>
+</div>
+</div>
+
+<pre><span id="VALget_magic_points"><span class="keyword">val</span> get_magic_points</span> : <code class="type">string -> <a href="State.html#TYPEt">t</a> -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_magic_points name t</code> is the magic point of <code class="code">name</code> in 
+    state <code class="code">t</code></p>
+
+<p><code class="code">get_magic_points s t</code> is the mp of <code class="code">s</code> in <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_current_boss"><span class="keyword">val</span> get_current_boss</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_current_boss t</code> is the current boss played against in state <code class="code">t</code></p>
+
+<p><code class="code">get_current_boss t</code> is the boss being fought against in <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_turnorder"><span class="keyword">val</span> get_turnorder</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> string list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_turnorder t</code> is the turnorder being played in state <code class="code">t</code></p>
+
+<p><code class="code">get_turnovert</code> is the turnorder in <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_party"><span class="keyword">val</span> get_party</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> string list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_party t</code> is the party being played in state <code class="code">t</code></p>
+
+<p><code class="code">get_party t</code> is the character names of the character's in the party <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_next_boss"><span class="keyword">val</span> get_next_boss</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_next_boss t</code> is the next_boss to be played in state <code class="code">t</code></p>
+
+<p><code class="code">get_next_boss t</code> is the next_boss to be played of <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_current_fighter"><span class="keyword">val</span> get_current_fighter</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_current_fighter t</code> is the name of the character or boss whose turn it 
+    currently is</p>
+
+<p><code class="code">get_current_fighter t</code> is the current fighter of state <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_next_fighter"><span class="keyword">val</span> get_next_fighter</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_next_fighter t</code> is the name of the character or boss whose turn is next</p>
+
+<p><code class="code">get_next_fighter t</code> is the next_fighter of state <code class="code">t</code></p>
+</div>
+</div>
+
+<pre><span id="VALalive_helper"><span class="keyword">val</span> alive_helper</span> : <code class="type">('a * int) list -> bool -> 'a -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">alive_helper lst bool boss</code> is <code class="code">bool</code> if the at least one member of <code class="code">lst</code> 
+    excluding <code class="code">boss</code> has a health &gt; 0</p>
+</div>
+</div>
+
+<pre><span id="VALcheck_alive"><span class="keyword">val</span> check_alive</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">check_alive t</code> is true if at least one member of the party in <code class="code">t</code> has a health
+    above 0</p>
+
+<p><code class="code">check_alive t</code> returns true if at least one character in the party in 
+    state <code class="code">t</code> is alive</p>
+</div>
+</div>
+
+<pre><span id="VALis_dead"><span class="keyword">val</span> is_dead</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> string -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">is_dead t name</code> is true if <code class="code">name</code> has a health in <code class="code">t</code> less than or equal to 
+   0</p>
+
+<p><code class="code">is_dead</code> returns true if the character's health is less than or equal to zero</p>
+</div>
+</div>
+
+<pre><span id="VALchange_turns"><span class="keyword">val</span> change_turns</span> : <code class="type"><a href="State.html#TYPEt">t</a> -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">change_turns t</code> is <code class="code">t</code> wiht the current fighter becoming the next fighter of 
+     <code class="code">t</code> and the next_fighter is the next person in the turnorder after <code class="code">t.next_fighter</code>
+     If the t has an empty turnorder this method will raise an exception. If the 
+     turnoder is of size one it current and next fighter will always be the sanme</p>
+
+<p><code class="code">change_turns t</code> is <code class="code">t</code> with the current_fighter and next_fighter updated</p>
+</div>
+</div>
+
+<pre><span id="VALfind_char"><span class="keyword">val</span> find_char</span> : <code class="type">string list -> <a href="Party.html#TYPEt">Party.t</a> list -> <a href="Party.html#TYPEt">Party.t</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">find_char lst acc</code> is the character list <code class="code">acc</code> with the characters whose 
+    names are in <code class="code">lst</code> in the order they are in <code class="code">lst</code></p>
+</div>
+</div>
+
+<pre><span id="VALreset_state"><span class="keyword">val</span> reset_state</span> : <code class="type"><a href="Gauntlet.html#TYPEt">Gauntlet.t</a> -> <a href="State.html#TYPEt">t</a> -> <a href="State.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">reset_state gtl l</code> resets the state of all the players and the new battle 
+    with the next boss in <code class="code">gtl</code></p>
+
+<p><code class="code">reset_state gtl t</code> resets the state from the previous battle to revive all 
+    health and magic points; change the current boss to the next boss in the gauntlet
+    and create a new turnorder</p>
+</div>
+</div>
+</body></html>

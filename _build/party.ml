@@ -4,7 +4,7 @@
 
 type spell = string 
 
-type sprite = (string list) list 
+type sprite = string list 
 
 type stat = {
   str : int; 
@@ -30,70 +30,75 @@ type t = character
 exception UnknownCharacter of string
 
 (** [get_spells c] is the spell list of characater[c] *)
-let get_spells {name;stats;weapon;spells;sprite} = spells
+let get_spells c = c.spells
 
 (** [get_stats c] is the stats of character [c] *)
-let get_stats {name;stats;weapon;spells;sprite} = stats
+let get_stats c = c.stats
 
 (** [get_weapon c] is the weapon of character [c] *)
-let get_weapon {name;stats;weapon;spells;sprite} = weapon 
+let get_weapon c = c.weapon 
 
 (** [get_sprite c] is the sprite of character [c] *)
-let get_sprite {name;stats;weapon;spells;sprite} = sprite
+let get_sprite c = c.sprite
+
+(** [get_name c] is the name of character [c] *)
+let get_name (c:character) = 
+  match c with 
+  | {name;_} -> name 
 
 (** Charcter fighter *)
 let fighter = {
   name = "fighter"; 
-  stats = {str = 20; agl = 5; int = 1; vit = 45; mp = 0; hit_percent = 10; m_def = 15; fight_def = 20};
-  weapon = "Sun sword";
+  stats = {str = 69; agl = 43; int = 23; vit = 993; mp = 0; hit_percent = 157; m_def = 162; fight_def = 60};
+  weapon = "Sun Sword";
   spells = [];
-  sprite = [[]];
+  sprite = [];
 }
 
 (** Charcter Thief *)
 let thief = {
   name = "thief"; 
-  stats = {str = 5; agl = 10; int = 5; vit = 35; mp = 15; hit_percent = 5; m_def = 15; fight_def=15};
-  weapon = "Dragon sword";
+  stats = {str = 42; agl = 46; int = 30; vit = 660; mp = 15; hit_percent = 103; m_def = 113; fight_def=51};
+  weapon = "Dragon Sword";
   spells = ["FIRE"; "ICE"];
-  sprite = [[]];
+  sprite = [];
 }
 
 (** Charcter Black Belt *)
 let black_belt = {
   name = "black belt"; 
-  stats = {str = 5; agl = 5; int = 5; vit = 53; mp = 0; hit_percent = 5; m_def = 10; fight_def = 25};
+  stats = {str = 35; agl = 36; int = 35; vit = 69; mp = 0; hit_percent = 152; m_def = 206; fight_def = 43};
   weapon = "Fists";
   spells = [];
-  sprite = [[]];
+  sprite = [];
 }
 
 
 (** Charcter Red Mage *)    
 let red_mage = {
   name = "red mage"; 
-  stats = {str = 10; agl = 10; int = 10; vit = 35; mp = 20; hit_percent = 7; m_def = 20; fight_def = 15};
-  weapon = "Fists";
+  stats = {str = 41; agl = 35; int = 40; vit = 591; mp = 20; hit_percent = 105; m_def = 118; fight_def = 51};
+  weapon = "Sun Sword";
   spells = ["FIR2";"ICE";"LIT2"];
-  sprite = [[]];
+  sprite = [];
 }
 
 (** Charcter White Mage *)
 let white_mage = {
   name = "white mage"; 
-  stats = {str = 5; agl = 5; int = 15; vit = 38; mp = 25; hit_percent = 5; m_def = 20; fight_def = 15};
+  stats = {str = 30; agl = 30; int = 49; vit = 676; mp = 25; hit_percent = 54; m_def = 118; fight_def = 51};
   weapon = "Silver Hammer";
   spells = ["LIT2";"ICE3";"LIT"];
-  sprite = [[]];
+  sprite = [];
 }
 
 (** Charcter Black Mage *)
 let black_mage = {
   name = "black mage"; 
-  stats = {str = 1; agl = 10; int = 20; vit = 26; mp = 25; hit_percent = 5; m_def = 20; fight_def = 15};
+  stats = {str = 23; agl = 32; int = 69; vit = 23; mp = 25; hit_percent = 54; m_def = 118; fight_def = 51};
   weapon = "Mage staff";
   spells = ["ICE3";"FIR2";"FIRE"];
-  sprite = [[]];
+  sprite = [];
 }
 
 (** [get_characters] is the character list of all characters of the game *)
