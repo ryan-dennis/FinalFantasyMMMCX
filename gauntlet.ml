@@ -14,6 +14,7 @@ type stats = {
   mdef : int;
   str : int;
   hit : int;
+  hits_per : int;
   weak : string list;
   resist : string list
 }
@@ -68,6 +69,7 @@ let stats_of_json j = {
   mdef = j |> member "magic defense" |> to_int;
   str = j |> member "strength" |> to_int;
   hit = j |> member "hit rate" |> to_int;
+  hits_per = j |> member "hits per turn" |> to_int;
   weak = j |> member "weaknesses" |> to_list |> List.map to_string;
   resist = j |> member "resistances" |> to_list |> List.map to_string;
 }

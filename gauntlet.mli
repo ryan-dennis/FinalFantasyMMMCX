@@ -23,6 +23,7 @@ type stats = {
   mdef : int;
   str : int;
   hit : int;
+  hits_per : int;
   weak : string list;
   resist : string list
 }
