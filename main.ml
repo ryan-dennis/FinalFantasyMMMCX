@@ -44,40 +44,42 @@ let rec stat_str (plst : string list) s (acc : string) : string =
 let rec repl g s = 
   (* print current game display *)
   if not (check_alive s) then 
-    (ANSITerminal.(print_string [red] "\n All party members are dead, you lost!\n\n"); 
+    (ANSITerminal.(print_string [red] "\nAll party members are dead, you lost!\n\n"); 
      exit 0)
   else
     let boss = get_current_boss s in 
-    if is_dead s boss then let s' = reset_state g s in print_string "resetting"; repl g s'
+    if is_dead s boss then (let s' = reset_state g s in print_string "resetting"; repl g s')
     else
-      ignore(Sys.command "clear");
-    let curr = get_current_fighter s in
-    let state_party = get_party s in
-    let state_hp = stat_str state_party s "" in
-    ANSITerminal.(print_string [cyan] ("Party:\n" ^ state_hp ^ "\n\n"));
-    if List.mem curr char_names then
-      let curr_char = find_character curr get_characters in
-      match parse (read_line ()) with
-      | Fight -> let s' = fight g s curr_char |> new_st in 
-        ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " attacked!\n\n")); 
-        repl g s'
-      | Magic spell -> let s' = fight g s curr_char |> new_st in 
-        ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " cast a spell!\n\n")); 
-        repl g s'
-      | Drink pot -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " healed.\n\n")); 
-        repl g s
-      | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
-        ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s spells: " ^ spell_str ^ "\n\n")); repl g s
-      | Quit -> ANSITerminal.(print_string [red] "\nQuiting game...\n\n"); 
-        ignore(Sys.command "printf '\\e[8;24;80t'"); exit 0
-      | exception Malformed -> ANSITerminal.(print_string [red] "\nInvalid command. Try another.\n\n"); 
-        repl g s
-      | exception Empty -> ANSITerminal.(print_string [red] "Please type a command.\n\n"); 
-        repl g s
-    else ignore(Sys.command "clear"); 
-    ANSITerminal.(print_string [yellow] ("" ^ curr ^ " attacked.\n\n"));
-    ANSITerminal.(print_string [yellow] (curr ^ " health: " ^ string_of_int (get_health curr s) ^ "\n\n")); 
-    boss_turn g s |> new_st |> repl g
+      (* ignore(Sys.command "clear"); *)
+      let curr = get_current_fighter s in
+      let state_party = get_party s in
+      let state_hp = stat_str state_party s "" in
+      ANSITerminal.(print_string [cyan] ("Party:\n" ^ state_hp ^ "\n\n"));
+      ANSITerminal.(print_string [yellow] (boss ^ " health: " ^ string_of_int (get_health boss s) ^ "\n\n"));
+      if List.mem curr char_names then
+        let curr_char = find_character curr get_characters in
+        let _ = print_string ("Enter a command for " ^ curr ^ ": ") in
+        match parse (read_line ()) with
+        | Fight -> let s' = fight g s curr_char |> new_st in 
+          ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " attacked!\n\n")); 
+          repl g s'
+        | Magic spell -> let s' = fight g s curr_char |> new_st in 
+          ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " cast a spell!\n\n")); 
+          repl g s'
+        | Drink pot -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " healed.\n\n")); 
+          repl g s
+        | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
+          ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s spells: " ^ spell_str ^ "\n\n")); repl g s
+        | Quit -> ANSITerminal.(print_string [red] "\nQuiting game...\n\n"); 
+          ignore(Sys.command "printf '\\e[8;24;80t'"); exit 0
+        | exception Malformed -> ANSITerminal.(print_string [red] "\nInvalid command. Try another.\n\n"); 
+          repl g s
+        | exception Empty -> ANSITerminal.(print_string [red] "Please type a command.\n\n"); 
+          repl g s
+          (* else (ignore(Sys.command "clear");  *)
+      else (
+        ANSITerminal.(print_string [yellow] ("" ^ curr ^ " attacked.\n\n"));
+        boss_turn g s |> new_st |> repl g)
 
 let rec game_start f = 
   try let gaunt = f |> Yojson.Basic.from_file |> from_json in 
@@ -100,6 +102,7 @@ let main () =
   print_string "> ";
   match read_line () with 
   | exception End_of_file -> ()
+  | file_name when file_name = "quit" -> exit 0
   | file_name -> game_start file_name
 
 let () = main ()
