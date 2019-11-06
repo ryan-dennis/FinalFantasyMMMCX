@@ -20,6 +20,7 @@ type stats = {
   hp : int;
   agl : int;
   def : int;
+  mdef : int;
   str : int;
   hit : int;
   weak : string list;
