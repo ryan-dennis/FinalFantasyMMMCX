@@ -1,3 +1,14 @@
 Should work when downloaded without any extra steps. \n
-The game is started by typing "make play," and then the file "gauntlet1.json,"\n
-which is currently the only valid gauntlet to be played through.
+The game is started by typing "make play," and then the file "gauntlet1.json," \n
+which is currently the only valid gauntlet to be played through. \n
+The player can then form a party by typing the names of three of the given \n
+characters individually and hitting enter after each. After the first battle \n
+begins, the valid commands are: fight, drink (potion), magic, cast (spell), \n
+and quit. Fight will deal damage; drink is currently not yet implemented and \n
+will work (but won't have any effect); magic will give the current attacker's \n
+list of spells, and cast (spell) is unimplemented but will deal damage as a \n
+placeholder; quit will exit the game. \n
+There are three bosses, though only the first is implemented with realistic \n
+stats. The player will fight each boss in sequence, then the game will end when \n
+the player has defeated all three or all three of their party members have been \n
+defeated.
