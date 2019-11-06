@@ -1,7 +1,14 @@
 open State
 
-(** To-do: # of hits/who takes damage/amount of damage should be available *)
+type t = {
+  hits : int;
+  dmg : int;
+  target : string;
+  new_st : State.t
+}
 
+(** [weapon st] is how much base attack from their weapon the current fighter
+    has. *)
 let weapon st =
   match get_current_fighter st with
   | "fighter" -> 32
@@ -61,7 +68,7 @@ let fight glt st c =
   let n = num_of_hits c_name char.hit_percent in
   let dmg = total_hit_dmg st char.hit_percent char.str boss.agl boss.def n 0 in
   let new_st = set_health b (get_health b st - dmg) st |> change_turns in
-  (n, dmg, new_st)
+  {hits = n; dmg = dmg; target = b; new_st = new_st}
 
 (** [boss_target glt st] is the character in [glt] who is targeted by the
     current boss in [st]. *)
@@ -87,4 +94,16 @@ let boss_turn glt st =
   let new_hp = get_health c st - dmg in
   let new_dmged_st = set_health c new_hp st in
   let new_st = rm_dead new_hp new_dmged_st c |> change_turns in
-  (n, dmg, c, new_st)
+  {hits = n; dmg = dmg; target = b; new_st = new_st}
+
+let num_hits b =
+  b.hits
+
+let dmg b = 
+  b.dmg
+
+let target b =
+  b.target
+
+let new_st b =
+  b.new_st

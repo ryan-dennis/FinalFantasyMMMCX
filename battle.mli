@@ -5,11 +5,14 @@
    it to the current battle state. It also controls the AI enemy's turn.
 *)
 
+(** The abstract type of values representing battle information. *)
+type t
+
 (** [fight st c] is the new state after the character [c] uses its fight
     attack on the enemy and the accompanying descriptor. Returns a triple,
     where the first entry is the number of hits, the second is the damage
     dealt, and the third is the new state. *)
-val fight : Gauntlet.t -> State.t -> Party.t -> int * int * State.t
+val fight : Gauntlet.t -> State.t -> Party.t -> t
 
 (**
    val magic : State.t -> State.t
@@ -21,4 +24,12 @@ val fight : Gauntlet.t -> State.t -> Party.t -> int * int * State.t
     gauntlet [glt] takes its turn and the accompanying descriptor. Returns a
     triple where the first entry is the number of hits, the second is the
     damage dealt, and the third is the new state. *)
-val boss_turn : Gauntlet.t -> State.t -> int * int * string * State.t
+val boss_turn : Gauntlet.t -> State.t -> t
+
+val num_hits : t -> int
+
+val dmg : t -> int
+
+val target : t -> string
+
+val new_st : t -> State.t
