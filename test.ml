@@ -35,11 +35,12 @@ let gauntlet_tests = [
   "start dialogue" >::
   (fun _ -> assert_equal "It's Chaos!" (start_dialogue glt1));
   "final boss" >:: (fun _ -> assert_equal "Clarkson" (final glt1));
-  "Chaos hp" >:: (fun _ -> assert_equal 1000 (chaos_stats.hp));
-  "Chaos agility" >:: (fun _ -> assert_equal 50 (chaos_stats.agl));
-  "Chaos defense" >:: (fun _ -> assert_equal 50 (chaos_stats.def));
-  "Chaos strength" >:: (fun _ -> assert_equal 50 (chaos_stats.str));
-  "Chaos hit rate" >:: (fun _ -> assert_equal 100 (chaos_stats.hit));
+  "Chaos hp" >:: (fun _ -> assert_equal 2000 (chaos_stats.hp));
+  "Chaos agility" >:: (fun _ -> assert_equal 100 (chaos_stats.agl));
+  "Chaos defense" >:: (fun _ -> assert_equal 100 (chaos_stats.def));
+  "Chaos magic defense" >:: (fun _ -> assert_equal 200 (chaos_stats.mdef));
+  "Chaos strength" >:: (fun _ -> assert_equal 100 (chaos_stats.str));
+  "Chaos hit rate" >:: (fun _ -> assert_equal 200 (chaos_stats.hit));
   "Chaos weaknesses" >:: (fun _ -> assert_equal [] (chaos_stats.weak));
   "Chaos resistances" >:: (fun _ -> assert_equal ["ICE"] (chaos_stats.resist));
   "Chaos spell chance" >::
