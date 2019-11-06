@@ -84,7 +84,8 @@ let rec repl g s =
         | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
           ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s spells: " ^ spell_str ^ "\n\n")); repl g s
         | Quit -> ANSITerminal.(print_string [red] "\nQuiting game...\n\n"); 
-          ignore(Sys.command "printf '\\e[8;24;80t'"); exit 0
+          (* ignore(Sys.command "printf '\\e[8;24;80t'");  *)
+          exit 0
         | exception Malformed -> ANSITerminal.(print_string [red] "\nInvalid command. Try another.\n\n"); 
           repl g s
         | exception Empty -> ANSITerminal.(print_string [red] "Please type a command.\n\n"); 
