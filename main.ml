@@ -54,7 +54,10 @@ let rec repl g s =
      exit 0)
   else
     let boss = get_current_boss s in 
-    if is_dead s boss then (let s' = reset_state g s in print_string "resetting"; repl g s')
+    if is_dead s boss && boss = final g then 
+      (ANSITerminal.(print_string [Blink; green] "\nYou defeated Clarkson, you won!\n\n"); 
+       exit 0)
+    else if is_dead s boss then reset_state g s |> repl g 
     else
       (* ignore(Sys.command "clear"); *)
       let curr = get_current_fighter s in
