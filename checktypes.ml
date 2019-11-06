@@ -61,4 +61,48 @@ end
 
 module StateCheck : StateSig = State
 
+module type GauntletSig = sig 
+  type t
+  type boss_id = string
+  type sprite = string list
+  type stats = {
+    hp : int;
+    agl : int;
+    def : int;
+    mdef : int;
+    str : int;
+    hit : int;
+    hits_per : int;
+    weak : string list;
+    resist : string list
+  }
+  exception UnknownBoss of boss_id
+  exception InvalidSprite of sprite
+  val from_json : Yojson.Basic.t -> t
+  val start_boss : t -> boss_id
+  val start_dialogue : t -> string
+  val final : t -> boss_id
+  val boss_stats : t -> boss_id -> stats
+  val boss_sprite : t -> boss_id -> string list
+  val boss_spell_chance : t -> boss_id -> int
+  val boss_spells : t -> boss_id -> string list
+  val boss_skill_chance : t -> boss_id -> int
+  val boss_skills : t -> boss_id -> string list
+  val next : t -> boss_id -> boss_id
+  val dialogue : t -> boss_id -> string
+end 
+
+module GuantletCheck : GauntletSig = Gauntlet
+
+module type BattleSig = sig 
+  type t
+  val fight : Gauntlet.t -> State.t -> Party.t -> t
+  val boss_turn : Gauntlet.t -> State.t -> t
+  val num_hits : t -> int
+  val dmg : t -> int
+  val target : t -> string
+  val new_st : t -> State.t
+end 
+
+module BattleCheck : BattleSig = Battle 
 
