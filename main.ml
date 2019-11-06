@@ -55,10 +55,10 @@ let rec repl g s =
   else
     let boss = get_current_boss s in 
     if is_dead s boss && boss = final g then 
-      (ANSITerminal.(print_string [Blink; green] ("\n" ^ dialogue g boss ^ "\n\n")); 
+      (ANSITerminal.(print_string [Blink; green] (dialogue g boss ^ "\n\n")); 
        exit 0)
     else if is_dead s boss then 
-      (ANSITerminal.(print_string [Blink; green] ("\n" ^ dialogue g boss ^ "\n\n")); 
+      (ANSITerminal.(print_string [Blink; green] (dialogue g boss ^ "\n\n")); 
        reset_state g s |> repl g) 
     else
       (* ignore(Sys.command "clear"); *)
@@ -79,7 +79,7 @@ let rec repl g s =
         | Magic spell -> let s' = fight g s curr_char |> new_st in 
           ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " cast a spell!\n\n")); 
           repl g s'
-        | Drink pot -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " healed.\n\n")); 
+        | Drink pot -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s bag is empty.\n\n")); 
           repl g s
         | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
           ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s spells: " ^ spell_str ^ "\n\n")); repl g s
