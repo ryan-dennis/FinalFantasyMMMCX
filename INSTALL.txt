@@ -1,4 +1,5 @@
-Should work when downloaded without any extra steps. 
+When downloading, create a new empty folder and download src.zip into that folder.
+Navigate to that folder in Unix and type "unzip src.zip," then "make play."
 The game is started by typing "make play," and then the file "gauntlet1.json," 
 which is currently the only valid gauntlet to be played through. 
 The player can then form a party by typing the names of three of the given 
