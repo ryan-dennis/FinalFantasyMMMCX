@@ -188,11 +188,13 @@ let rec find_char lst acc =
 (** [reset_state gtl l] resets the state of all the players and the new battle 
     with the next boss in [gtl] *)
 let reset_state gtl t = 
-  let init = init_state gtl (find_char t.party []) in 
-  {health = init.health; magic_points = init.magic_points; 
-   turnorder = init.turnorder; party = init.party; current_boss = t.next_boss; 
-   next_boss = next gtl t.next_boss; current_fighter = init.current_fighter; 
-   next_fighter = init.next_fighter}   
+  let boss = t.next_boss in
+  let party = find_char t.party [] in
+  let t_order = generate_turnorder t.party boss in 
+  {health = (boss, get_bs gtl boss)::(get_party_health party []);
+   magic_points = get_party_mp party [] ; party = t.party ;
+   turnorder = t_order; current_boss = boss; next_boss = next gtl boss; 
+   current_fighter = List.nth t_order 0; next_fighter = List.nth t_order 1}  
 
 
 
