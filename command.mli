@@ -2,11 +2,16 @@
     resulting in either a exception or returns a command.
     edit more :) TODO *)
 
-(** type command represents the valid commands the user can call *)
-type command 
-
 (** TODO Ryan you can do this *)
 type object_phrase 
+
+(** type command represents the valid commands the user can call *)
+type command =
+  | Fight
+  | Magic of object_phrase
+  | Drink of object_phrase
+  | Show
+  | Quit
 
 (** Raised when a malformed command is encountered *)
 exception Malformed 
