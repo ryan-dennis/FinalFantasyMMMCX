@@ -1,0 +1,3 @@
+Should work when downloaded without any extra steps. \n
+The game is started by typing "make play," and then the file "gauntlet1.json,"\n
+which is currently the only valid gauntlet to be played through.
