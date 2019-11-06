@@ -24,7 +24,8 @@ let rec select_party (acc : string list) : string list =
   | 3 -> acc
   | _ -> print_string "> "; 
     let try_char = read_line () in
-    if List.mem try_char char_names then select_party (List.sort_uniq compare (try_char::acc))
+    if List.mem try_char char_names && not (List.mem try_char acc) 
+    then select_party (try_char::acc)
     else let _ = reject "character" in select_party acc
 
 (** [stat_str plst s acc] is the list string concatenation of [name: hp] values
@@ -47,7 +48,7 @@ let rec repl g s =
      exit 0)
   else
     let boss = get_current_boss s in 
-    if is_dead s boss then reset_state g s |> repl g
+    if is_dead s boss then let s' = reset_state g s in print_string "resetting"; repl g s'
     else
       ignore(Sys.command "clear");
     let curr = get_current_fighter s in
