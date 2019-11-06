@@ -193,8 +193,3 @@ let reset_state gtl t =
    magic_points = get_party_mp party [] ; party = t.party ;
    turnorder = t_order; current_boss = boss; next_boss = next gtl boss; 
    current_fighter = List.nth t_order 0; next_fighter = List.nth t_order 1}  
-
-
-
-
-
