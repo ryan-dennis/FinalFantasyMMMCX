@@ -80,9 +80,9 @@ let state_tests = [
   "Testing set health works correctly">:: 
   (fun _ -> assert_equal 25 (get_health "red mage" r_set));
   "Testing get health for boss">:: 
-  (fun _ -> assert_equal 1000 (get_health "Chaos" init)); 
+  (fun _ -> assert_equal 2000 (get_health "Chaos" init)); 
   "Testing setting red mage health doesn't affect another character">::
-  (fun _ -> assert_equal 1000 (get_health "Chaos" init));
+  (fun _ -> assert_equal 2000 (get_health "Chaos" init));
   "Testing set on boss">:: 
   (fun _ -> assert_equal 100 (get_health "Chaos" b_set));
   "Testing size of init's turnorder">:: 
