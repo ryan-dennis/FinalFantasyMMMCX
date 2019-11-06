@@ -55,9 +55,11 @@ let rec repl g s =
   else
     let boss = get_current_boss s in 
     if is_dead s boss && boss = final g then 
-      (ANSITerminal.(print_string [Blink; green] "\nYou defeated Clarkson, you won!\n\n"); 
+      (ANSITerminal.(print_string [Blink; green] ("\n" ^ dialogue g boss ^ "\n\n")); 
        exit 0)
-    else if is_dead s boss then reset_state g s |> repl g 
+    else if is_dead s boss then 
+      (ANSITerminal.(print_string [Blink; green] ("\n" ^ dialogue g boss ^ "\n\n")); 
+       reset_state g s |> repl g) 
     else
       (* ignore(Sys.command "clear"); *)
       let curr = get_current_fighter s in
@@ -82,7 +84,8 @@ let rec repl g s =
         | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
           ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s spells: " ^ spell_str ^ "\n\n")); repl g s
         | Quit -> ANSITerminal.(print_string [red] "\nQuiting game...\n\n"); 
-          ignore(Sys.command "printf '\\e[8;24;80t'"); exit 0
+          (* ignore(Sys.command "printf '\\e[8;24;80t'");  *)
+          exit 0
         | exception Malformed -> ANSITerminal.(print_string [red] "\nInvalid command. Try another.\n\n"); 
           repl g s
         | exception Empty -> ANSITerminal.(print_string [red] "Please type a command.\n\n"); 
