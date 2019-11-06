@@ -67,7 +67,7 @@ let thief = {
 (** Charcter Black Belt *)
 let black_belt = {
   name = "black belt"; 
-  stats = {str = 35; agl = 36; int = 35; vit = 69; mp = 0; hit_percent = 152; m_def = 206; fight_def = 43};
+  stats = {str = 35; agl = 36; int = 35; vit = 999; mp = 0; hit_percent = 152; m_def = 206; fight_def = 43};
   weapon = "Fists";
   spells = [];
   sprite = [];
@@ -95,7 +95,7 @@ let white_mage = {
 (** Charcter Black Mage *)
 let black_mage = {
   name = "black mage"; 
-  stats = {str = 23; agl = 32; int = 69; vit = 23; mp = 25; hit_percent = 54; m_def = 118; fight_def = 51};
+  stats = {str = 23; agl = 32; int = 69; vit = 470; mp = 25; hit_percent = 54; m_def = 118; fight_def = 51};
   weapon = "Mage staff";
   spells = ["ICE3";"FIR2";"FIRE"];
   sprite = [];
