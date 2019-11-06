@@ -19,7 +19,7 @@ play:
 	$(OCAMLBUILD) $(MAIN) && ./$(MAIN)
 	
 zip:
-	zip game.zip *.ml* *.json _tags Makefile
+	zip game.zip *.ml* *.json _tags INSTALL.txt Makefile
 	
 docs: docs-public docs-private
 	
