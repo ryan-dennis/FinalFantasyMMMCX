@@ -40,6 +40,12 @@ let rec stat_str (plst : string list) s (acc : string) : string =
   | [_] -> acc ^ str
   | _ :: t -> stat_str t s (acc ^ str ^ " • ")
 
+let attack_response (b:Battle.t) (curr:string) : string =
+  let damage = string_of_int (dmg b) in
+  let hits = string_of_int (num_hits b) in 
+  let targ = target b in 
+  curr ^ " attacked " ^ targ ^ " " ^ hits ^ " times for " ^ damage ^ " damage.\n\n"
+
 (** *)
 let rec repl g s = 
   (* print current game display *)
@@ -54,14 +60,16 @@ let rec repl g s =
       let curr = get_current_fighter s in
       let state_party = get_party s in
       let state_hp = stat_str state_party s "" in
-      ANSITerminal.(print_string [cyan] ("Party:\n" ^ state_hp ^ "\n\n"));
+      ANSITerminal.(print_string [Underlined; cyan] "Party:\n");
+      ANSITerminal.(print_string [cyan] (state_hp ^ "\n\n"));
       ANSITerminal.(print_string [yellow] (boss ^ " health: " ^ string_of_int (get_health boss s) ^ "\n\n"));
       if List.mem curr char_names then
         let curr_char = find_character curr get_characters in
         let _ = print_string ("Enter a command for " ^ curr ^ ": ") in
         match parse (read_line ()) with
-        | Fight -> let s' = fight g s curr_char |> new_st in 
-          ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " attacked!\n\n")); 
+        | Fight -> let b = fight g s curr_char in
+          let s' = new_st b in 
+          ANSITerminal.(print_string [green] ("\n" ^ attack_response b curr)); 
           repl g s'
         | Magic spell -> let s' = fight g s curr_char |> new_st in 
           ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " cast a spell!\n\n")); 
@@ -78,8 +86,11 @@ let rec repl g s =
           repl g s
           (* else (ignore(Sys.command "clear");  *)
       else (
-        ANSITerminal.(print_string [yellow] ("" ^ curr ^ " attacked.\n\n"));
-        boss_turn g s |> new_st |> repl g)
+        (* ANSITerminal.(print_string [yellow] ("" ^ curr ^ " attacked.\n\n")); *)
+        let b = boss_turn g s in 
+        let s' = new_st b in 
+        ANSITerminal.(print_string [yellow] (attack_response b boss));
+        repl g s')
 
 let rec game_start f = 
   try let gaunt = f |> Yojson.Basic.from_file |> from_json in 
