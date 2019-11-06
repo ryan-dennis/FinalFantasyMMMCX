@@ -4,8 +4,6 @@ open Party
 open Command 
 open Gauntlet 
 
-(**reset function; *)
-
 (** Represents the state of the game beinf played *)
 type t = {
   health : (string*int) list; 
