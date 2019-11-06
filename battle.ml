@@ -13,12 +13,12 @@ let char_atk st =
   let char = Party.find_character c Party.get_characters in
   let str_bonus = (Party.get_stats char).str / 2 in
   let weapon = match c with
-    | "fighter" -> 32
-    | "thief" -> 19
+    | "fighter" -> 45
+    | "thief" -> 33
     | "black belt" -> 100 - str_bonus
     | "red mage" -> 32
-    | "white mage" -> 12
-    | "black mage" -> 12
+    | "white mage" -> 18
+    | "black mage" -> 22
     | c -> failwith "invalid character" in
   str_bonus + weapon
 
