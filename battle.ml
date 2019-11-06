@@ -46,21 +46,21 @@ let num_of_hits c hit =
 (** [fight_dmg st a_hit d_agl d_def atk] is how much damage an attacker with
     a hit percent of [a_hit] and base attack of [atk] does to a defender with
     an agility of [d_agl] and defense of [d_def]. *)
-let fight_dmg st a_hit d_agl d_def atk =
-  if hit_roll a_hit d_agl = false then 0
-  else let dmg = (Random.int atk) + atk - d_def in
+let fight_dmg st (char : Party.stat) (boss : Gauntlet.stats) atk =
+  if hit_roll char.hit_percent boss.agl = false then 0
+  else let dmg = (Random.int atk) + atk - boss.def in
     if dmg <= 0 then 1
     else dmg
 
-(** [total_hit_dmg st a_hit d_agl d_def n atk acc] is how much damage an
-    attacker with a hit percent of [a_hit] and base attack of [atk] does to a
-    defender with an agility of [d_agl] and defense of [d_def], over the course
+(** [total_hit_dmg st a_hit d_agl d_def n atk acc] is how much damage a
+    character with a hit percent of [a_hit] and base attack of [atk] does to a
+    boss with an agility of [d_agl] and defense of [d_def], over the course
     of [n] hits. *)
-let rec total_hit_dmg st a_hit d_agl d_def n atk acc =
+let rec total_hit_dmg st char boss n atk acc =
   match n with
   | 0 -> acc
-  | n -> acc + fight_dmg st a_hit d_agl d_def atk |>
-         total_hit_dmg st a_hit d_agl d_def (n-1) atk
+  | n -> acc + fight_dmg st char boss atk |>
+         total_hit_dmg st char boss (n-1) atk
 
 let fight glt st c =
   let b = get_current_boss st in
@@ -68,10 +68,33 @@ let fight glt st c =
   let c_name = Party.get_name c in
   let boss = cur_boss_stats glt st in
   let n = num_of_hits c_name char.hit_percent in
-  let dmg = total_hit_dmg st char.hit_percent boss.agl boss.def
-      n (char_atk st) 0 in
+  let dmg = total_hit_dmg st char boss n (char_atk st) 0 in
   let new_st = set_health b (get_health b st - dmg) st |> change_turns in
   {hits = n; dmg = dmg; target = b; new_st = new_st}
+
+(** [boss_hit_roll hit agl] is whether the boss with a hit % of [hit] hits
+    a character with an agility of [agl]. *)
+let boss_hit_roll hit agl =
+  let cth = 168 + hit - agl in
+  if Random.int 200 <= cth then true
+  else false
+
+(** [boss_fight_dmg st a_hit d_agl d_def atk] is how much damage a boss
+    [boss] in [st] with a base attack of [atk] can do to [char]. *)
+let boss_fight_dmg st (boss : Gauntlet.stats) (char : Party.stat) atk =
+  if boss_hit_roll boss.hit char.agl = false then 0
+  else let dmg = (Random.int atk) + atk - char.fight_def in
+    if dmg <= 0 then 1
+    else dmg
+
+(** [total_boss_hit_dmg st a_hit d_agl d_def n atk acc] is how much damage
+    a boss [boss] in [st] with a base attack of [atk] can do to [char] over
+    the course of [n] hits. *)
+let rec total_boss_hit_dmg st boss char n atk acc =
+  match n with
+  | 0 -> acc
+  | n -> acc + boss_fight_dmg st boss char atk |>
+         total_boss_hit_dmg st boss char (n-1) atk
 
 (** [boss_target glt st] is the character in [glt] who is targeted by the
     current boss in [st]. If the character chosen is dead, then a new target
@@ -97,7 +120,7 @@ let boss_turn glt st =
   let char = Party.find_character c Party.get_characters |> char_stats in
   let boss = cur_boss_stats glt st in
   let n = num_of_hits c boss.hit in
-  let dmg = total_hit_dmg st boss.hit char.agl char.fight_def n boss.str 0 in
+  let dmg = total_boss_hit_dmg st boss char n boss.str 0 in
   let dmged_hp = get_health c st - dmg in
   let new_hp = if dmged_hp > 0 then dmged_hp else 0 in
   let new_dmged_st = set_health c new_hp st in

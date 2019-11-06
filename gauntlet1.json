@@ -3,7 +3,7 @@
     "id": "Chaos",
     "dialogue": "It's Chaos!"
   },
-  "final": "Clarkson",
+  "final": "Cloud",
   "bosses": [
     {
       "id": "Chaos",
@@ -14,6 +14,7 @@
         "magic defense": 200,
         "strength": 100,
         "hit rate": 200,
+        "hits per turn": 2,
         "weaknesses": [],
         "resistances": [
           "ICE"
@@ -53,10 +54,10 @@
         ]
       },
       "dialogue": "You've defeated Chaos!",
-      "next boss": "Mutability"
+      "next boss": "Sephiroth"
     },
     {
-      "id": "Mutability",
+      "id": "Sephiroth",
       "stats": {
         "hp": 10,
         "agility": 10,
@@ -64,6 +65,7 @@
         "magic defense": 10,
         "strength": 10,
         "hit rate": 100,
+        "hits per turn": 2,
         "weaknesses": [],
         "resistances": []
       },
@@ -76,11 +78,11 @@
         "skill chance": 0,
         "skill list": []
       },
-      "dialogue": "You've defeated Mutability!",
-      "next boss": "Clarkson"
+      "dialogue": "You've defeated Sephiroth!",
+      "next boss": "Cloud"
     },
     {
-      "id": "Clarkson",
+      "id": "Cloud",
       "stats": {
         "hp": 10,
         "agility": 10,
@@ -88,6 +90,7 @@
         "magic defense": 10,
         "strength": 10,
         "hit rate": 100,
+        "hits per turn": 2,
         "weaknesses": [],
         "resistances": []
       },
@@ -100,7 +103,7 @@
         "skill chance": 0,
         "skill list": []
       },
-      "dialogue": "You've defeated Clarkson!",
+      "dialogue": "You've defeated Cloud!",
       "next boss": ""
     }
   ]
