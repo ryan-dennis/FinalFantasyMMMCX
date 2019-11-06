@@ -103,7 +103,7 @@
         "skill chance": 0,
         "skill list": []
       },
-      "dialogue": "You've defeated Cloud!",
+      "dialogue": "You've defeated Cloud! Congratulations, you've completed the gauntlet!",
       "next boss": ""
     }
   ]
