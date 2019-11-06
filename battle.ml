@@ -74,13 +74,17 @@ let fight glt st c =
   {hits = n; dmg = dmg; target = b; new_st = new_st}
 
 (** [boss_target glt st] is the character in [glt] who is targeted by the
-    current boss in [st]. *)
-let boss_target glt st =
+    current boss in [st]. If the character chosen is dead, then a new target
+    will be chosen until a valid target is selected. *)
+let rec boss_target glt st =
   let party = get_party st in
   let r = Random.int 7 in
-  if r < 5 then List.nth party 0
-  else if r < 7 then List.nth party 1
-  else List.nth party 3
+  let target = 
+    if r < 4 then List.nth party 0
+    else if r < 6 then List.nth party 1
+    else List.nth party 2 in
+  if is_dead st target then boss_target glt st
+  else target
 
 (** [rm_dead new_hp st c] is the state [st] with character [c] removed from
     the turn order if they are dead ([new_hp] <= 0). *)
@@ -94,7 +98,8 @@ let boss_turn glt st =
   let boss = cur_boss_stats glt st in
   let n = num_of_hits c boss.hit in
   let dmg = total_hit_dmg st boss.hit char.agl char.fight_def n boss.str 0 in
-  let new_hp = get_health c st - dmg in
+  let dmged_hp = get_health c st - dmg in
+  let new_hp = if dmged_hp > 0 then dmged_hp else 0 in
   let new_dmged_st = set_health c new_hp st in
   let new_st = rm_dead new_hp new_dmged_st c |> change_turns in
   {hits = n; dmg = dmg; target = c; new_st = new_st}
