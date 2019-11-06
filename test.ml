@@ -34,7 +34,7 @@ let gauntlet_tests = [
   "start boss" >:: (fun _ -> assert_equal "Chaos" (start_boss glt1));
   "start dialogue" >::
   (fun _ -> assert_equal "It's Chaos!" (start_dialogue glt1));
-  "final boss" >:: (fun _ -> assert_equal "Clarkson" (final glt1));
+  "final boss" >:: (fun _ -> assert_equal "Cloud" (final glt1));
   "Chaos hp" >:: (fun _ -> assert_equal 2000 (chaos_stats.hp));
   "Chaos agility" >:: (fun _ -> assert_equal 100 (chaos_stats.agl));
   "Chaos defense" >:: (fun _ -> assert_equal 100 (chaos_stats.def));
@@ -51,8 +51,8 @@ let gauntlet_tests = [
   (fun _ -> assert_equal 64 (boss_skill_chance glt1 "Chaos"));
   "Chaos skills" >::
   (fun _ -> assert_equal chaos_skills (boss_skills glt1 "Chaos"));
-  "Chaos next is Mutability" >::
-  (fun _ -> assert_equal "Mutability" (next glt1 "Chaos"));
+  "Chaos next is Sephiroth" >::
+  (fun _ -> assert_equal "Sephiroth" (next glt1 "Chaos"));
   "Chaos dialogue" >::
   (fun _ -> assert_equal "You've defeated Chaos!" (dialogue glt1 "Chaos"))
 ]
@@ -72,7 +72,7 @@ let state_tests = [
   "Testing init set current boss correctly">:: 
   (fun _ -> assert_equal "Chaos" (get_current_boss init));
   "Testing init set next boss correctly">:: 
-  (fun _ -> assert_equal "Mutability" (get_next_boss init));
+  (fun _ -> assert_equal "Sephiroth" (get_next_boss init));
   "Testing party is set correctly">:: 
   (fun _ -> assert_equal ["white mage";"red mage";"thief"] (get_party init));
   "Testing health was set correctly ">:: 
