@@ -6,8 +6,10 @@
 *)
 
 (** [fight st c] is the new state after the character [c] uses its fight
-    attack on the enemy. *)
-val fight : Gauntlet.t -> State.t -> Party.t -> State.t
+    attack on the enemy and the accompanying descriptor. Returns a triple,
+    where the first entry is the number of hits, the second is the damage
+    dealt, and the third is the new state. *)
+val fight : Gauntlet.t -> State.t -> Party.t -> int * int * State.t
 
 (**
    val magic : State.t -> State.t
@@ -16,5 +18,7 @@ val fight : Gauntlet.t -> State.t -> Party.t -> State.t
 *)
 
 (** [boss_turn glt st] is the new state after the boss during [st] from
-    gauntlet [glt] takes its turn. *)
-val boss_turn : Gauntlet.t -> State.t -> State.t
+    gauntlet [glt] takes its turn and the accompanying descriptor. Returns a
+    triple where the first entry is the number of hits, the second is the
+    damage dealt, and the third is the new state. *)
+val boss_turn : Gauntlet.t -> State.t -> int * int * string * State.t

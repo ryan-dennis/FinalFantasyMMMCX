@@ -58,10 +58,10 @@ let fight glt st c =
   let char = char_stats c in
   let c_name = Party.get_name c in
   let boss = cur_boss_stats glt st in
-  set_health b (get_health b st -
-                total_hit_dmg st char.hit_percent char.str boss.agl boss.def
-                  (num_of_hits c_name char.hit_percent) 0) st |>
-  change_turns
+  let n = num_of_hits c_name char.hit_percent in
+  let dmg = total_hit_dmg st char.hit_percent char.str boss.agl boss.def n 0 in
+  let new_st = set_health b (get_health b st - dmg) st |> change_turns in
+  (n, dmg, new_st)
 
 (** [boss_target glt st] is the character in [glt] who is targeted by the
     current boss in [st]. *)
@@ -72,12 +72,19 @@ let boss_target glt st =
   else if r < 7 then List.nth party 1
   else List.nth party 3
 
+(** [rm_dead new_hp st c] is the state [st] with character [c] removed from
+    the turn order if they are dead ([new_hp] <= 0). *)
+let rm_dead new_hp st c =
+  if new_hp > 0 then st
+  else remove_from_t c st
+
 let boss_turn glt st =
   let c = boss_target glt st in
   let char = Party.find_character c Party.get_characters |> char_stats in
   let boss = cur_boss_stats glt st in
-  let new_hp = get_health c st - total_hit_dmg st boss.hit boss.str
-                 char.agl char.fight_def (num_of_hits c boss.hit) 0 in
-  let new_st = set_health c new_hp st in
-  if new_hp > 0 then new_st |> change_turns
-  else remove_from_t c new_st |> change_turns
+  let n = num_of_hits c boss.hit in
+  let dmg = total_hit_dmg st boss.hit boss.str char.agl char.fight_def n 0 in
+  let new_hp = get_health c st - dmg in
+  let new_dmged_st = set_health c new_hp st in
+  let new_st = rm_dead new_hp new_dmged_st c |> change_turns in
+  (n, dmg, c, new_st)
