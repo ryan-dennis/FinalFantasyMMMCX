@@ -14,11 +14,10 @@ type t
     dealt, and the third is the new state. *)
 val fight : Gauntlet.t -> State.t -> Party.t -> t
 
-(**
-   val magic : State.t -> State.t
-
-   val drink : State.t -> State.t
-*)
+(** [magic st s c] is the new state after the spell [s] is cast on the target
+    with name [c]. Returns a triple where the first entry is the number of
+    hits, the second is the damage dealt, and the third is the new state. *)
+val magic : State.t -> string -> string -> t
 
 (** [boss_turn glt st] is the new state after the boss during [st] from
     gauntlet [glt] takes its turn and the accompanying descriptor. Returns a
