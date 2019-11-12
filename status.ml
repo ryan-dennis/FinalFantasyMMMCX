@@ -1,0 +1,1 @@
+type status = Poison | Blind | Paralysis | Silence 
