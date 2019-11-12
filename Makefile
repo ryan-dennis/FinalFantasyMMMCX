@@ -1,4 +1,4 @@
-MODULES= party gauntlet command state display main authors
+MODULES= party gauntlet command state status spells display main authors
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
