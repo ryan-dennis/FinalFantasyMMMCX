@@ -3,6 +3,7 @@ open Command
 open Gauntlet
 open State
 open Battle
+open Potions
 
 let rec string_of_list acc = function
   | [] -> acc
@@ -46,6 +47,12 @@ let attack_response (b:Battle.t) (curr:string) : string =
   let targ = target b in 
   curr ^ " attacked " ^ targ ^ " " ^ hits ^ " times for " ^ damage ^ " damage.\n\n"
 
+let drink_comm s pot curr = 
+  try let s' = drink s pot in 
+    ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " drank a " ^ pot ^ " potion.\n\n")); 
+    s'
+  with Malformed -> reject "potion"; s
+
 (** *)
 let rec repl g s = 
   (* print current game display *)
@@ -79,8 +86,7 @@ let rec repl g s =
         | Magic spell -> let s' = fight g s curr_char |> new_st in 
           ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " cast a spell!\n\n")); 
           repl g s'
-        | Drink pot -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s bag is empty.\n\n")); 
-          repl g s
+        | Drink pot -> drink_comm s pot curr |> repl g
         | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
           ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s spells: " ^ spell_str ^ "\n\n")); repl g s
         | Quit -> ANSITerminal.(print_string [red] "\nQuiting game...\n\n"); 

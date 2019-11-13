@@ -29,7 +29,7 @@ module PartyCheck : PartySig = Party
 
 module type CommandSig = sig 
   type command
-  type object_phrase 
+  type object_phrase = string
   exception Empty
   exception Malformed 
   val parse: string -> command 

@@ -3,7 +3,7 @@
     edit more :) TODO *)
 
 (** TODO Ryan you can do this *)
-type object_phrase 
+type object_phrase = string
 
 (** type command represents the valid commands the user can call *)
 type command =
