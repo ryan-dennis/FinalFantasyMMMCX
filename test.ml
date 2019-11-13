@@ -3,6 +3,7 @@ open Yojson.Basic.Util
 open Party
 open Gauntlet
 open State
+open Status
 
 let ch = get_characters
 let fighter = List.nth ch 0 
@@ -67,6 +68,14 @@ let rem_red_white = remove_from_t "white mage" rem_red
 let rw = get_turnorder rem_red_white
 let before_next = get_next_fighter rem_red_white
 let twist = change_turns rem_red_white
+let blind = status_add "white mage" Blind init 
+let blind2 = status_add "white mage" Blind blind
+let blPo = status_add "white mage" Poisoned blind2
+let remb = status_remove "white mage" Blind blPo
+let remp = status_remove "white mage" Poisoned blPo
+let remnone = status_remove "white mage" Paralyzed blPo
+
+
 
 let state_tests = [
   "Testing init set current boss correctly">:: 
@@ -95,6 +104,19 @@ let state_tests = [
   (fun _ -> assert_equal 2 (List.length rw));
   "Testing remove from turnorder">:: 
   (fun _ -> assert_equal false (List.mem "white mage" rw));
+  "Testing status_add">:: 
+  (fun _ -> assert_equal [Blind] (get_status "white mage" blind));
+  "Testing status_add">:: 
+  (fun _ -> assert_equal [] (get_status "red mage" blind));
+  "Testing status_add">:: 
+  (fun _ -> assert_equal [Blind] (get_status "white mage" blind2));
+  "Testing status_remove">:: 
+  (fun _ -> assert_equal [Blind] (get_status "white mage" remp));
+  "Testing status_remove">:: 
+  (fun _ -> assert_equal [Poisoned] (get_status "white mage" remb));
+  "testing status_remove">:: 
+  (fun _ -> assert_equal [Poisoned;Blind] (get_status "white mage" remnone));
+
 
 ]
 
