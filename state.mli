@@ -1,5 +1,5 @@
 open Gauntlet
-open Status 
+open Status
 (** State maintains all of the information changing within the game. 
     State must know which Boss of the gauntlet the game is being played in as well as
     each indiviual party members stats including health as well as the enemy's 
@@ -76,4 +76,5 @@ val status_remove: string -> Status.t -> t -> t
     state. *)
 val get_status: string -> t -> Status.t list 
 
+val pure_status: string -> t -> t
 

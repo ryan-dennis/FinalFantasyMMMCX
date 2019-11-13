@@ -3,7 +3,6 @@
 open Party 
 open Gauntlet 
 open Status
-
 (** Represents the state of the game beinf played *)
 type t = {
   health : (string*int) list; 
@@ -226,3 +225,9 @@ let status_remove name status state =
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
    status's = helper2 name stats state.status's []}   
+
+let pure_status name state = 
+  {health = state.health; magic_points = state.magic_points; turnorder = state.turnorder;
+   party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
+   current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
+   status's = helper2 name [] state.status's []}  
