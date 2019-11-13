@@ -1,4 +1,5 @@
 open Gauntlet
+open Status 
 (** State maintains all of the information changing within the game. 
     State must know which Boss of the gauntlet the game is being played in as well as
     each indiviual party members stats including health as well as the enemy's 
@@ -60,5 +61,19 @@ val change_turns : t -> t
     health and magic points; change the current boss to the next boss in the gauntlet
     and create a new turnorder *)
 val reset_state: Gauntlet.t -> t -> t 
+
+(** [status_add name status state] is [state] with [name] adding 
+    [status] to its list of current status effects. If [name] already has 
+    [status] as a current status effect, change nothing in [state] *)
+val status_add: string -> Status.t -> t -> t
+
+(** [status_remove name status state] is [state] with [name] no longer 
+    having [status] as a status effect. If [name] never had [status] to begin with 
+    then nothing is changed  *)
+val status_remove: string -> Status.t -> t -> t
+
+(** [get_status] is the current status effects of the given player at this 
+    state. *)
+val get_status: string -> t -> Status.t list 
 
 

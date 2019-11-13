@@ -1,19 +1,20 @@
 (** State contains all of the temporary and changing information regarding the 
     party members and the enemy. *)
 open Party 
-open Command 
 open Gauntlet 
+open Status
 
 (** Represents the state of the game beinf played *)
 type t = {
   health : (string*int) list; 
   magic_points : (string*int) list; 
+  status's : (string *(Status.t list)) list;
   turnorder : string list;
   party : string list;
   current_boss: string;
   next_boss : string; 
   current_fighter: string;
-  next_fighter: string 
+  next_fighter: string
 }
 
 (** [get_party_health gtl party acc] is [acc] with the (name,vit) of every
@@ -49,6 +50,11 @@ let generate_turnorder party name =
   let lst = name::party in 
   shuffle lst 
 
+let rec status_helper acc (lst: string list) = 
+  match lst with  
+  | [] -> acc
+  | x::t -> status_helper ((x,[])::acc) t 
+
 (** [init state gtl party] initializes the first state of the game. Every 
     Party memeber has full health and magic points as well as the boss. The
     turnover is the official turnover including all 4 players. Current boss is the 
@@ -60,7 +66,8 @@ let init_state gtl party =
   {health = (boss, get_bs gtl boss)::(get_party_health party []);
    magic_points = get_party_mp party [] ; party = party_helper party [] ;
    turnorder = t_order; current_boss =boss; next_boss = next gtl boss; 
-   current_fighter = List.nth t_order 0; next_fighter = List.nth t_order 1}
+   current_fighter = List.nth t_order 0; next_fighter = List.nth t_order 1;
+   status's = status_helper [] (boss::(party_helper party []))}
 
 (** [helper name lst] is the health of [name] of the character in 
     [lst] or raises UnknownCharacter if not in [lst] *)
@@ -68,10 +75,6 @@ let rec helper name lst =
   match lst with 
   | [] -> raise (UnknownCharacter name)
   | (n,i)::t -> if n=name then i else helper name t 
-
-(** [get_health name t] is the health of chracter with name [name] in 
-    state [t]  *)
-let get_health name t = helper name t.health  
 
 (**[helper2 name num lst acc] is [acc] with each element of [lst] but with 
    [num] of [name] changed. *)
@@ -85,13 +88,13 @@ let rec helper2 name num lst acc =
 let set_health name num t = 
   {health = List.rev (helper2 name num t.health []);magic_points = t.magic_points;
    turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
-   current_fighter = t.current_fighter; next_fighter = t.next_fighter}
+   current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's}
 
 (** [set_magic_points name num t] is [t] with the mp of [name] set to [num] *)
 let set_magic_points name num t = 
   {health = t.health;magic_points = List.rev (helper2 name num t.magic_points []);
    turnorder= t.turnorder; party=t.party;current_boss=t.current_boss;next_boss=t.next_boss;
-   current_fighter = t.current_fighter; next_fighter= t.next_fighter}
+   current_fighter = t.current_fighter; next_fighter= t.next_fighter; status's = t.status's}
 
 
 (** [get_next name lst head] is [head] if [name] is the last element in [lst] else 
@@ -123,7 +126,11 @@ let remove_from_t name state =
   {health = state.health; magic_points = state.magic_points; 
    turnorder = t; party = state.party; current_boss = state.current_boss; 
    next_boss= state.next_boss; current_fighter = state.current_fighter;
-   next_fighter= (check state.current_fighter state.next_fighter t)}      
+   next_fighter= (check state.current_fighter state.next_fighter t); status's = state.status's}      
+
+(** [get_health name t] is the health of chracter with name [name] in 
+    state [t]  *)
+let get_health name t = helper name t.health 
 
 (** [get_magic_points name t] is the magic point of [name] in 
     state [t] *)
@@ -147,6 +154,9 @@ let get_current_fighter t = t.current_fighter
 
 (** [get_next_fighter t] is the name of the character or boss whose turn is next *)
 let get_next_fighter t = t.next_fighter
+
+(** [get_status name state] is the status effects of [name] in [state]*)
+let get_status name state = helper name state.status's
 
 (** [alive_helper lst bool boss] is [bool] if the at least one member of [lst] 
     excluding [boss] has a health > 0 *)
@@ -174,7 +184,8 @@ let change_turns t =
   {health = t.health; magic_points = t.magic_points; turnorder = t.turnorder;
    party = t.party; current_boss = t.current_boss; next_boss = t.next_boss; 
    current_fighter = t.next_fighter; 
-   next_fighter = get_next t.next_fighter t.turnorder (List.nth t.turnorder 0)}  
+   next_fighter = get_next t.next_fighter t.turnorder (List.nth t.turnorder 0); 
+   status's = t.status's}  
 
 (** [find_char lst acc] is the character list [acc] with the characters whose 
     names are in [lst] in the order they are in [lst] *)
@@ -192,4 +203,26 @@ let reset_state gtl t =
   {health = (boss, get_bs gtl boss)::(get_party_health party []);
    magic_points = get_party_mp party [] ; party = t.party ;
    turnorder = t_order; current_boss = boss; next_boss = next gtl boss; 
-   current_fighter = List.nth t_order 0; next_fighter = List.nth t_order 1}  
+   current_fighter = List.nth t_order 0; next_fighter = List.nth t_order 1;
+   status's = status_helper [] (boss:: (party_helper party []))}  
+
+(** [status_add name status state] is [state] with the status effect [status]
+    added to [name]'s status effects *)
+let status_add name status state = 
+  let stats = List.sort_uniq compare (status::(get_status name state)) in 
+  {health = state.health; magic_points = state.magic_points; turnorder = state.turnorder;
+   party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
+   current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
+   status's = helper2 name stats state.status's []} 
+
+
+(** [status_remove name status state] is [state] with the status effect [status]  
+    removed from [name]'s status effects *)
+let status_remove name status state = 
+  let s = get_status name state in 
+  let stats = if List.mem status s then 
+      (List.filter (fun x -> x <> status) s) else s in 
+  {health = state.health; magic_points = state.magic_points; turnorder = state.turnorder;
+   party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
+   current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
+   status's = helper2 name stats state.status's []}   

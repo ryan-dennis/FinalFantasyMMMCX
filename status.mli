@@ -1,13 +1,9 @@
-(**to be in state.ml *)
-type status = Poison | Blind | Paralysis | Silence 
-(* val change_status: string -> status -> State.t -> State.t
+type t =  Poisoned | Blind | Paralyzed | Silenced 
 
-   val get_status: string -> State.t -> State.t  *)
+val effects_of_Poisson: string -> t
 
-(** to actually be in status.ml *)
-(* type t * which will be status and status wont be in state *)
+val effects_of_Blind: string -> t
 
-(* val effects_of_Poisson 
-   val effects_of_Blind
-   val effects_of_Paralysis
-   val effects_of_Silence *)
+val effects_of_Paralysis: string -> t
+
+val effects_of_Silence: string -> t
