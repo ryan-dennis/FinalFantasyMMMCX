@@ -72,6 +72,11 @@ let fight glt st c =
   let new_st = set_health b (get_health b st - dmg) st |> change_turns in
   {hits = n; dmg = dmg; target = b; new_st = new_st}
 
+
+let magic st s c =
+  failwith "Unimplemented"
+
+
 (** [boss_hit_roll hit agl] is whether the boss with a hit % of [hit] hits
     a character with an agility of [agl]. *)
 let boss_hit_roll hit agl =
