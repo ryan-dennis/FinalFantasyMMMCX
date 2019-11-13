@@ -3,7 +3,7 @@ type element = Fire | Ice | Lightning | Poison | Status | None
 (** Type of the effectivity of a spell *)
 type effectivity =
   | Eff of int
-  | EStatus of Status.status
+  | EStatus of Status.t
 
 (** Type of a spell effect *)
 type effect =
