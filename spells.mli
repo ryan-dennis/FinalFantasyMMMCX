@@ -15,9 +15,9 @@ type spell
 (** [get_spell s] is the spell with name [s]. *)
 val get_spell : string -> spell
 
-(** [is_valid_target sp tar] is whether the target [tar] is a valid target for
-    the spell [sp]. *)
-val is_valid_target : spell -> string -> bool
+(** [is_valid_target st sp tar] is whether the target [tar] is a valid target
+    for the spell [sp] in state [st]. *)
+val is_valid_target : State.t -> spell -> string -> bool
 
 (** [cast_spell glt st sp c tar] is the cast spell data after the spell [sp]
     has been cast by character [c] in state [st] on the target [tar]. *)

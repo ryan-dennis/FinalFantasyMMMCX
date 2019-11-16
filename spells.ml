@@ -25,8 +25,10 @@ type effectivity =
 (** Type of a spell effect.
     Damage (Damage): always hits, uses attack magic algorithms
     Status (StatusAilment): if it hits, inflicts the status ailment of EStatus
-    Support (HPRec, RestoreStatus, DefUp, AtkUp, HitUp, AtkAccUp, FullHP,
-    EvaUp): always hits, positive effects that benefit a player character
+    Heal (HPRec, FullHP, RestoreStatus): always hits, heals a player character
+    and/or removes statuses
+    Support (DefUp, StrUp, StrHitUp, AglUp): always hits, stat buffs that are
+    applied to a player character
     HP300 (HP300Status): always hits if target is not resistant and current HP
     is equal to or less than 300 and always misses otherwise, inflicts the
     status ailment of EStatus if hits
@@ -148,20 +150,20 @@ let write_spell_desc st sp tar hit effect =
 let get_spell s =
   List.find (fun x -> x.sp_name = s) spell_list
 
-(** [is_support sp] is whether the spell [sp] is a support spell (used on
+(** [is_friendly sp] is whether the spell [sp] is a friendly spell (used on
     teammates). *)
-let is_support sp =
+let is_friendly sp =
   match sp.sp_effect with
-  | HPRec | FullHP | RestoreStatus | DefUp | StrUp | StrHitUp | AglUp
-  | HP300Status -> true
+  | HPRec | FullHP | RestoreStatus | DefUp | StrUp | StrHitUp | AglUp -> true
   | _ -> false
 
-let is_valid_target sp tar =
-  let support = is_support sp in
+let is_valid_target st sp tar =
+  let friendly = is_friendly sp in
+  let is_boss = get_current_boss st = tar in
   try ignore(Party.find_character tar Party.get_characters);
-    if support then true else false
+    if friendly then true else false
   with Party.UnknownCharacter _ ->
-    if support then false else true
+    if is_boss && friendly = false then true else false
 
 (** [is_boss_resistant sp b] is whether the boss [b] is resistant to the
     element of spell [sp]. *)
@@ -230,6 +232,26 @@ let cast_status_spell glt st sp tar =
     desc = string_of_status status |> write_spell_desc st sp tar hit;
     new_st = if hit then status_add tar status st else st
   }
+
+(** [cast_heal_spell st sp tar] is the cast spell data after a heal spell [sp]
+    is cast on a player character [tar] in state [st]. *)
+let cast_heal_spell st sp tar =
+  let eff = match sp.sp_eff with
+    | Eff e -> e
+    | EStatus _ -> failwith "not a heal spell" in
+  let new_st = match sp.sp_effect with
+    | DefUp -> get_fight_def tar st + eff |> set_agil tar st
+    | StrUp -> get_strength tar st + eff |> set_strength tar st
+    | StrHitUp -> get_hit_per tar st + sp.sp_acc |> set_hit_percent tar
+                    (get_strength tar st + eff |> set_strength tar st)
+    | AglUp
+    | _ -> failwith "Unimplemented" in
+  failwith "Unimplemented"
+
+(** [cast_support_spell st sp tar] is the cast spell data after a support
+    spell [sp] is cast on a player character [tar] in state [st]. *)
+let cast_support_spell st sp tar =
+  failwith "Unimplemented"
 
 (** [hp300_hit_roll glt st sp] is whether an HP300Status spell [sp] hits the
     boss from gauntlet [glt] in state [st]. *)
