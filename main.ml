@@ -4,11 +4,18 @@ open Gauntlet
 open State
 open Battle
 open Potions
+open Status
 
 let rec string_of_list acc = function
   | [] -> acc
   | [e] -> acc ^ e
   | h :: t -> string_of_list (h ^ ", " ^ acc) t
+
+let string_of_status = function
+  | Poisoned -> "poisoned"
+  | Blinded -> "blinded"
+  | Paralyzed -> "paralyzed"
+  | Silenced -> "silenced"
 
 (** [char_names] is the list of names of all characters in the game. *)
 let char_names = List.map (get_name) get_characters
@@ -47,11 +54,12 @@ let attack_response (b:Battle.t) (curr:string) : string =
   let targ = target b in 
   curr ^ " attacked " ^ targ ^ " " ^ hits ^ " times for " ^ damage ^ " damage.\n\n"
 
-let drink_comm s pot curr = 
-  try let s' = drink s pot in 
-    ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " drank a " ^ pot ^ " potion.\n\n")); 
-    s'
-  with Malformed -> reject "potion"; s
+let drink_comm s curr pot = 
+  match pot with
+  | Heal -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " healed.\n\n")); 
+    heal_eff s
+  | Pure -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " purified their status effects.\n\n"));
+    pure_eff s
 
 (** *)
 let rec repl g s = 
@@ -73,7 +81,10 @@ let rec repl g s =
       let state_party = get_party s in
       let state_hp = stat_str state_party s "" in
       ANSITerminal.(print_string [Underlined; cyan] "Party:\n");
-      ANSITerminal.(print_string [cyan] (state_hp ^ "\n\n"));
+      ANSITerminal.(print_string [cyan] (state_hp ^ "\n"));
+      ANSITerminal.(print_string [blue] ("The " ^ curr ^ "'s current status effects: " ^ 
+                                         (get_status curr s |> List.map string_of_status |> 
+                                          string_of_list "") ^ "\n\n"));
       ANSITerminal.(print_string [yellow] (boss ^ " health: " ^ string_of_int (get_health boss s) ^ "\n\n"));
       if List.mem curr char_names then
         let curr_char = find_character curr get_characters in
@@ -86,7 +97,9 @@ let rec repl g s =
         | Magic spell -> let s' = fight g s curr_char |> new_st in 
           ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " cast a spell!\n\n")); 
           repl g s'
-        | Drink pot -> drink_comm s pot curr |> repl g
+        | Drink pot -> (try drink pot |> drink_comm s curr |> repl g 
+                        with Invalid_potion -> (print_endline ""; reject "potion"; 
+                                                print_endline ""; repl g s))
         | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
           ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s spells: " ^ spell_str ^ "\n\n")); repl g s
         | Quit -> ANSITerminal.(print_string [red] "\nQuiting game...\n\n"); 
