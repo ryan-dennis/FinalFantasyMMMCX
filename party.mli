@@ -54,5 +54,7 @@ val find_character: string -> t list -> t
     charcter name *)
 val add : string list -> t list -> t list
 
+val char_og_health : t -> int 
+
 
 
