@@ -135,7 +135,10 @@ let rec helper2 name num lst acc =
 
 (** [set_health name num t] is [t] with the health of [name] set to [num] *)
 let set_health name t num = 
-  {health = List.rev (helper2 name (if num< 0 then 0 else num) t.health []);magic_points = t.magic_points;
+  let char = find_character name get_characters in 
+  {health = List.rev (helper2 name (if num< 0 then 0 else if 
+                                      num > char_og_health char then char_og_health char else  num) t.health []);
+   magic_points = t.magic_points;
    turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
    current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
    strength = t.strength; agility = t.agility;
@@ -372,7 +375,7 @@ let pure_status name state =
 
 let cure4_status name state = 
   let h = (find_character name get_characters) in 
-  let hp = char_og_health h in 
+  let hp = char_og_health h in  
   {health = List.rev (helper2 name hp state.health []); magic_points = state.magic_points; turnorder = state.turnorder;
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
