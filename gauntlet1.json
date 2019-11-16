@@ -15,9 +15,11 @@
         "strength": 100,
         "hit rate": 200,
         "hits per turn": 2,
-        "weaknesses": [],
+        "weaknesses": [
+          "Fire"
+        ],
         "resistances": [
-          "ICE"
+          "Lightning"
         ]
       },
       "sprite": [

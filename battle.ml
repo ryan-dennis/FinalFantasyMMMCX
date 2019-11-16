@@ -25,7 +25,7 @@ exception InvalidSpellTarget
 let write_fight_desc st target hits dmg =
   String.concat " " [get_current_fighter st; "attacked"; target;
                      string_of_int hits; "times for"; string_of_int dmg;
-                     "damage."]
+                     "damage!"]
 
 (** [char_atk st] is the attack rating of the current fighter in [st]. *)
 let char_atk st =

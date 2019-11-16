@@ -1,5 +1,6 @@
 open State
 open Gauntlet
+open Status
 
 type t = {
   dmg : int;
@@ -14,10 +15,12 @@ type t = {
 
 type element = Fire | Ice | Lightning | Poison | Status | None
 
+type status = Status.t
+
 (** Type of the effectivity of a spell *)
 type effectivity =
   | Eff of int
-  | EStatus of Status.t
+  | EStatus of status
 
 (** Type of a spell effect.
     Damage (Damage): always hits, uses attack magic algorithms
@@ -102,6 +105,46 @@ let spell_list = [
   spell "NUKE" (Eff 100) 107 None Damage mp8
 ]
 
+(** [string_of_el el] is the element [el] as a string. *)
+let string_of_el el =
+  match el with
+  | Fire -> "Fire"
+  | Ice -> "Ice"
+  | Lightning -> "Lightning"
+  | Poison -> "Poison"
+  | Status -> "Status"
+  | None -> "None"
+
+(** [string_of_status status] is the status [status] as a string. *)
+let string_of_status status =
+  match status with
+  | Poisoned -> "Poisoned"
+  | Blinded -> "Blinded"
+  | Paralyzed -> "Paralyzed"
+  | Silenced -> "Silenced"
+
+(** [write_spell_desc st tar hit effect] is the description of the last turn,
+    if the last turn a player character cast a spell. *)
+let write_spell_desc st sp tar hit effect =
+  let cur_fighter = get_current_fighter st in
+  let spell_desc = match sp.sp_effect with
+    | Damage -> ["dealt"; effect; string_of_el sp.sp_el; "damage!"]
+    | StatusAilment -> ["inflicted"; effect ^ "!"]
+    | HPRec -> ["healed them for"; effect; "HP!"]
+    | FullHP -> ["healed them completely!"]
+    | RestoreStatus -> ["cured their"; effect ^ "!"]
+    | DefUp -> ["raised their defense!"]
+    | StrUp -> ["raised their strength!"]
+    | StrHitUp -> ["raised their strength and hit rate!"]
+    | AglUp -> ["raised their agility!"]
+    | HP300Status -> ["inflicted"; effect ^ "!"]
+  in
+  if hit = false
+  then String.concat " " [cur_fighter; "tried to cast"; sp.sp_name; "on"; tar;
+                          "but it failed!"]
+  else [cur_fighter; "cast"; sp.sp_name; "on"; tar; "and"] @ spell_desc |>
+       String.concat " "
+
 let get_spell s =
   List.find (fun x -> x.sp_name = s) spell_list
 
@@ -120,49 +163,17 @@ let is_valid_target sp tar =
   with Party.UnknownCharacter _ ->
     if support then false else true
 
-(** [el_to_string el] is the element [el] as a string. *)
-let el_to_string el =
-  match el with
-  | Fire -> "Fire"
-  | Ice -> "Ice"
-  | Lightning -> "Lightning"
-  | Poison -> "Poison"
-  | Status -> "Status"
-  | None -> "None"
-
 (** [is_boss_resistant sp b] is whether the boss [b] is resistant to the
     element of spell [sp]. *)
 let is_boss_resistant glt sp b =
-  List.exists (fun x -> x = el_to_string(sp.sp_el))
+  List.exists (fun x -> x = string_of_el(sp.sp_el))
     (Gauntlet.boss_stats glt b).resist
 
 (** [is_boss_weak glt sp b] is whether the boss [b] is weak to the element of
     spell [sp]. *)
 let is_boss_weak glt sp b =
-  List.exists (fun x -> x = el_to_string(sp.sp_el))
+  List.exists (fun x -> x = string_of_el(sp.sp_el))
     (Gauntlet.boss_stats glt b).weak
-
-(** [write_spell_desc st tar hit effect] is the description of the last turn,
-    if the last turn a player character cast a spell. *)
-let write_spell_desc st sp tar hit effect =
-  let cur_fighter = get_current_fighter st in
-  let spell_desc = match sp.sp_effect with
-    | Damage -> ["dealing"; effect; el_to_string sp.sp_el; "damage."]
-    | StatusAilment -> ["inflicting"; effect ^ "."]
-    | HPRec -> ["healing for"; effect; "HP."]
-    | FullHP -> ["restoring their HP fully and curing their"; effect ^ "."]
-    | RestoreStatus -> ["curing their"; effect ^ "."]
-    | DefUp -> ["raising their defense."]
-    | StrUp -> ["raising their strength."]
-    | StrHitUp -> ["raising their strength and hit rate."]
-    | AglUp -> ["raising their agility."]
-    | HP300Status -> ["inflicting"; effect ^ "."]
-  in
-  if hit = false
-  then String.concat " " [cur_fighter; "tried to cast"; sp.sp_name; "on"; tar;
-                          "but missed."]
-  else [cur_fighter; "cast"; sp.sp_name; "on"; tar ^ ","] @ spell_desc |>
-       String.concat " "
 
 (** [dmg_status_hit_roll glt st sp] is whether a Damage or StatusAilment spell
     [sp] hits the boss [b] from gauntlet [glt] in state [st]. If the spell has
@@ -203,9 +214,22 @@ let cast_damage_spell glt st sp tar =
     new_st = get_health b st - dmg |> set_health b st
   }
 
-(** *)
+(** [cast_status_spell glt st sp tar] is the cast spell data after
+    StatusAilment spell [sp] is cast on boss [tar] from gauntlet [glt] in state
+    [st]. *)
 let cast_status_spell glt st sp tar =
-  failwith "Unimplemented"
+  let b = get_current_boss st in
+  let status = match sp.sp_eff with
+    | EStatus status -> status
+    | Eff _ -> failwith "not a status spell"
+  in
+  let hit = dmg_status_hit_roll glt st sp b in
+  {
+    dmg = 0;
+    target = tar;
+    desc = string_of_status status |> write_spell_desc st sp tar hit;
+    new_st = if hit then status_add tar status st else st
+  }
 
 (** [hp300_hit_roll glt st sp] is whether an HP300Status spell [sp] hits the
     boss from gauntlet [glt] in state [st]. *)
@@ -224,7 +248,7 @@ let update_mp c sp st =
 let cast_spell glt st sp c tar =
   let spell_data = match sp.sp_effect with
     | Damage -> cast_damage_spell glt st sp tar
-    | StatusAilment
+    | StatusAilment -> cast_status_spell glt st sp tar
     | HPRec
     | FullHP
     | RestoreStatus
