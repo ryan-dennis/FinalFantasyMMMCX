@@ -52,7 +52,7 @@ val get_current_fighter: t -> string
 
 (** [set_health name num t] returns [t] with new health for [name] with
     value [num] *)
-val set_health: string-> t-> int -> t
+val set_health: Gauntlet.t->string-> t-> int -> t
 
 (** [set_magic_points name num t] returns [t] with new mp for [name] with
     value [num] *)
@@ -85,7 +85,7 @@ val check_alive: t -> bool
 val is_dead: t->string-> bool 
 
 (** [change_turns t] is [t] with the current_fighter and next_fighter updated *)
-val change_turns : t -> t
+val change_turns : Gauntlet.t -> t -> t
 
 (** [reset_state gtl t] resets the state from the previous battle to revive all 
     health and magic points; change the current boss to the next boss in the gauntlet

@@ -131,13 +131,17 @@ let rec helper2 name num lst acc =
   match lst with 
   | [] -> acc
   | (n,i)::t -> if n = name then helper2 name num t ((name,num)::acc)
-    else helper2 name num t ((n,i)::acc)     
+    else helper2 name num t ((n,i)::acc)  
+
+let max_hp name t gtl = 
+  if name = t.current_boss then get_bs gtl name
+  else find_character name get_characters |> char_og_health           
 
 (** [set_health name num t] is [t] with the health of [name] set to [num] *)
-let set_health name t num = 
-  let char = find_character name get_characters in 
+let set_health gtl name t num = 
+  let hp = max_hp name t gtl in 
   {health = List.rev (helper2 name (if num< 0 then 0 else if 
-                                      num > char_og_health char then char_og_health char else  num) t.health []);
+                                      num > hp then hp else  num) t.health []);
    magic_points = t.magic_points;
    turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
    current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
@@ -313,18 +317,18 @@ let cure_para name t =
 
 (** [status_effects name t] is [t] with the status effects of [name] taken care 
     of (Poison subtracts 20 Hp and Paralyzed removed by random) *)
-let status_effects name t = 
+let status_effects gtl name t = 
   if is_poisoned name t && is_paralyzed name t then 
-    (get_health name t)-20 |> set_health name t |> cure_para name 
-  else if is_poisoned name t then set_health name t ((get_health name t)-20) 
+    (get_health name t)-20 |> set_health gtl name t |> cure_para name 
+  else if is_poisoned name t then set_health gtl name t ((get_health name t)-20) 
   else if is_paralyzed name t then cure_para name t else t  
 
 (**  [change_turns t] is [t] wiht the current fighter becoming the next fighter of 
      [t] and the next_fighter is the next person in the turnorder after [t.next_fighter]
      If the t has an empty turnorder this method will raise an exception. If the 
      turnoder is of size one it current and next fighter will always be the sanme*)
-let change_turns t = 
-  let n = status_effects t.next_fighter t in 
+let change_turns gtl t = 
+  let n = status_effects gtl t.next_fighter t in 
   {health = n.health; magic_points = n.magic_points; turnorder = n.turnorder;
    party = n.party; current_boss = n.current_boss; next_boss = n.next_boss; 
    current_fighter = n.next_fighter; 
