@@ -6,23 +6,20 @@ type potion =
   | Pure
 
 (** *)
-exception Malformed
+exception Invalid_potion
 
 let heal_eff (st : State.t) =
   let c = get_current_fighter st in
   let amt = 32 - Random.int 15 in
-  let new_st = set_health c (get_health c st + amt) st |> change_turns in
-  new_st
+  set_health c st (get_health c st + amt) |> change_turns
 
 let pure_eff (st : State.t) =
   let c = get_current_fighter st in
-  let amt = 32 - Random.int 15 in
-  let new_st = set_health c (get_health c st + amt) st |> change_turns in
-  new_st
+  pure_status c st |> change_turns
 
 (** *)
-let drink st sp = 
-  match sp with
-  | "heal" -> heal_eff st
-  | "pure" -> pure_eff st
-  | _ -> raise Malformed
+let drink p = 
+  match p with
+  | "heal" -> Heal
+  | "pure" -> Pure
+  | _ -> raise Invalid_potion
