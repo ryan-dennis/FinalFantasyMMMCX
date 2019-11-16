@@ -8,8 +8,13 @@ type potion =
   | Heal
   | Pure
 
-(** Raised when a malformed spell is encountered *)
-exception Malformed
+(** Raised when a [Invalid_potion] pot is encountered *)
+exception Invalid_potion
 
-(** [drink st sp] is the new [State.t] after spell [sp] has been used. *)
-val drink: State.t -> string -> State.t
+val heal_eff: State.t -> State.t
+
+val pure_eff: State.t -> State.t
+
+(** [drink p] is the new [State.t] after potion [pot] has been used.
+    Raises: Malformed if the spell is not a *)
+val drink: string -> potion
