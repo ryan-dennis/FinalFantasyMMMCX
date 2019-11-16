@@ -24,18 +24,18 @@ type effectivity =
 
 (** Type of a spell effect.
     Damage (Damage): always hits, uses attack magic algorithms
-    Status (StatusAilment): if it hits, inflicts the status ailment of EStatus
-    Heal (HPRec, FullHP, RestoreStatus): always hits, heals a player character
-    and/or removes statuses
+    Status (StatusAilment, HP300 Status): if it hits, inflicts the status
+    ailment of EStatus
+    Heal (HPRec, FullHP): always hits, heals a player character and/or removes
+    all statuses
+    RestoreStatus (RestoreStatus): removes the status EStatus
     Support (DefUp, StrUp, StrHitUp, AglUp): always hits, stat buffs that are
     applied to a player character
-    HP300 (HP300Status): always hits if target is not resistant and current HP
-    is equal to or less than 300 and always misses otherwise, inflicts the
-    status ailment of EStatus if hits
 *)
 type effect =
   | Damage
   | StatusAilment
+  | HP300Status
   | HPRec
   | FullHP
   | RestoreStatus
@@ -43,7 +43,6 @@ type effect =
   | StrUp
   | StrHitUp
   | AglUp
-  | HP300Status
 
 type spell = {
   sp_name : string;
@@ -132,6 +131,7 @@ let write_spell_desc st sp tar hit effect =
   let spell_desc = match sp.sp_effect with
     | Damage -> ["dealt"; effect; string_of_el sp.sp_el; "damage!"]
     | StatusAilment -> ["inflicted"; effect ^ "!"]
+    | HP300Status -> ["inflicted"; effect ^ "!"]
     | HPRec -> ["healed them for"; effect; "HP!"]
     | FullHP -> ["healed them completely!"]
     | RestoreStatus -> ["cured their"; effect ^ "!"]
@@ -139,7 +139,6 @@ let write_spell_desc st sp tar hit effect =
     | StrUp -> ["raised their strength!"]
     | StrHitUp -> ["raised their strength and hit rate!"]
     | AglUp -> ["raised their agility!"]
-    | HP300Status -> ["inflicted"; effect ^ "!"]
   in
   if hit = false
   then String.concat " " [cur_fighter; "tried to cast"; sp.sp_name; "on"; tar;
@@ -177,10 +176,10 @@ let is_boss_weak glt sp b =
   List.exists (fun x -> x = string_of_el(sp.sp_el))
     (Gauntlet.boss_stats glt b).weak
 
-(** [dmg_status_hit_roll glt st sp] is whether a Damage or StatusAilment spell
-    [sp] hits the boss [b] from gauntlet [glt] in state [st]. If the spell has
-    the StatusAilment effect, then it hits; if the spell has the Damage effect,
-    then the damage dealt is doubled. *)
+(** [dmg_status_hit_roll glt st sp b] is whether a Damage or StatusAilment spell
+    [sp] hits the boss [b] from gauntlet [glt] in state [st]. If the spell
+    has the StatusAilment effect, then it hits; if the spell has the Damage
+    effect, then the damage dealt will be doubled. *)
 let dmg_status_hit_roll glt st sp b =
   let weak = is_boss_weak glt sp b in
   let res = is_boss_resistant glt sp b in
@@ -199,7 +198,7 @@ let damage_spell_dmg glt st sp b hit =
   let res = is_boss_resistant glt sp b in
   let eff = match sp.sp_eff with
     | Eff e -> if res then e / 2 else if weak then e * 3 / 2 else e
-    | EStatus status -> failwith "Damage spell cannot inflict a status" in
+    | EStatus _ -> failwith "Not a damage spell" in
   let res_multiplier = if hit then 2 else 1 in
   ((Random.int eff) + eff) * res_multiplier
 
@@ -216,16 +215,27 @@ let cast_damage_spell glt st sp tar =
     new_st = get_health b st - dmg |> set_health b st
   }
 
-(** [cast_status_spell glt st sp tar] is the cast spell data after
-    StatusAilment spell [sp] is cast on boss [tar] from gauntlet [glt] in state
+(** [hp300_hit_roll glt st sp] is whether an HP300Status spell [sp] hits the
+    boss [b] from gauntlet [glt] in state [st]. *)
+let hp300_hit_roll glt st sp b =
+  if (is_boss_resistant glt sp b = false) && (get_health b st <= 300)
+  then true
+  else false
+
+(** [cast_status_spell glt st sp tar hit] is the cast spell data after
+    a status spell [sp] is cast on boss [tar] from gauntlet [glt] in state
     [st]. *)
 let cast_status_spell glt st sp tar =
   let b = get_current_boss st in
+  let hit = match sp.sp_effect with
+    | StatusAilment -> dmg_status_hit_roll glt st sp b
+    | HP300Status -> hp300_hit_roll glt st sp b
+    | _ -> failwith "not a status spell"
+  in
   let status = match sp.sp_eff with
     | EStatus status -> status
     | Eff _ -> failwith "not a status spell"
   in
-  let hit = dmg_status_hit_roll glt st sp b in
   {
     dmg = 0;
     target = tar;
@@ -243,16 +253,34 @@ let hp_healed st sp tar =
 (** [cast_heal_spell st sp tar] is the cast spell data after a heal spell [sp]
     is cast on a player character [tar] in state [st]. *)
 let cast_heal_spell st sp tar =
+  let old_hp = get_health tar st in
+  let new_st = match sp.sp_effect with
+    | HPRec -> old_hp + hp_healed st sp tar |>
+               set_health tar st
+    | FullHP -> cure4_status tar st
+    | _ -> failwith "not a heal spell"
+  in
+  let hp_rec = get_health tar new_st - old_hp in
+  {
+    dmg = hp_rec;
+    target = tar;
+    desc = string_of_int hp_rec |> write_spell_desc st sp tar true;
+    new_st = new_st
+  }
 
+(** [cast_restore_status_spell st sp tar] is the cast spell data after
+    RestoreStatus spell [sp] is cast on player character [tar] in state
+    [st]. *)
+let cast_restore_status_spell st sp tar =
+  let status = match sp.sp_eff with
+    | EStatus status -> status
+    | Eff e -> failwith "not a restore status spell"
+  in
   {
     dmg = 0;
     target = tar;
-    desc = write_spell_desc st sp tar true "";
-    new_st = match sp.sp_effect with
-      | HPRec
-      | FullHP
-      | RestoreStatus
-      | _ -> failwith "not a heal spell"
+    desc = string_of_status status |> write_spell_desc st sp tar true;
+    new_st = status_remove tar status st
   }
 
 (** [cast_support_spell st sp tar] is the cast spell data after a support
@@ -274,14 +302,6 @@ let cast_support_spell st sp tar =
       | _ -> failwith "not a support spell"
   }
 
-(** [hp300_hit_roll glt st sp] is whether an HP300Status spell [sp] hits the
-    boss from gauntlet [glt] in state [st]. *)
-let hp300_hit_roll glt st sp =
-  let b = get_current_boss st in
-  if (is_boss_resistant glt sp b = false) && (get_health b st <= 300)
-  then true
-  else false
-
 (** [update_mp c sp st] is the new state with the character [c]'s MP updated
     from state [st] after casting spell [sp]. *)
 let update_mp c sp st =
@@ -291,12 +311,10 @@ let update_mp c sp st =
 let cast_spell glt st sp c tar =
   let spell_data = match sp.sp_effect with
     | Damage -> cast_damage_spell glt st sp tar
-    | StatusAilment -> cast_status_spell glt st sp tar
-    | HPRec
-    | FullHP
-    | RestoreStatus
+    | StatusAilment | HP300Status -> cast_status_spell glt st sp tar
+    | HPRec | FullHP -> cast_heal_spell st sp tar
+    | RestoreStatus -> cast_restore_status_spell st sp tar
     | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell st sp tar
-    | HP300Status -> failwith "Unimplemented"
   in
   let st = spell_data.new_st in
   {spell_data with

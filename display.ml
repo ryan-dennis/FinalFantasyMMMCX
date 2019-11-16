@@ -1,6 +1,8 @@
 (** Dimensions: 70 across, 30 vertically 
     Boss box: 37 across, 20 vertically
-    Character box: 19 across, 20 vertically *)
+    Character box: 19 across, 20 vertically
+    Characters: 10 px by 10 px, 10 characters across by 5 lines
+    Boss: 30 px by 30 px, 30 characters across by 15 lines *)
 
 (** Dimensions of the frame. *)
 let arena = 56
