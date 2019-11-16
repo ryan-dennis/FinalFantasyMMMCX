@@ -1,5 +1,6 @@
 open Gauntlet
 open Status
+open Command
 (** State maintains all of the information changing within the game. 
     State must know which Boss of the gauntlet the game is being played in as well as
     each indiviual party members stats including health as well as the enemy's 
@@ -38,7 +39,7 @@ val get_current_fighter: t -> string
 
 (** [set_health name num t] returns [t] with new health for [name] with
     value [num] *)
-val set_health: string-> int-> t -> t
+val set_health: string-> t-> int -> t
 
 (** [set_magic_points name num t] returns [t] with new mp for [name] with
     value [num] *)
@@ -76,5 +77,11 @@ val status_remove: string -> Status.t -> t -> t
     state. *)
 val get_status: string -> t -> Status.t list 
 
+(** [pure_status name state] removes all status effects from [name] and returns
+    [state] *)
 val pure_status: string -> t -> t
+
+(* * [is_valid_com name t com] is true if [com] is a valid command for 
+   [name] to perform. *)
+val is_valid_com: string->t -> Command.command -> bool
 

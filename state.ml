@@ -3,6 +3,7 @@
 open Party 
 open Gauntlet 
 open Status
+open Command
 (** Represents the state of the game beinf played *)
 type t = {
   health : (string*int) list; 
@@ -84,7 +85,7 @@ let rec helper2 name num lst acc =
     else helper2 name num t ((n,i)::acc)     
 
 (** [set_health name num t] is [t] with the health of [name] set to [num] *)
-let set_health name num t = 
+let set_health name t num = 
   {health = List.rev (helper2 name num t.health []);magic_points = t.magic_points;
    turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
    current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's}
@@ -173,18 +174,55 @@ let check_alive t =
 (**[is_dead t name] is true if [name] has a health in [t] less than or equal to 
    0 *)
 let is_dead t name = 
-  if (helper name t.health) <= 0 then true else false    
+  if (helper name t.health) <= 0 then true else false 
+
+(** [status_remove name status state] is [state] with the status effect [status]  
+    removed from [name]'s status effects *)
+let status_remove name status state = 
+  let s = get_status name state in 
+  let stats = if List.mem status s then 
+      (List.filter (fun x -> x <> status) s) else s in 
+  {health = state.health; magic_points = state.magic_points; turnorder = state.turnorder;
+   party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
+   current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
+   status's = helper2 name stats state.status's []}     
+
+(** [is_poisoned name t] is true if [name] has status effect Poisoned in state [t] *)
+let is_poisoned name t = 
+  List.mem Poisoned (get_status name t) 
+
+(** [is_paralysed name t] is true if [name] has status effect Paralyzed in state [t] *)
+let is_paralyzed name t = 
+  List.mem Paralyzed (get_status name t)      
+
+(** [cure_para name t] is [t] with Paralyzed remove by random chance. if [name]
+    is a PC then 25% chance and if [name] is an enemy then 10% chance *)
+let cure_para name t = 
+  let num = Random.int 101 in 
+  if name = t.current_boss then 
+    (if num <= 10 then status_remove name Paralyzed t else t)
+  else if num > 25 && num <= 50 then status_remove name Paralyzed t 
+  else t 
+
+(** [status_effects name t] is [t] with the status effects of [name] taken care 
+    of (Poison subtracts 20 Hp and Paralyzed removed by random chance) *)
+let status_effects name t = 
+  if is_poisoned name t && is_paralyzed name t then 
+    (get_health name t)-20 |> set_health name t |> cure_para name 
+  else if is_poisoned name t then set_health name t ((get_health name t)-20) 
+  else if is_paralyzed name t then cure_para name t else t  
 
 (**  [change_turns t] is [t] wiht the current fighter becoming the next fighter of 
      [t] and the next_fighter is the next person in the turnorder after [t.next_fighter]
      If the t has an empty turnorder this method will raise an exception. If the 
      turnoder is of size one it current and next fighter will always be the sanme*)
 let change_turns t = 
-  {health = t.health; magic_points = t.magic_points; turnorder = t.turnorder;
-   party = t.party; current_boss = t.current_boss; next_boss = t.next_boss; 
-   current_fighter = t.next_fighter; 
-   next_fighter = get_next t.next_fighter t.turnorder (List.nth t.turnorder 0); 
-   status's = t.status's}  
+  let n = status_effects t.next_fighter t in 
+  {health = n.health; magic_points = n.magic_points; turnorder = n.turnorder;
+   party = n.party; current_boss = n.current_boss; next_boss = n.next_boss; 
+   current_fighter = n.next_fighter; 
+   next_fighter = get_next n.next_fighter n.turnorder (List.nth n.turnorder 0); 
+   status's = n.status's}  
 
 (** [find_char lst acc] is the character list [acc] with the characters whose 
     names are in [lst] in the order they are in [lst] *)
@@ -215,19 +253,21 @@ let status_add name status state =
    status's = helper2 name stats state.status's []} 
 
 
-(** [status_remove name status state] is [state] with the status effect [status]  
-    removed from [name]'s status effects *)
-let status_remove name status state = 
-  let s = get_status name state in 
-  let stats = if List.mem status s then 
-      (List.filter (fun x -> x <> status) s) else s in 
-  {health = state.health; magic_points = state.magic_points; turnorder = state.turnorder;
-   party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
-   current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
-   status's = helper2 name stats state.status's []}   
-
+(** [pure_status nmae state] is [state] but with [name] has no status effects *)
 let pure_status name state = 
   {health = state.health; magic_points = state.magic_points; turnorder = state.turnorder;
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
-   status's = helper2 name [] state.status's []}  
+   status's = helper2 name [] state.status's []}
+
+(** [is_valid_com name t com] is true if [name] does not have a status effect
+    preventing them to perform [com], false otherwise. *)
+let is_valid_com name t com = 
+  let st = get_status name t in 
+  match com with 
+  | Fight -> if is_paralyzed name t then false else true 
+  | Magic n -> if is_paralyzed name t then false else if 
+      List.mem Silenced st then false else true 
+  | Drink n -> if is_paralyzed name t then false else if 
+      List.mem Silenced st then false else true
+  | _ -> true    
