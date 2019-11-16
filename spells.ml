@@ -212,7 +212,7 @@ let cast_damage_spell glt st sp tar =
     dmg = dmg;
     target = tar;
     desc = string_of_int dmg |> write_spell_desc st sp tar hit;
-    new_st = get_health b st - dmg |> set_health b st
+    new_st = get_health b st - dmg |> set_health glt b st
   }
 
 (** [hp300_hit_roll glt st sp] is whether an HP300Status spell [sp] hits the
@@ -252,11 +252,11 @@ let hp_healed st sp tar =
 
 (** [cast_heal_spell st sp tar] is the cast spell data after a heal spell [sp]
     is cast on a player character [tar] in state [st]. *)
-let cast_heal_spell st sp tar =
+let cast_heal_spell glt st sp tar =
   let old_hp = get_health tar st in
   let new_st = match sp.sp_effect with
     | HPRec -> old_hp + hp_healed st sp tar |>
-               set_health tar st
+               set_health glt tar st
     | FullHP -> cure4_status tar st
     | _ -> failwith "not a heal spell"
   in
@@ -312,13 +312,13 @@ let cast_spell glt st sp c tar =
   let spell_data = match sp.sp_effect with
     | Damage -> cast_damage_spell glt st sp tar
     | StatusAilment | HP300Status -> cast_status_spell glt st sp tar
-    | HPRec | FullHP -> cast_heal_spell st sp tar
+    | HPRec | FullHP -> cast_heal_spell glt st sp tar
     | RestoreStatus -> cast_restore_status_spell st sp tar
     | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell st sp tar
   in
   let st = spell_data.new_st in
   {spell_data with
-   new_st = st |> update_mp c sp |> change_turns}
+   new_st = st |> update_mp c sp |> change_turns glt}
 
 
 (******************************************************************************
@@ -374,6 +374,16 @@ let skill_list = [
 
 let get_skill s =
   List.find (fun x -> x.sk_name = s) skill_list
+
+(** [boss_dmg_status_hit_roll glt st sp tar] is whether a Damage or
+    StatusAilment spell [sp] cast by the current boss from gauntlet [glt] hits
+    the target character in state [st]. *)
+let dmg_status_hit_roll glt st sp b =
+  let base_cth = 148 in
+  let cth = base_cth + sp.sp_acc - (boss_stats glt b).mdef in
+  if Random.int 200 <= cth then true
+  else false
+
 
 let cast_boss_spell glt sp tar st =
   failwith "Unimplemented"
