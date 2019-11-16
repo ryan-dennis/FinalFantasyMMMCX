@@ -97,11 +97,17 @@ let fight glt st c =
    new_st = new_st}
 
 let magic glt st s c tar =
-  fight glt st c
-(**let sp = get_spell s in
-   if is_valid_target sp tar
-   then cast_spell glt sp c tar st
-   else raise InvalidSpellTarget*)
+  let sp = get_spell s in
+  let spell_data = if is_valid_target sp tar
+    then cast_spell glt st sp c tar
+    else raise InvalidSpellTarget in
+  {
+    hits = 1;
+    dmg = spell_data.dmg;
+    target = spell_data.target;
+    desc = spell_data.desc;
+    new_st = spell_data.new_st
+  }
 
 
 (******************************************************************************

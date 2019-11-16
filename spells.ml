@@ -1,3 +1,17 @@
+open State
+open Gauntlet
+
+type t = {
+  dmg : int;
+  target : string;
+  desc : string;
+  new_st : State.t
+}
+
+(******************************************************************************
+   PLAYER CHARACTER MAGIC
+ ******************************************************************************)
+
 type element = Fire | Ice | Lightning | Poison | Status | None
 
 (** Type of the effectivity of a spell *)
@@ -5,40 +19,45 @@ type effectivity =
   | Eff of int
   | EStatus of Status.t
 
-(** Type of a spell effect *)
+(** Type of a spell effect.
+    Damage (Damage): always hits, uses attack magic algorithms
+    Status (StatusAilment): if it hits, inflicts the status ailment of EStatus
+    Support (HPRec, RestoreStatus, DefUp, AtkUp, HitUp, AtkAccUp, FullHP,
+    EvaUp): always hits, positive effects that benefit a player character
+    HP300 (HP300Status): always hits if target is not resistant and current HP
+    is equal to or less than 300 and always misses otherwise, inflicts the
+    status ailment of EStatus if hits
+*)
 type effect =
   | Damage
   | StatusAilment
-  | HitDown
   | HPRec
+  | FullHP
   | RestoreStatus
   | DefUp
-  | AtkUp
-  | HitUp
-  | AtkAccUp
-  | FullHP
-  | EvaUp
+  | StrUp
+  | StrHitUp
+  | AglUp
   | HP300Status
 
-(** Type of a spell *)
 type spell = {
-  name : string;
-  eff : effectivity;
-  acc : int;
-  el : element;
-  effect : effect;
-  mp : int
+  sp_name : string;
+  sp_eff : effectivity;
+  sp_acc : int;
+  sp_el : element;
+  sp_effect : effect;
+  sp_mp : int
 }
 
 (** [spell] is a spell with name [name], effectivity [eff], accuracy [acc]
     element [el], effect [effect], and cost [mp]. *)
 let spell name eff acc el effect mp = {
-  name = name;
-  eff = eff;
-  acc = acc;
-  el = el;
-  effect = effect;
-  mp = mp
+  sp_name = name;
+  sp_eff = eff;
+  sp_acc = acc;
+  sp_el = el;
+  sp_effect = effect;
+  sp_mp = mp
 }
 
 (** List of magic points required for each level of spell *)
@@ -49,16 +68,15 @@ let (mp1, mp2, mp3, mp4, mp5, mp6, mp7, mp8) =
 let spell_list = [
   spell "CURE" (Eff 16) 0 None HPRec mp1;
   spell "FOG" (Eff 8) 0 None DefUp mp1;
-  spell "RUSE" (Eff 80) 0 None EvaUp mp1;
+  spell "RUSE" (Eff 80) 0 None AglUp mp1;
   spell "FIRE" (Eff 10) 24 Fire Damage mp1;
   spell "LIT" (Eff 10) 24 Lightning Damage mp1;
   spell "LAMP" (EStatus Blinded) 0 None RestoreStatus mp2;
   spell "MUTE" (EStatus Silenced) 64 Status StatusAilment mp2;
-  spell "INVS" (Eff 40) 0 None EvaUp mp2;
+  spell "INVS" (Eff 40) 0 None AglUp mp2;
   spell "ICE" (Eff 20) 24 Ice Damage mp2;
   spell "DARK" (EStatus Blinded) 24 Status StatusAilment mp2;
-  spell "TMPR" (Eff 14) 24 None AtkAccUp mp2;
-  spell "SLOW" (Eff 0) 64 Status HitDown mp2;
+  spell "TMPR" (Eff 14) 24 None StrHitUp mp2;
   spell "CUR2" (Eff 33) 0 None HPRec mp3;
   spell "HEAL" (Eff 12) 0 None HPRec mp3;
   spell "FIR2" (Eff 30) 24 Fire Damage mp3;
@@ -66,48 +84,186 @@ let spell_list = [
   spell "LIT2" (Eff 30) 24 Lightning Damage mp3;
   spell "PURE" (EStatus Poisoned) 0 None RestoreStatus mp4;
   spell "AMUT" (EStatus Silenced) 0 None RestoreStatus mp4;
-  spell "FAST" (Eff 0) 0 None HitUp mp4;
   spell "ICE2" (Eff 40) 24 Ice Damage mp4;
   spell "CUR3" (Eff 66) 0 None HPRec mp5;
   spell "HEL2" (Eff 24) 0 None HPRec mp5;
   spell "FIR3" (Eff 50) 24 Fire Damage mp5;
-  spell "SLO2" (Eff 0) 64 None HitDown mp5;
   spell "FOG2" (Eff 12) 0 None DefUp mp6;
-  spell "INV2" (Eff 40) 0 None EvaUp mp6;
+  spell "INV2" (Eff 40) 0 None AglUp mp6;
   spell "LIT3" (Eff 60) 24 Lightning Damage mp6;
   spell "STUN" (EStatus Paralyzed) 0 Status HP300Status mp6;
   spell "CUR4" (Eff 0) 0 None FullHP mp7;
   spell "HEL3" (Eff 48) 48 None HPRec mp7;
   spell "ICE3" (Eff 70) 24 Ice Damage mp7;
   spell "BRAK" (EStatus Poisoned) 64 Poison StatusAilment mp7;
-  spell "SABR" (Eff 60) 64 None AtkAccUp mp7;
+  spell "SABR" (Eff 60) 64 None StrHitUp mp7;
   spell "BLND" (EStatus Blinded) 0 Status HP300Status mp7;
   spell "FADE" (Eff 80) 107 None Damage mp8;
   spell "NUKE" (Eff 100) 107 None Damage mp8
 ]
 
-(** Type for the number of targets *)
+let get_spell s =
+  List.find (fun x -> x.sp_name = s) spell_list
+
+(** [is_support sp] is whether the spell [sp] is a support spell (used on
+    teammates). *)
+let is_support sp =
+  match sp.sp_effect with
+  | HPRec | FullHP | RestoreStatus | DefUp | StrUp | StrHitUp | AglUp
+  | HP300Status -> true
+  | _ -> false
+
+let is_valid_target sp tar =
+  let support = is_support sp in
+  try ignore(Party.find_character tar Party.get_characters);
+    if support then true else false
+  with Party.UnknownCharacter _ ->
+    if support then false else true
+
+(** [el_to_string el] is the element [el] as a string. *)
+let el_to_string el =
+  match el with
+  | Fire -> "Fire"
+  | Ice -> "Ice"
+  | Lightning -> "Lightning"
+  | Poison -> "Poison"
+  | Status -> "Status"
+  | None -> "None"
+
+(** [is_boss_resistant sp b] is whether the boss [b] is resistant to the
+    element of spell [sp]. *)
+let is_boss_resistant glt sp b =
+  List.exists (fun x -> x = el_to_string(sp.sp_el))
+    (Gauntlet.boss_stats glt b).resist
+
+(** [is_boss_weak glt sp b] is whether the boss [b] is weak to the element of
+    spell [sp]. *)
+let is_boss_weak glt sp b =
+  List.exists (fun x -> x = el_to_string(sp.sp_el))
+    (Gauntlet.boss_stats glt b).weak
+
+(** [write_spell_desc st tar hit effect] is the description of the last turn,
+    if the last turn a player character cast a spell. *)
+let write_spell_desc st sp tar hit effect =
+  let cur_fighter = get_current_fighter st in
+  let spell_desc = match sp.sp_effect with
+    | Damage -> ["dealing"; effect; el_to_string sp.sp_el; "damage."]
+    | StatusAilment -> ["inflicting"; effect ^ "."]
+    | HPRec -> ["healing for"; effect; "HP."]
+    | FullHP -> ["restoring their HP fully and curing their"; effect ^ "."]
+    | RestoreStatus -> ["curing their"; effect ^ "."]
+    | DefUp -> ["raising their defense."]
+    | StrUp -> ["raising their strength."]
+    | StrHitUp -> ["raising their strength and hit rate."]
+    | AglUp -> ["raising their agility."]
+    | HP300Status -> ["inflicting"; effect ^ "."]
+  in
+  if hit = false
+  then String.concat " " [cur_fighter; "tried to cast"; sp.sp_name; "on"; tar;
+                          "but missed."]
+  else [cur_fighter; "cast"; sp.sp_name; "on"; tar ^ ","] @ spell_desc |>
+       String.concat " "
+
+(** [dmg_status_hit_roll glt st sp] is whether a Damage or StatusAilment spell
+    [sp] hits the boss [b] from gauntlet [glt] in state [st]. If the spell has
+    the StatusAilment effect, then it hits; if the spell has the Damage effect,
+    then the damage dealt is doubled. *)
+let dmg_status_hit_roll glt st sp b =
+  let weak = is_boss_weak glt sp b in
+  let res = is_boss_resistant glt sp b in
+  let base_cth = if weak && res then 40
+    else if weak then 188
+    else if res then 0
+    else 148 in
+  let cth = base_cth + sp.sp_acc - (boss_stats glt b).mdef in
+  if Random.int 200 <= cth then true
+  else false
+
+(** [damage_spell_dmg glt st sp b hit] is the amount of damage the Damage spell
+    [sp] cast on the boss [b] from gauntlet [glt] in state [st] deals. *)
+let damage_spell_dmg glt st sp b hit =
+  let weak = is_boss_weak glt sp b in
+  let res = is_boss_resistant glt sp b in
+  let eff = match sp.sp_eff with
+    | Eff e -> if res then e / 2 else if weak then e * 3 / 2 else e
+    | EStatus status -> failwith "Damage spell cannot inflict a status" in
+  let res_multiplier = if hit then 2 else 1 in
+  Random.int eff * 2 * res_multiplier
+
+(** [cast_damage_spell glt sp c tar st] is the cast spell data after Damage
+    spell [sp] is cast on boss [tar] from gauntlet [glt] in state [st]. *)
+let cast_damage_spell glt st sp tar =
+  let b = get_current_boss st in
+  let hit = dmg_status_hit_roll glt st sp b in
+  let dmg = damage_spell_dmg glt st sp b hit in
+  {
+    dmg = dmg;
+    target = tar;
+    desc = string_of_int dmg |> write_spell_desc st sp tar hit;
+    new_st = get_health b st - dmg |> set_health b st
+  }
+
+(** *)
+let cast_status_spell glt st sp tar =
+  failwith "Unimplemented"
+
+(** [hp300_hit_roll glt st sp] is whether an HP300Status spell [sp] hits the
+    boss from gauntlet [glt] in state [st]. *)
+let hp300_hit_roll glt st sp =
+  let b = get_current_boss st in
+  if (is_boss_resistant glt sp b = false) && (get_health b st <= 300)
+  then true
+  else false
+
+(** [update_mp c sp st] is the new state with the character [c]'s MP updated
+    from state [st] after casting spell [sp]. *)
+let update_mp c sp st =
+  let c_name = Party.get_name c in
+  set_magic_points c_name (get_magic_points c_name st - sp.sp_mp) st
+
+let cast_spell glt st sp c tar =
+  let spell_data = match sp.sp_effect with
+    | Damage -> cast_damage_spell glt st sp tar
+    | StatusAilment
+    | HPRec
+    | FullHP
+    | RestoreStatus
+    | DefUp
+    | StrUp
+    | StrHitUp
+    | AglUp
+    | HP300Status -> failwith "Unimplemented"
+  in
+  let st = spell_data.new_st in
+  {spell_data with
+   new_st = st |> update_mp c sp |> change_turns}
+
+
+(******************************************************************************
+   BOSS MAGIC
+ ******************************************************************************)
+
+(** Type for the number of targets of a skill. *)
 type target = All | Single
 
-(** Type of a skill *)
 type skill = {
-  name : string;
-  eff : effectivity;
-  acc : int;
-  el : element;
-  effect : effect;
-  target : target
+  sk_name : string;
+  sk_eff : effectivity;
+  sk_acc : int;
+  sk_el : element;
+  sk_effect : effect;
+  sk_target : target
 }
 
 (** [skill] is a skill with name [name], effectivity [eff], accuracy [acc]
     element [el], effect [effect], and target [target]. *)
 let skill name eff acc el effect target = {
-  name = name;
-  eff = eff;
-  acc = acc;
-  el = el;
-  effect = effect;
-  target = target
+  sk_name = name;
+  sk_eff = eff;
+  sk_acc = acc;
+  sk_el = el;
+  sk_effect = effect;
+  sk_target = target
 }
 
 (** [skill_list] is the list of all available skills. *)
@@ -134,3 +290,11 @@ let skill_list = [
   skill "TORNADO" (Eff 64) 32 None Damage All
 ]
 
+let get_skill s =
+  List.find (fun x -> x.sk_name = s) skill_list
+
+let cast_boss_spell glt sp tar st =
+  failwith "Unimplemented"
+
+let cast_boss_skill glt sp st =
+  failwith "Unimplemented"

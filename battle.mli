@@ -17,7 +17,7 @@ val fight : Gauntlet.t -> State.t -> Party.t -> t
 
 (** [magic glt st s c tar] is the new state after the spell with name [s] is
     cast by the character [c] on target [tar]. *)
-val magic : Gauntlet.t -> State.t -> string -> string -> string -> t
+val magic : Gauntlet.t -> State.t -> string -> Party.t -> string -> t
 
 (** [boss_turn glt st] is the new state after the boss during [st] from
     gauntlet [glt] takes its turn and the accompanying descriptor. *)
