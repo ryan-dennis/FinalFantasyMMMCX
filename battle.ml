@@ -97,10 +97,11 @@ let fight glt st c =
    new_st = new_st}
 
 let magic glt st s c tar =
-  let sp = get_spell s in
-  if is_valid_target sp tar
-  then cast_spell glt sp c tar st
-  else raise InvalidSpellTarget
+  fight glt st c
+(**let sp = get_spell s in
+   if is_valid_target sp tar
+   then cast_spell glt sp c tar st
+   else raise InvalidSpellTarget*)
 
 
 (******************************************************************************

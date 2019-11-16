@@ -23,16 +23,15 @@ val magic : Gauntlet.t -> State.t -> string -> string -> string -> t
     gauntlet [glt] takes its turn and the accompanying descriptor. *)
 val boss_turn : Gauntlet.t -> State.t -> t
 
-(**
-   (** [num_hits b] is the number of hits during the battle turn [b]. *)
-   val num_hits : t -> int
 
-   (** [dmg b] is the damage dealt during the battle turn [b]. *)
-   val dmg : t -> int
+(** [num_hits b] is the number of hits during the battle turn [b]. *)
+val num_hits : t -> int
 
-   (** [target b] is the target of the attack during the battle turn [b]. *)
-   val target : t -> string
-*)
+(** [dmg b] is the damage dealt during the battle turn [b]. *)
+val dmg : t -> int
+
+(** [target b] is the target of the attack during the battle turn [b]. *)
+val target : t -> string
 
 (** [desc b] is the description of the last battle turn [b]. *)
 val desc : t -> string
