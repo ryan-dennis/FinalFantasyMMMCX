@@ -98,7 +98,7 @@ let fight glt st c =
 
 let magic glt st s c tar =
   let sp = get_spell s in
-  let spell_data = if is_valid_target sp tar
+  let spell_data = if is_valid_target st sp tar
     then cast_spell glt st sp c tar
     else raise InvalidSpellTarget in
   {
