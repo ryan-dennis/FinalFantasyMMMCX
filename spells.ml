@@ -201,7 +201,7 @@ let damage_spell_dmg glt st sp b hit =
     | Eff e -> if res then e / 2 else if weak then e * 3 / 2 else e
     | EStatus status -> failwith "Damage spell cannot inflict a status" in
   let res_multiplier = if hit then 2 else 1 in
-  Random.int eff * 2 * res_multiplier
+  ((Random.int eff) + eff) * res_multiplier
 
 (** [cast_damage_spell glt sp c tar st] is the cast spell data after Damage
     spell [sp] is cast on boss [tar] from gauntlet [glt] in state [st]. *)
@@ -233,25 +233,46 @@ let cast_status_spell glt st sp tar =
     new_st = if hit then status_add tar status st else st
   }
 
-(** [cast_heal_spell st sp tar] is the cast spell data after a heal spell [sp]
-    is cast on a player character [tar] in state [st]. *)
-let cast_heal_spell st sp tar =
+(** [hp_healed] is the amount of HP healed by a HPRec spell [sp]. *)
+let hp_healed st sp tar =
   let eff = match sp.sp_eff with
     | Eff e -> e
     | EStatus _ -> failwith "not a heal spell" in
-  let new_st = match sp.sp_effect with
-    | DefUp -> get_fight_def tar st + eff |> set_agil tar st
-    | StrUp -> get_strength tar st + eff |> set_strength tar st
-    | StrHitUp -> get_hit_per tar st + sp.sp_acc |> set_hit_percent tar
-                    (get_strength tar st + eff |> set_strength tar st)
-    | AglUp
-    | _ -> failwith "Unimplemented" in
-  failwith "Unimplemented"
+  (Random.int eff) + eff
+
+(** [cast_heal_spell st sp tar] is the cast spell data after a heal spell [sp]
+    is cast on a player character [tar] in state [st]. *)
+let cast_heal_spell st sp tar =
+
+  {
+    dmg = 0;
+    target = tar;
+    desc = write_spell_desc st sp tar true "";
+    new_st = match sp.sp_effect with
+      | HPRec
+      | FullHP
+      | RestoreStatus
+      | _ -> failwith "not a heal spell"
+  }
 
 (** [cast_support_spell st sp tar] is the cast spell data after a support
     spell [sp] is cast on a player character [tar] in state [st]. *)
 let cast_support_spell st sp tar =
-  failwith "Unimplemented"
+  let eff = match sp.sp_eff with
+    | Eff e -> e
+    | EStatus _ -> failwith "not a support spell" in
+  {
+    dmg = 0;
+    target = tar;
+    desc = write_spell_desc st sp tar true "";
+    new_st = match sp.sp_effect with
+      | DefUp -> get_fight_def tar st + eff |> set_fight_def tar st
+      | StrUp -> get_strength tar st + eff |> set_strength tar st
+      | StrHitUp -> get_hit_per tar st + sp.sp_acc |> set_hit_percent tar
+                      (get_strength tar st + eff |> set_strength tar st)
+      | AglUp -> get_agil tar st + eff |> set_agil tar st
+      | _ -> failwith "not a support spell"
+  }
 
 (** [hp300_hit_roll glt st sp] is whether an HP300Status spell [sp] hits the
     boss from gauntlet [glt] in state [st]. *)
@@ -274,10 +295,7 @@ let cast_spell glt st sp c tar =
     | HPRec
     | FullHP
     | RestoreStatus
-    | DefUp
-    | StrUp
-    | StrHitUp
-    | AglUp
+    | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell st sp tar
     | HP300Status -> failwith "Unimplemented"
   in
   let st = spell_data.new_st in
