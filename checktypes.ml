@@ -46,7 +46,7 @@ module type StateSig = sig
   val get_current_boss : t -> Gauntlet.boss_id 
   val get_turnorder : t -> string list
   val get_next_boss: t -> Gauntlet.boss_id
-  val set_health: string-> int-> t -> t
+  val set_health: string-> t -> int -> t
   val set_magic_points: string-> int -> t->t
   val check_alive: t -> bool
   val get_party: t -> string list

@@ -10,6 +10,7 @@ open Command
 
 type t
 
+
 (** [init_state] returns the initial state of the game *)
 val init_state : Gauntlet.t -> Party.t list -> t  
 
