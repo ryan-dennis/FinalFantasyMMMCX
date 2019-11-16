@@ -52,7 +52,22 @@ let fighter = {
   stats = {str = 69; agl = 43; int = 23; vit = 993; mp = 0; hit_percent = 187; m_def = 162; fight_def = 60};
   weapon = "Sun Sword";
   spells = [];
-  sprite = [];
+  sprite = [
+    "                       ████     "; 
+    "                  ████     ███  ";
+    "                ███        ███  ";
+    "            ████          ██    ";
+    "   ██████████           ██      ";
+    " ██                      ██     ";
+    "    ██████                 ██   "; 
+    "       ██████████           ██  ";
+    "     ████   ███████           █ ";
+    "    █████   █████   ██         █";
+    "    █████████████   ███████████ ";
+    "    ███████████████████████████ ";
+    "██    ██████████████████    ████";
+    "████             ███████      █ ";
+  ]
 }
 
 (** Charcter Thief *)
@@ -118,3 +133,6 @@ let rec add lst acc  =
   match lst with 
   | [] -> List.rev acc
   | x::t -> add t ((find_character x get_characters)::acc)
+
+let char_og_health char = 
+  char.stats.vit   

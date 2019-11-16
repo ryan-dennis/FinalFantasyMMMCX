@@ -114,3 +114,5 @@ val pure_status: string -> t -> t
    [name] to perform. *)
 val is_valid_com: string->t -> Command.command -> bool
 
+val cure4_status: string -> t -> t
+

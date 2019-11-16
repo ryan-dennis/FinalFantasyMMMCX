@@ -94,6 +94,7 @@ let generate_turnorder party name =
   let lst = name::party in 
   shuffle lst 
 
+(** [status_helper acc lst] creates the intial status  *)
 let rec status_helper acc (lst: string list) = 
   match lst with  
   | [] -> acc
@@ -364,6 +365,15 @@ let status_add name status state =
 (** [pure_status nmae state] is [state] but with [name] has no status effects *)
 let pure_status name state = 
   {health = state.health; magic_points = state.magic_points; turnorder = state.turnorder;
+   party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
+   current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
+   status's = helper2 name [] state.status's []; strength = state.strength; 
+   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense}
+
+let cure4_status name state = 
+  let h = (find_character name get_characters) in 
+  let hp = char_og_health h in 
+  {health = List.rev (helper2 name hp state.health []); magic_points = state.magic_points; turnorder = state.turnorder;
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
    status's = helper2 name [] state.status's []; strength = state.strength; 
