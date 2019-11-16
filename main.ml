@@ -5,6 +5,11 @@ open State
 open Battle
 open Potions
 open Status
+open Spells
+
+let minisleep (sec: float) s =
+  print_endline s;
+  ignore (Unix.select [] [] [] sec)
 
 let rec string_of_list acc = function
   | [] -> acc
@@ -52,14 +57,24 @@ let attack_response (b:Battle.t) (curr:string) : string =
   let damage = string_of_int (dmg b) in
   let hits = string_of_int (num_hits b) in 
   let targ = target b in 
-  curr ^ " attacked " ^ targ ^ " " ^ hits ^ " times for " ^ damage ^ " damage.\n\n"
+  curr ^ " attacked " ^ targ ^ " " ^ hits ^ " times for " ^ damage ^ " damage.\n"
 
-let drink_comm s curr pot = 
+let drink_comm g s curr pot = 
   match pot with
   | Heal -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " healed.\n\n")); 
-    heal_eff s
+    heal_eff g s
   | Pure -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " purified their status effects.\n\n"));
-    pure_eff s
+    pure_eff g s
+
+let magic_help g s spell ch = 
+  ANSITerminal.(print_string [white] "\nEnter the target for the spell: ");
+  let sp_t = get_spell spell in
+  let tar = read_line () in
+  let curr = get_current_fighter s in
+  if is_valid_target s sp_t tar then 
+    (ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " cast a spell!\n"));
+     minisleep 1.5 ""; magic g s spell ch tar |> new_st)
+  else ((print_endline ""; reject "target"; print_endline ""; s))
 
 (** *)
 let rec repl g s = 
@@ -90,16 +105,26 @@ let rec repl g s =
         let curr_char = find_character curr get_characters in
         let _ = print_string ("Enter a command for " ^ curr ^ ": ") in
         match parse (read_line ()) with
-        | Fight -> let b = fight g s curr_char in
-          let s' = new_st b in 
-          ANSITerminal.(print_string [green] ("\n" ^ attack_response b curr)); 
-          repl g s'
-        | Magic spell -> let s' = fight g s curr_char |> new_st in 
-          ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " cast a spell!\n\n")); 
-          repl g s'
-        | Drink pot -> (try drink pot |> drink_comm s curr |> repl g 
-                        with Invalid_potion -> (print_endline ""; reject "potion"; 
-                                                print_endline ""; repl g s))
+        | Fight -> if is_valid_com curr s Fight then 
+            (let b = fight g s curr_char in
+             let s' = new_st b in 
+             ANSITerminal.(print_string [green] ("\n" ^ attack_response b curr));
+             minisleep 1.5 "";
+             repl g s' )
+          else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ "'s status prevents him from fighting\n\n")); 
+                repl g s)
+        | Magic spell -> if is_valid_com curr s (Magic spell) then 
+            (try magic_help g s spell curr_char |> repl g 
+             with Not_found -> (reject "spell"; 
+                                print_endline ""; repl g s))
+          else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ "'s status prevents him from casting spells\n\n")); 
+                repl g s)
+        | Drink pot -> (*if is_valid_com curr s (Drink pot) then *)
+          (try drink pot |> drink_comm g s curr |> repl g 
+           with Invalid_potion -> (print_endline ""; reject "potion"; 
+                                   print_endline ""; repl g s))
+        (*else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ "'s status prevents him from drinking potions\n\n")); 
+              repl g s)   *)                    
         | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
           ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s spells: " ^ spell_str ^ "\n\n")); repl g s
         | Quit -> ANSITerminal.(print_string [red] "\nQuiting game...\n\n"); 
@@ -115,6 +140,7 @@ let rec repl g s =
         let b = boss_turn g s in 
         let s' = new_st b in 
         ANSITerminal.(print_string [yellow] (attack_response b boss));
+        minisleep 1.5 "";
         repl g s')
 
 let rec game_start f = 

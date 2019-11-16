@@ -8,14 +8,14 @@ type potion =
 (** *)
 exception Invalid_potion
 
-let heal_eff (st : State.t) =
+let heal_eff g (st : State.t) =
   let c = get_current_fighter st in
   let amt = 32 - Random.int 15 in
-  set_health c st (get_health c st + amt) |> change_turns
+  set_health g c st (get_health c st + amt) |> change_turns g
 
-let pure_eff (st : State.t) =
+let pure_eff g (st : State.t) =
   let c = get_current_fighter st in
-  pure_status c st |> change_turns
+  pure_status c st |> change_turns g
 
 (** *)
 let drink p = 
