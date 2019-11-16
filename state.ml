@@ -14,7 +14,11 @@ type t = {
   current_boss: string;
   next_boss : string; 
   current_fighter: string;
-  next_fighter: string
+  next_fighter: string; 
+  strength : (string*int) list;
+  agility: (string*int) list;
+  hit_percent: (string*int) list;
+  fight_defense : (string*int) list;
 }
 
 (** [get_party_health gtl party acc] is [acc] with the (name,vit) of every
@@ -23,6 +27,34 @@ let rec get_party_health party acc =
   match party with 
   | [] -> acc 
   | x::t -> get_party_health t ((get_name x,(get_stats x).vit)::acc) 
+
+(** [get_party_str gtl party acc] is [acc] with the (name,str) of every
+    character in [party]  *)
+let rec get_party_str party acc = 
+  match party with 
+  | [] -> acc 
+  | x::t -> get_party_health t ((get_name x,(get_stats x).str)::acc) 
+
+(** [get_party_agility gtl party acc] is [acc] with the (name,agl) of every
+    character in [party]  *)
+let rec get_party_agility party acc = 
+  match party with 
+  | [] -> acc 
+  | x::t -> get_party_health t ((get_name x,(get_stats x).agl)::acc) 
+
+(** [get_party_hit_per gtl party acc] is [acc] with the (name,hit_percent) of every
+    character in [party]  *)
+let rec get_party_hit_per party acc = 
+  match party with 
+  | [] -> acc 
+  | x::t -> get_party_health t ((get_name x,(get_stats x).hit_percent)::acc) 
+
+(** [get_party_def gtl party acc] is [acc] with the (name,fight_def) of every
+    character in [party]  *)
+let rec get_party_def party acc = 
+  match party with 
+  | [] -> acc 
+  | x::t -> get_party_health t ((get_name x,(get_stats x).fight_def)::acc) 
 
 (** [get_party_health gtl party acc] is [acc] with the (name,mp) of every
     character in [party]  *)
@@ -33,6 +65,18 @@ let rec get_party_mp party acc =
 
 (** [get_bs gtl boss] is the health of [boss] in [gtl] *)
 let get_bs gtl boss = (boss_stats gtl boss).hp 
+
+(** [get_bagl gtl boss] is the agility of [boss] in [gtl] *)
+let get_bagl gtl boss = (boss_stats gtl boss).agl 
+
+(** [get_bdef gtl boss] is the defense of [boss] in [gtl] *)
+let get_bdef gtl boss = (boss_stats gtl boss).def 
+
+(** [get_bstr gtl boss] is the strength of [boss] in [gtl] *)
+let get_bstr gtl boss = (boss_stats gtl boss).str 
+
+(** [get_bhits_per gtl boss] is the hit_percent of [boss] in [gtl] *)
+let get_bhits_per gtl boss = (boss_stats gtl boss).hits_per 
 
 (** [party_helper lst acc] is [acc] with the name of every character in 
     [lst] *)
@@ -67,7 +111,11 @@ let init_state gtl party =
    magic_points = get_party_mp party [] ; party = party_helper party [] ;
    turnorder = t_order; current_boss =boss; next_boss = next gtl boss; 
    current_fighter = List.nth t_order 0; next_fighter = List.nth t_order 1;
-   status's = status_helper [] (boss::(party_helper party []))}
+   status's = status_helper [] (boss::(party_helper party []));
+   strength = (boss, get_bstr gtl boss)::(get_party_str party []);
+   agility = (boss, get_bagl gtl boss)::(get_party_agility party []);
+   hit_percent = (boss, get_bhits_per gtl boss)::(get_party_hit_per party []);
+   fight_defense = (boss, get_bdef gtl boss)::(get_party_def party [])}
 
 (** [helper name lst] is the health of [name] of the character in 
     [lst] or raises UnknownCharacter if not in [lst] *)
@@ -86,16 +134,52 @@ let rec helper2 name num lst acc =
 
 (** [set_health name num t] is [t] with the health of [name] set to [num] *)
 let set_health name t num = 
-  {health = List.rev (helper2 name num t.health []);magic_points = t.magic_points;
+  {health = List.rev (helper2 name (if num< 0 then 0 else num) t.health []);magic_points = t.magic_points;
    turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
-   current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's}
+   current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
+   strength = t.strength; agility = t.agility;
+   hit_percent = t.hit_percent; fight_defense = t.fight_defense}
 
 (** [set_magic_points name num t] is [t] with the mp of [name] set to [num] *)
 let set_magic_points name num t = 
-  {health = t.health;magic_points = List.rev (helper2 name num t.magic_points []);
+  {health = t.health;magic_points = List.rev (helper2 name (if num< 0 then 0 else num) t.magic_points []);
    turnorder= t.turnorder; party=t.party;current_boss=t.current_boss;next_boss=t.next_boss;
-   current_fighter = t.current_fighter; next_fighter= t.next_fighter; status's = t.status's}
+   current_fighter = t.current_fighter; next_fighter= t.next_fighter; status's = t.status's;
+   strength = t.strength; agility = t.agility; 
+   hit_percent = t.hit_percent; fight_defense = t.fight_defense}
 
+(** [set_strength name num t] is [t] with the strength of [name] set to [num] *)
+let set_strength name t num = 
+  {health = t.health;magic_points = t.magic_points;
+   turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
+   current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
+   strength =  List.rev (helper2 name (if num< 0 then 0 else num) t.strength []); agility = t.agility;
+   hit_percent = t.hit_percent; fight_defense = t.fight_defense}
+
+(** [set_agil name num t] is [t] with the agil of [name] set to [num] *)
+let set_agil name t num = 
+  {health = t.health; magic_points = t.magic_points;
+   turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
+   current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
+   strength = t.strength; agility =  List.rev (helper2 name (if num< 0 then 0 else num) t.agility []);
+   hit_percent = t.hit_percent; fight_defense = t.fight_defense}
+
+(** [set_hip_percent name num t] is [t] with the hit_percent of [name] set to [num] *)
+let set_hit_percent name t num = 
+  {health = t.health;magic_points = t.magic_points;
+   turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
+   current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
+   strength = t.strength; agility = t.agility;
+   hit_percent = List.rev (helper2 name (if num< 0 then 0 else num) t.hit_percent []); fight_defense = t.fight_defense}
+
+(** [set_fight_def name num t] is [t] with the fight_defense of [name] set to [num] *)
+let set_fight_def name t num = 
+  {health = t.health ;magic_points = t.magic_points;
+   turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
+   current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
+   strength = t.strength; agility = t.agility;
+   hit_percent = t.hit_percent; 
+   fight_defense =  List.rev (helper2 name (if num< 0 then 0 else num) t.fight_defense [])}         
 
 (** [get_next name lst head] is [head] if [name] is the last element in [lst] else 
     it is the element following [name] in [lst]  *)
@@ -126,7 +210,9 @@ let remove_from_t name state =
   {health = state.health; magic_points = state.magic_points; 
    turnorder = t; party = state.party; current_boss = state.current_boss; 
    next_boss= state.next_boss; current_fighter = state.current_fighter;
-   next_fighter= (check state.current_fighter state.next_fighter t); status's = state.status's}      
+   next_fighter= (check state.current_fighter state.next_fighter t); status's = state.status's;
+   strength = state.strength; agility = state.agility; 
+   hit_percent = state.hit_percent; fight_defense = state.fight_defense}      
 
 (** [get_health name t] is the health of chracter with name [name] in 
     state [t]  *)
@@ -135,6 +221,22 @@ let get_health name t = helper name t.health
 (** [get_magic_points name t] is the magic point of [name] in 
     state [t] *)
 let get_magic_points name t = helper name t.magic_points
+
+(** [get_strength name t] is the strength of chracter with name [name] in 
+    state [t]  *)
+let get_strength name t = helper name t.strength
+
+(** [get_agil name t] is the agility of chracter with name [name] in 
+    state [t]  *)
+let get_agil name t = helper name t.agility
+
+(** [get_hit_per name t] is the hit_percent of chracter with name [name] in 
+    state [t]  *)
+let get_hit_per name t = helper name t.hit_percent
+
+(** [get_fight_def name t] is the fight defense of chracter with name [name] in 
+    state [t]  *)
+let get_fight_def name t = helper name t.fight_defense 
 
 (** [get_current_boss t] is the current boss played against in state [t] *)
 let get_current_boss t = t.current_boss
@@ -185,7 +287,8 @@ let status_remove name status state =
   {health = state.health; magic_points = state.magic_points; turnorder = state.turnorder;
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
-   status's = helper2 name stats state.status's []}     
+   status's = helper2 name stats state.status's [];strength = state.strength; 
+   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense}     
 
 (** [is_poisoned name t] is true if [name] has status effect Poisoned in state [t] *)
 let is_poisoned name t = 
@@ -222,7 +325,8 @@ let change_turns t =
    party = n.party; current_boss = n.current_boss; next_boss = n.next_boss; 
    current_fighter = n.next_fighter; 
    next_fighter = get_next n.next_fighter n.turnorder (List.nth n.turnorder 0); 
-   status's = n.status's}  
+   status's = n.status's;strength = n.strength;  agility = n.agility; 
+   hit_percent = n.hit_percent; fight_defense = n.fight_defense}  
 
 (** [find_char lst acc] is the character list [acc] with the characters whose 
     names are in [lst] in the order they are in [lst] *)
@@ -241,7 +345,11 @@ let reset_state gtl t =
    magic_points = get_party_mp party [] ; party = t.party ;
    turnorder = t_order; current_boss = boss; next_boss = next gtl boss; 
    current_fighter = List.nth t_order 0; next_fighter = List.nth t_order 1;
-   status's = status_helper [] (boss:: (party_helper party []))}  
+   status's = status_helper [] (boss:: (party_helper party []));
+   strength = (boss, get_bstr gtl boss)::(get_party_str party []);
+   agility = (boss, get_bagl gtl boss)::(get_party_agility party []);
+   hit_percent = (boss, get_bhits_per gtl boss)::(get_party_hit_per party []);
+   fight_defense = (boss, get_bdef gtl boss)::(get_party_def party [])}  
 
 (** [status_add name status state] is [state] with the status effect [status]
     added to [name]'s status effects *)
@@ -250,14 +358,16 @@ let status_add name status state =
   {health = state.health; magic_points = state.magic_points; turnorder = state.turnorder;
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
-   status's = helper2 name stats state.status's []} 
+   status's = helper2 name stats state.status's []; strength = state.strength; 
+   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense} 
 
 (** [pure_status nmae state] is [state] but with [name] has no status effects *)
 let pure_status name state = 
   {health = state.health; magic_points = state.magic_points; turnorder = state.turnorder;
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
-   status's = helper2 name [] state.status's []}
+   status's = helper2 name [] state.status's []; strength = state.strength; 
+   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense}
 
 (** [is_valid_com name t com] is true if [name] does not have a status effect
     preventing them to perform [com], false otherwise. *)

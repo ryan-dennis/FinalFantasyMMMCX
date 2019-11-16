@@ -17,6 +17,18 @@ val init_state : Gauntlet.t -> Party.t list -> t
 (** [get_health s t] is the health of [s] in [t] *)
 val get_health : string -> t -> int  
 
+(** [get_strength s t] is the strength of [s] in [t] *)
+val get_strength : string -> t -> int  
+
+(** [get_agil s t] is the agility of [s] in [t] *)
+val get_agil : string -> t -> int  
+
+(** [get_hit_per s t] is the hit percent of [s] in [t] *)
+val get_hit_per : string -> t -> int  
+
+(** [get_fight_def s t] is the fight defense of [s] in [t] *)
+val get_fight_def : string -> t -> int  
+
 (** [get_magic_points s t] is the mp of [s] in [t] *)
 val get_magic_points : string -> t -> int 
 
@@ -45,6 +57,22 @@ val set_health: string-> t-> int -> t
 (** [set_magic_points name num t] returns [t] with new mp for [name] with
     value [num] *)
 val set_magic_points: string-> int -> t->t
+
+(** [set_strength name num t] returns [t] with new strength for [name] with
+    value [num] *)
+val set_strength: string-> t-> int -> t
+
+(** [set_agil name num t] returns [t] with new agility for [name] with
+    value [num] *)
+val set_agil: string-> t-> int -> t
+
+(** [set_hip_percent name num t] returns [t] with new hit_percent for [name] with
+    value [num] *)
+val set_hit_percent: string-> t-> int -> t
+
+(** [set_fight_def name num t] returns [t] with new fight_def for [name] with
+    value [num] *)
+val set_fight_def: string-> t-> int -> t
 
 (** [remove_from_t name t ] is [t] with [name] removed from turnorder *)
 val remove_from_t: string -> t -> t 
