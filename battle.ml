@@ -1,11 +1,31 @@
+(** Notes:
+    - Implement Blinded (attacker's base chance to hit drops by 40%, and boss's
+      cth against that specific character increases by 40%)
+*)
+
 open State
+open Spells
 
 type t = {
   hits : int;
   dmg : int;
   target : string;
+  desc : string;
   new_st : State.t
 }
+
+(******************************************************************************
+   PLAYER CHARACTER TURN
+ ******************************************************************************)
+
+exception InvalidSpellTarget
+
+(** [write_fight_desc st target hits dmg] is the description of the last turn,
+    if the last turn was a fight attack. *)
+let write_fight_desc st target hits dmg =
+  String.concat " " [get_current_fighter st; "attacked"; target;
+                     string_of_int hits; "times for"; string_of_int dmg;
+                     "damage."]
 
 (** [char_atk st] is the attack rating of the current fighter in [st]. *)
 let char_atk st =
@@ -69,13 +89,60 @@ let fight glt st c =
   let boss = cur_boss_stats glt st in
   let n = num_of_hits c_name char.hit_percent in
   let dmg = total_hit_dmg st char boss n (char_atk st) 0 in
-  let new_st = set_health b (get_health b st - dmg) st |> change_turns in
-  {hits = n; dmg = dmg; target = b; new_st = new_st}
+  let new_st = get_health b st - dmg |> set_health b st |> change_turns in
+  {hits = n;
+   dmg = dmg;
+   target = b;
+   desc = write_fight_desc new_st b n dmg;
+   new_st = new_st}
+
+let magic glt st s c tar =
+  let sp = get_spell s in
+  if is_valid_target sp tar
+  then cast_spell glt sp c tar st
+  else raise InvalidSpellTarget
 
 
-let magic st s c =
-  failwith "Unimplemented"
+(******************************************************************************
+   BOSS AI
+ ******************************************************************************)
 
+type boss_attack =
+  | Spell of spell
+  | Skill of skill
+  | Fight
+
+(** [boss_spell_num] is what spell in the list the boss will cast. *)
+let boss_spell_num = ref 0
+
+(** [boss_skill_num] is what skill in the list the boss will cast. *)
+let boss_skill_num = ref 0
+
+(** [boss_spell glt b] is the next spell for boss [b] in [glt]. *)
+let boss_spell glt b =
+  let spells = Gauntlet.boss_spells glt b in
+  let sp = !boss_spell_num mod (List.length spells) |>
+           List.nth spells |>
+           get_spell in
+  boss_spell_num := !boss_spell_num + 1; Spell sp
+
+(** [boss_skill glt b] is the next skill for boss [b] in [glt]. *)
+let boss_skill glt b =
+  let skills = Gauntlet.boss_skills glt b in
+  let sk = !boss_skill_num mod (List.length skills) |>
+           List.nth skills |>
+           get_skill in
+  boss_skill_num := !boss_skill_num + 1; Skill sk
+
+(** [boss_action glt st] is the boss_attack that the boss chooses on its next
+    turn. *)
+let boss_action glt st =
+  let b = get_current_boss st in
+  if (Random.int 128) + 1 <= Gauntlet.boss_spell_chance glt b
+  then boss_spell glt b
+  else if (Random.int 128) + 1 <= Gauntlet.boss_skill_chance glt b
+  then boss_skill glt b
+  else Fight
 
 (** [boss_hit_roll hit agl] is whether the boss with a hit % of [hit] hits
     a character with an agility of [agl]. *)
@@ -128,9 +195,13 @@ let boss_turn glt st =
   let dmg = total_boss_hit_dmg st boss char n boss.str 0 in
   let dmged_hp = get_health c st - dmg in
   let new_hp = if dmged_hp > 0 then dmged_hp else 0 in
-  let new_dmged_st = set_health c new_hp st in
+  let new_dmged_st = set_health c st new_hp in
   let new_st = rm_dead new_hp new_dmged_st c |> change_turns in
-  {hits = n; dmg = dmg; target = c; new_st = new_st}
+  {hits = n;
+   dmg = dmg;
+   target = c;
+   desc = write_fight_desc new_st c n dmg;
+   new_st = new_st}
 
 let num_hits b =
   b.hits
@@ -140,6 +211,9 @@ let dmg b =
 
 let target b =
   b.target
+
+let desc b =
+  b.desc
 
 let new_st b =
   b.new_st

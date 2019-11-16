@@ -8,31 +8,34 @@
 (** The abstract type of values representing battle information of one turn. *)
 type t
 
-(** [fight st c] is the new state after the character [c] uses its fight
-    attack on the enemy and the accompanying descriptor. Returns a triple,
-    where the first entry is the number of hits, the second is the damage
-    dealt, and the third is the new state. *)
+(** Exception raised when an invalid target for a spell is chosen *)
+exception InvalidSpellTarget
+
+(** [fight glt st c] is the new state after the character [c] uses its fight
+    attack on the enemy and the accompanying descriptor. *)
 val fight : Gauntlet.t -> State.t -> Party.t -> t
 
-(** [magic st s c] is the new state after the spell [s] is cast on the target
-    with name [c]. Returns a triple where the first entry is the number of
-    hits, the second is the damage dealt, and the third is the new state. *)
-val magic : State.t -> string -> string -> t
+(** [magic glt st s c tar] is the new state after the spell with name [s] is
+    cast by the character [c] on target [tar]. *)
+val magic : Gauntlet.t -> State.t -> string -> string -> string -> t
 
 (** [boss_turn glt st] is the new state after the boss during [st] from
-    gauntlet [glt] takes its turn and the accompanying descriptor. Returns a
-    triple where the first entry is the number of hits, the second is the
-    damage dealt, and the third is the new state. *)
+    gauntlet [glt] takes its turn and the accompanying descriptor. *)
 val boss_turn : Gauntlet.t -> State.t -> t
 
-(** [num_hits b] is the number of hits during the battle turn [b]. *)
-val num_hits : t -> int
+(**
+   (** [num_hits b] is the number of hits during the battle turn [b]. *)
+   val num_hits : t -> int
 
-(** [dmg b] is the damage dealt during the battle turn [b]. *)
-val dmg : t -> int
+   (** [dmg b] is the damage dealt during the battle turn [b]. *)
+   val dmg : t -> int
 
-(** [target b] is the target of the attack during the battle turn [b]. *)
-val target : t -> string
+   (** [target b] is the target of the attack during the battle turn [b]. *)
+   val target : t -> string
+*)
+
+(** [desc b] is the description of the last battle turn [b]. *)
+val desc : t -> string
 
 (** [new_st b] is the new state after battle turn [b] has finished. *)
 val new_st : t -> State.t
