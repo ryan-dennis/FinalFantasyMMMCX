@@ -2,6 +2,8 @@
     Boss box: 37 across, 20 vertically
     Character box: 19 across, 20 vertically *)
 
+open Party
+open State
 (** Dimensions of the frame. *)
 let arena = 56
 let b1_top = 37
@@ -52,6 +54,9 @@ let frame_side_word word =
                     word; String.make (b2_bot - (String.length word) - 2) ' ';
                     "║"; String.make b3_bot ' ';
                     "║"]
+(** get the sprite of a character *)
+let spr name = 
+  find_character name get_characters |> get_sprite                    
 
 (** [frame] is the GUI frame as a string list. *)
 let frame =
