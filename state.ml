@@ -205,7 +205,7 @@ let cure_para name t =
   else t 
 
 (** [status_effects name t] is [t] with the status effects of [name] taken care 
-    of (Poison subtracts 20 Hp and Paralyzed removed by random chance) *)
+    of (Poison subtracts 20 Hp and Paralyzed removed by random) *)
 let status_effects name t = 
   if is_poisoned name t && is_paralyzed name t then 
     (get_health name t)-20 |> set_health name t |> cure_para name 
@@ -251,7 +251,6 @@ let status_add name status state =
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
    status's = helper2 name stats state.status's []} 
-
 
 (** [pure_status nmae state] is [state] but with [name] has no status effects *)
 let pure_status name state = 
