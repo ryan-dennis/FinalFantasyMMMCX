@@ -148,5 +148,11 @@ let rec add lst acc  =
   | [] -> List.rev acc
   | x::t -> add t ((find_character x get_characters)::acc)
 
+(** [char_og_health char] is the health of [char] *)
 let char_og_health char = 
   char.stats.vit   
+
+(** [has_spell char spell] is [true] if [char] has [spell] in spell list else 
+    [false] *)
+let has_spell char spell = 
+  List.mem spell char.spells   
