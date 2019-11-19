@@ -53,21 +53,12 @@ let fighter = {
   weapon = "Sun Sword";
   spells = ["CURE";"FOG";"RUSE";"LAMP";"INVS";"PURE";];
   sprite = [
-    "                       ████     "; 
-    "                  ████     ███  ";
-    "                ███        ███  ";
-    "            ████          ██    ";
-    "   ██████████           ██      ";
-    " ██                      ██     ";
-    "    ██████                 ██   "; 
-    "       ██████████           ██  ";
-    "     ████   ███████           █ ";
-    "    █████   █████   ██         █";
-    "    █████████████   ███████████ ";
-    "    ███████████████████████████ ";
-    "██    ██████████████████    ████";
-    "████             ███████      █ ";
-  ]
+    "██████████";
+    "█        █";
+    "█        █";
+    "█        █";
+    "██████████";
+  ];
 }
 
 (** Charcter Thief *)
@@ -77,7 +68,13 @@ let thief = {
   weapon = "Dragon Sword";
   spells = ["CURE";"FOG";"FIRE";"LIT";"MUTE";"ICE";"DARK";"TMPR";"CUR2";"FIR2";
             "HOLD";"LIT2";"ICE2";];
-  sprite = [];
+  sprite = [
+    "██████████";
+    "█        █";
+    "█        █";
+    "█        █";
+    "██████████";
+  ];
 }
 
 (** Charcter Black Belt *)
@@ -104,7 +101,13 @@ let red_mage = {
   spells = ["CURE";"FOG";"RUSE";"FIRE";"LIT";"LAMP";"MUTE";"INVS";"ICE";"DARK";
             "TMPR";"CUR2";"FIR2";"HOLD";"LIT2";"PURE";"AMUT";"ICE2";"CUR3";"FIR3";
             "FOG2";"INV2";"LIT3";"ICE3";];
-  sprite = [];
+  sprite = [
+    "██████████";
+    "█        █";
+    "█        █";
+    "█        █";
+    "██████████";
+  ];
 }
 
 (** Charcter White Mage *)
@@ -115,7 +118,13 @@ let white_mage = {
   spells = ["CURE";"FOG";"RUSE";"FIRE";"LIT";"LAMP";"MUTE";"INVS";"ICE";"DARK";
             "TMPR";"CUR2";"HEAL";"FIR2";"HOLD";"LIT2";"PURE";"AMUT";"ICE2";"CUR3";
             "HEL2";"FIR3";"FOG2";"INV2";"LIT3";"STUN";"HEL3";"ICE3";"BLND";];
-  sprite = [];
+  sprite = [
+    "██████████";
+    "█        █";
+    "█        █";
+    "█        █";
+    "██████████";
+  ];
 }
 
 (** Charcter Black Mage *)
@@ -127,7 +136,23 @@ let black_mage = {
             "TMPR";"CUR2";"HEAL";"FIR2";"HOLD";"LIT2";"PURE";"AMUT";"ICE2";"CUR3";
             "HEL2";"FIR3";"FOG2";"INV2";"LIT3";"STUN";"CUR4";"HEL3";"ICE3";"BRAK";
             "BLND";"SABR";"NUKE";"FADE";];
-  sprite = [];
+  sprite = [
+
+    "                       ████     "; 
+    "                  ████     ███  ";
+    "                ███        ███  ";
+    "            ████          ██    ";
+    "   ██████████           ██      ";
+    " ██                      ██     ";
+    "    ██████                 ██   "; 
+    "       ██████████           ██  ";
+    "     ████   ███████           █ ";
+    "    █████   █████   ██         █";
+    "    █████████████   ███████████ ";
+    "    ███████████████████████████ ";
+    "██    ██████████████████    ████";
+    "████             ███████      █ ";
+  ];
 }
 
 (** [get_characters] is the character list of all characters of the game *)

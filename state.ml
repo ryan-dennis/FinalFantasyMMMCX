@@ -4,7 +4,8 @@ open Party
 open Gauntlet 
 open Status
 open Command
-(** Represents the state of the game beinf played *)
+
+(** Represents the state of the game being played *)
 type t = {
   health : (string*int) list; 
   magic_points : (string*int) list; 
@@ -133,6 +134,7 @@ let rec helper2 name num lst acc =
   | (n,i)::t -> if n = name then helper2 name num t ((name,num)::acc)
     else helper2 name num t ((n,i)::acc)  
 
+(** [max_hp name t gtl] is the maximal hp [name] can have. (the starting health) *)
 let max_hp name t gtl = 
   if name = t.current_boss then get_bs gtl name
   else find_character name get_characters |> char_og_health           
@@ -377,6 +379,8 @@ let pure_status name state =
    status's = helper2 name [] state.status's []; strength = state.strength; 
    agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense}
 
+(** [cure4_status name state] is [t] after [name]'s health has been revived and 
+    status effects have been removed. *)
 let cure4_status name state = 
   let h = (find_character name get_characters) in 
   let hp = char_og_health h in  
