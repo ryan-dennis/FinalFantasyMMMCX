@@ -49,41 +49,38 @@ let get_name (c:character) =
 (** Charcter fighter *)
 let fighter = {
   name = "fighter"; 
-  stats = {str = 69; agl = 43; int = 23; vit = 993; mp = 0; hit_percent = 187; m_def = 162; fight_def = 60};
+  stats = {str = 69; agl = 43; int = 23; vit = 993; mp = 70; hit_percent = 187; m_def = 162; fight_def = 60};
   weapon = "Sun Sword";
   spells = ["CURE";"FOG";"RUSE";"LAMP";"INVS";"PURE";];
   sprite = [
-    "                       ████     "; 
-    "                  ████     ███  ";
-    "                ███        ███  ";
-    "            ████          ██    ";
-    "   ██████████           ██      ";
-    " ██                      ██     ";
-    "    ██████                 ██   "; 
-    "       ██████████           ██  ";
-    "     ████   ███████           █ ";
-    "    █████   █████   ██         █";
-    "    █████████████   ███████████ ";
-    "    ███████████████████████████ ";
-    "██    ██████████████████    ████";
-    "████             ███████      █ ";
-  ]
+    "██████████";
+    "█        █";
+    "█        █";
+    "█        █";
+    "██████████";
+  ];
 }
 
 (** Charcter Thief *)
 let thief = {
   name = "thief"; 
-  stats = {str = 42; agl = 46; int = 30; vit = 660; mp = 15; hit_percent = 118; m_def = 113; fight_def=51};
+  stats = {str = 42; agl = 46; int = 30; vit = 660; mp = 120; hit_percent = 118; m_def = 113; fight_def=51};
   weapon = "Dragon Sword";
   spells = ["CURE";"FOG";"FIRE";"LIT";"MUTE";"ICE";"DARK";"TMPR";"CUR2";"FIR2";
             "HOLD";"LIT2";"ICE2";];
-  sprite = [];
+  sprite = [
+    "██████████";
+    "█        █";
+    "█        █";
+    "█        █";
+    "██████████";
+  ];
 }
 
 (** Charcter Black Belt *)
 let black_belt = {
   name = "black belt"; 
-  stats = {str = 35; agl = 36; int = 35; vit = 999; mp = 0; hit_percent = 152; m_def = 206; fight_def = 43};
+  stats = {str = 35; agl = 36; int = 35; vit = 999; mp = 45; hit_percent = 152; m_def = 206; fight_def = 43};
   weapon = "Fists";
   spells = ["CURE";"RUSE";"MUTE";"CUR2";"FIR3";];
   sprite = [
@@ -99,35 +96,63 @@ let black_belt = {
 (** Charcter Red Mage *)    
 let red_mage = {
   name = "red mage"; 
-  stats = {str = 41; agl = 35; int = 40; vit = 591; mp = 20; hit_percent = 135; m_def = 118; fight_def = 51};
+  stats = {str = 41; agl = 35; int = 40; vit = 591; mp = 150; hit_percent = 135; m_def = 118; fight_def = 51};
   weapon = "Sun Sword";
   spells = ["CURE";"FOG";"RUSE";"FIRE";"LIT";"LAMP";"MUTE";"INVS";"ICE";"DARK";
             "TMPR";"CUR2";"FIR2";"HOLD";"LIT2";"PURE";"AMUT";"ICE2";"CUR3";"FIR3";
             "FOG2";"INV2";"LIT3";"ICE3";];
-  sprite = [];
+  sprite = [
+    "██████████";
+    "█        █";
+    "█        █";
+    "█        █";
+    "██████████";
+  ];
 }
 
 (** Charcter White Mage *)
 let white_mage = {
   name = "white mage"; 
-  stats = {str = 30; agl = 30; int = 49; vit = 676; mp = 25; hit_percent = 59; m_def = 118; fight_def = 51};
+  stats = {str = 30; agl = 30; int = 49; vit = 676; mp = 180; hit_percent = 59; m_def = 118; fight_def = 51};
   weapon = "Silver Hammer";
   spells = ["CURE";"FOG";"RUSE";"FIRE";"LIT";"LAMP";"MUTE";"INVS";"ICE";"DARK";
             "TMPR";"CUR2";"HEAL";"FIR2";"HOLD";"LIT2";"PURE";"AMUT";"ICE2";"CUR3";
             "HEL2";"FIR3";"FOG2";"INV2";"LIT3";"STUN";"HEL3";"ICE3";"BLND";];
-  sprite = [];
+  sprite = [
+    "██████████";
+    "█        █";
+    "█        █";
+    "█        █";
+    "██████████";
+  ];
 }
 
 (** Charcter Black Mage *)
 let black_mage = {
   name = "black mage"; 
-  stats = {str = 23; agl = 32; int = 69; vit = 470; mp = 25; hit_percent = 64; m_def = 118; fight_def = 51};
+  stats = {str = 23; agl = 32; int = 69; vit = 470; mp = 215; hit_percent = 64; m_def = 118; fight_def = 51};
   weapon = "Mage staff";
   spells = ["CURE";"FOG";"RUSE";"FIRE";"LIT";"LAMP";"MUTE";"INVS";"ICE";"DARK";
             "TMPR";"CUR2";"HEAL";"FIR2";"HOLD";"LIT2";"PURE";"AMUT";"ICE2";"CUR3";
             "HEL2";"FIR3";"FOG2";"INV2";"LIT3";"STUN";"CUR4";"HEL3";"ICE3";"BRAK";
             "BLND";"SABR";"NUKE";"FADE";];
-  sprite = [];
+  sprite = [
+
+    "                       ████     "; 
+    "                  ████     ███  ";
+    "                ███        ███  ";
+    "            ████          ██    ";
+    "   ██████████           ██      ";
+    " ██                      ██     ";
+    "    ██████                 ██   "; 
+    "       ██████████           ██  ";
+    "     ████   ███████           █ ";
+    "    █████   █████   ██         █";
+    "    █████████████   ███████████ ";
+    "    ███████████████████████████ ";
+    "██    ██████████████████    ████";
+    "████             ███████      █ ";
+  ];
 }
 
 (** [get_characters] is the character list of all characters of the game *)
@@ -148,5 +173,11 @@ let rec add lst acc  =
   | [] -> List.rev acc
   | x::t -> add t ((find_character x get_characters)::acc)
 
+(** [char_og_health char] is the health of [char] *)
 let char_og_health char = 
   char.stats.vit   
+
+(** [has_spell char spell] is [true] if [char] has [spell] in spell list else 
+    [false] *)
+let has_spell char spell = 
+  List.mem spell char.spells   

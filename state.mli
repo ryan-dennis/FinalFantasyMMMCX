@@ -10,7 +10,6 @@ open Command
 
 type t
 
-
 (** [init_state] returns the initial state of the game *)
 val init_state : Gauntlet.t -> Party.t list -> t  
 
@@ -114,5 +113,6 @@ val pure_status: string -> t -> t
    [name] to perform. *)
 val is_valid_com: string->t -> Command.command -> bool
 
+(** [cure4_status name t] is [t] with [name] having full health and no status effects *)
 val cure4_status: string -> t -> t
 

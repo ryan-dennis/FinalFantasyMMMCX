@@ -54,7 +54,11 @@ val find_character: string -> t list -> t
     charcter name *)
 val add : string list -> t list -> t list
 
+(** [char_og_health t] returns the health of [t] *)
 val char_og_health : t -> int 
+
+(** [has_spell t spell] returns [true] if [t] has [spell] and [false] otherwise *)
+val has_spell: t -> spell -> bool 
 
 
 
