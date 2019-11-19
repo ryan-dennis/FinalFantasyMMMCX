@@ -71,10 +71,34 @@ let magic_help g s spell ch =
   let sp_t = get_spell spell in
   let tar = read_line () in
   let curr = get_current_fighter s in
-  if is_valid_target s sp_t tar then 
-    (ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " cast a spell!\n"));
-     minisleep 1.5 ""; magic g s spell ch tar |> new_st)
+  if is_valid_target s sp_t tar && has_spell ch spell then 
+    (let b = magic g s spell ch tar in
+     let msg = "\n" ^ (desc b) ^ "\n" in 
+     ANSITerminal.(print_string [green] msg);
+     minisleep 1.5 "";  new_st b)
+  else if not (has_spell ch spell) then 
+    (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ " does not have that spell! Pick another.\n\n")); 
+     s)
   else ((print_endline ""; reject "target"; print_endline ""; s))
+
+
+(******************************************************************************* 
+   MAGIC BUGS AND THOUGHTS:
+   - Can cast spells that aren't in the characters list of spells
+   - Almost all casting of spells return a failed message
+   - When casting NUKE, msg is: _ cast NUKE on _ and dealt 240 NONE damage!
+ *******************************************************************************)
+
+(******************************************************************************* 
+   POTION BUGS AND THOUGHTS:
+   - Heal doesn't heal enough
+   - Unlimited potions
+ *******************************************************************************)
+
+(******************************************************************************* 
+   RANDOM BUGS AND THOUGHTS:
+   - Add description command for spells
+ *******************************************************************************)
 
 (** *)
 let rec repl g s = 
@@ -107,15 +131,16 @@ let rec repl g s =
         match parse (read_line ()) with
         | Fight -> if is_valid_com curr s Fight then 
             (let b = fight g s curr_char in
+             let msg = desc b in
              let s' = new_st b in 
-             ANSITerminal.(print_string [green] ("\n" ^ attack_response b curr));
+             ANSITerminal.(print_string [green] ("\n" ^ msg ^ "\n"));
              minisleep 1.5 "";
              repl g s' )
           else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ "'s status prevents him from fighting\n\n")); 
                 repl g s)
         | Magic spell -> if is_valid_com curr s (Magic spell) then 
             (try magic_help g s spell curr_char |> repl g 
-             with Not_found -> (reject "spell"; 
+             with Not_found -> (print_endline "\n"; reject "spell"; 
                                 print_endline ""; repl g s))
           else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ "'s status prevents him from casting spells\n\n")); 
                 repl g s)

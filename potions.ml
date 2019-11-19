@@ -1,6 +1,7 @@
 open State
 
-(** *)
+(** [potion b] represents the potion with bool [b] as true if it can be used, 
+    or false if it has already been used (i.e. only one use per potion per character) *)
 type potion = 
   | Heal
   | Pure
@@ -20,6 +21,6 @@ let pure_eff g (st : State.t) =
 (** *)
 let drink p = 
   match p with
-  | "heal" -> Heal
+  | "heal" -> Heal 
   | "pure" -> Pure
   | _ -> raise Invalid_potion
