@@ -3,11 +3,15 @@ open Gauntlet
 open Status
 
 type t = {
-  dmg : int;
-  target : string;
-  desc : string;
-  new_st : State.t
+  m_dmg : int;
+  m_target : string;
+  m_desc : string;
+  m_new_st : State.t
 }
+
+exception InvalidSpellTarget
+
+exception NotEnoughMP
 
 (******************************************************************************
    PLAYER CHARACTER MAGIC
@@ -152,7 +156,8 @@ let is_valid_target st sp tar =
     try ignore(Party.find_character tar Party.get_characters);
       if friendly then true else false
     with Party.UnknownCharacter _ ->
-      if (is_boss st tar) && friendly = false then true else false
+      if (is_boss st tar) && friendly = false then true
+      else raise InvalidSpellTarget
 
 (** [write_spell_desc st tar hit effect] is the description of the last turn,
     if the last turn a player character cast a spell. *)
@@ -215,29 +220,30 @@ let dmg_status_hit_roll glt st sp tar =
   if Random.int 200 <= cth then true
   else false
 
-(** [damage_spell_dmg glt st sp tar hit] is the amount of damage the Damage
-    spell [sp] cast on the target [tar] in state [st] deals. *)
-let damage_spell_dmg glt st sp tar hit =
+(** [damage_spell_dmg glt st sp tar doubled] is the amount of damage the Damage
+    spell [sp] cast on the target [tar] in state [st] deals. [doubled] is
+    whether the damage is doubled or not. *)
+let damage_spell_dmg glt st sp tar doubled =
   let weak = is_weak glt st sp tar in
   let res = is_resistant glt st sp tar in
   let eff = match sp.sp_eff with
     | Eff e -> if res then e / 2 else if weak then e * 3 / 2 else e
     | EStatus _ -> failwith "Not a damage spell" in
-  let res_multiplier = if hit then 2 else 1 in
+  let res_multiplier = if doubled then 2 else 1 in
   ((Random.int eff) + eff) * res_multiplier
 
 (** [cast_damage_spell glt sp c tar st] is the cast spell data after Damage
-    spell [sp] is cast on boss [tar] from gauntlet [glt] in state [st]. *)
+    spell [sp] is cast on boss [tar] from gauntlet [glt] in state [st]. Damage
+    spells will always hit. *)
 let cast_damage_spell glt st sp tar =
-  let hit = dmg_status_hit_roll glt st sp tar in
-  let dmg = damage_spell_dmg glt st sp tar hit in
-  let new_st = if hit then get_health tar st - dmg |> set_health glt tar st
-    else st in
+  let doubled = dmg_status_hit_roll glt st sp tar in
+  let dmg = damage_spell_dmg glt st sp tar doubled in
+  let new_st = get_health tar st - dmg |> set_health glt tar st in
   {
-    dmg = dmg;
-    target = tar;
-    desc = string_of_int dmg |> write_spell_desc st sp tar hit;
-    new_st = new_st
+    m_dmg = dmg;
+    m_target = tar;
+    m_desc = string_of_int dmg |> write_spell_desc st sp tar true;
+    m_new_st = new_st
   }
 
 (** [hp300_hit_roll glt st sp tar] is whether an HP300Status spell [sp] hits the
@@ -260,10 +266,10 @@ let cast_status_spell glt st sp tar =
     | Eff _ -> failwith "not a status spell"
   in
   {
-    dmg = 0;
-    target = tar;
-    desc = string_of_status status |> write_spell_desc st sp tar hit;
-    new_st = if hit then status_add tar status st else st
+    m_dmg = 0;
+    m_target = tar;
+    m_desc = string_of_status status |> write_spell_desc st sp tar hit;
+    m_new_st = if hit then status_add tar status st else st
   }
 
 (** [hp_healed] is the amount of HP healed by a HPRec spell [sp]. *)
@@ -285,10 +291,10 @@ let cast_heal_spell glt st sp tar =
   in
   let hp_rec = get_health tar new_st - old_hp in
   {
-    dmg = hp_rec;
-    target = tar;
-    desc = string_of_int hp_rec |> write_spell_desc st sp tar true;
-    new_st = new_st
+    m_dmg = hp_rec;
+    m_target = tar;
+    m_desc = string_of_int hp_rec |> write_spell_desc st sp tar true;
+    m_new_st = new_st
   }
 
 (** [cast_restore_status_spell st sp tar] is the cast spell data after
@@ -300,10 +306,10 @@ let cast_restore_status_spell st sp tar =
     | Eff e -> failwith "not a restore status spell"
   in
   {
-    dmg = 0;
-    target = tar;
-    desc = string_of_status status |> write_spell_desc st sp tar true;
-    new_st = status_remove tar status st
+    m_dmg = 0;
+    m_target = tar;
+    m_desc = string_of_status status |> write_spell_desc st sp tar true;
+    m_new_st = status_remove tar status st
   }
 
 (** [cast_support_spell st sp tar] is the cast spell data after a support
@@ -313,10 +319,10 @@ let cast_support_spell st sp tar =
     | Eff e -> e
     | EStatus _ -> failwith "not a support spell" in
   {
-    dmg = 0;
-    target = tar;
-    desc = write_spell_desc st sp tar true "";
-    new_st = match sp.sp_effect with
+    m_dmg = 0;
+    m_target = tar;
+    m_desc = write_spell_desc st sp tar true "";
+    m_new_st = match sp.sp_effect with
       | DefUp -> get_fight_def tar st + eff |> set_fight_def tar st
       | StrUp -> get_strength tar st + eff |> set_strength tar st
       | StrHitUp -> get_hit_per tar st + sp.sp_acc |> set_hit_percent tar
@@ -331,7 +337,13 @@ let update_mp c sp st =
   let c_name = Party.get_name c in
   set_magic_points c_name (get_magic_points c_name st - sp.sp_mp) st
 
+let is_enough_mp sp c st =
+  if sp.sp_mp <= get_magic_points (Party.get_name c) st
+  then true
+  else raise NotEnoughMP
+
 let cast_spell glt st sp c tar =
+  ignore (is_valid_target st sp tar); ignore (is_enough_mp sp c st);
   let spell_data = match sp.sp_effect with
     | Damage -> cast_damage_spell glt st sp tar
     | StatusAilment | HP300Status -> cast_status_spell glt st sp tar
@@ -339,9 +351,9 @@ let cast_spell glt st sp c tar =
     | RestoreStatus -> cast_restore_status_spell st sp tar
     | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell st sp tar
   in
-  let st = spell_data.new_st in
+  let st = spell_data.m_new_st in
   {spell_data with
-   new_st = st |> update_mp c sp |> change_turns glt}
+   m_new_st = st |> update_mp c sp |> change_turns glt}
 
 
 (******************************************************************************
@@ -398,9 +410,43 @@ let cast_boss_spell glt sp tar st =
     | RestoreStatus -> cast_restore_status_spell st sp tar
     | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell st sp tar
   in
-  let st = spell_data.new_st in
-  {spell_data with
-   new_st = st |> change_turns glt}
+  {spell_data with m_new_st = spell_data.m_new_st}
 
-let cast_boss_skill glt sp st =
-  failwith "Unimplemented"
+(** [get_st t] is the new state after a spell/skill is cast. *)
+let get_st t =
+  t.m_new_st
+
+(** [atk_all glt sp party st acc] is the new spell data after the spell [sp] is
+    cast on every member of [party] by the current boss from gauntlet [glt]. *)
+let rec atk_all glt sp party st acc =
+  match party with
+  | [] -> acc
+  | h::t -> let spell_data = cast_boss_spell glt sp h st in
+    atk_all glt sp t (get_st spell_data) spell_data
+
+(** [t_init st] is an empty record of type t. *)
+let t_init st = {
+  m_dmg = 0;
+  m_target = "";
+  m_desc = "";
+  m_new_st = st
+}
+
+let cast_boss_skill glt sk tar st =
+  let party = get_party st in
+  let sp = sk.sk_spell in
+  let spell_data = match sk.sk_target with
+    | All -> t_init st |> atk_all glt sp party st 
+    | Single -> cast_boss_spell glt sp tar st
+  in
+  let b = get_current_boss st in
+  let desc = match sk.sk_target with
+    | All -> String.concat " " [b; "cast"; sp.sp_name; "on the party!"]
+    | Single -> spell_data.m_desc
+  in
+  {
+    m_dmg = 0;
+    m_target = tar;
+    m_desc = desc;
+    m_new_st = spell_data.m_new_st
+  }

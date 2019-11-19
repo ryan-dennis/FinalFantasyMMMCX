@@ -18,8 +18,6 @@ type t = {
    PLAYER CHARACTER TURN
  ******************************************************************************)
 
-exception InvalidSpellTarget
-
 (** [write_fight_desc st target hits dmg] is the description of the last turn,
     if the last turn was a fight attack. *)
 let write_fight_desc st target hits dmg =
@@ -94,22 +92,22 @@ let fight glt st c =
   {hits = n;
    dmg = dmg;
    target = b;
-   desc = write_fight_desc new_st b n dmg;
+   desc = write_fight_desc st b n dmg;
    new_st = new_st}
 
-let magic glt st s c tar =
-  let sp = get_spell s in
-  let spell_data = if is_valid_target st sp tar
-    then cast_spell glt st sp c tar
-    else raise InvalidSpellTarget in
+(** [magic_to_battle_data spell_data] is the magic data [t] in the form of
+    battle data. *)
+let magic_to_battle_data t =
   {
     hits = 1;
-    dmg = spell_data.dmg;
-    target = spell_data.target;
-    desc = spell_data.desc;
-    new_st = spell_data.new_st
+    dmg = t.m_dmg;
+    target = t.m_target;
+    desc = t.m_desc;
+    new_st = t.m_new_st
   }
 
+let magic glt st s c tar =
+  cast_spell glt st (get_spell s) c tar |> magic_to_battle_data
 
 (******************************************************************************
    BOSS AI
@@ -195,7 +193,8 @@ let rm_dead new_hp st c =
   if new_hp > 0 then st
   else remove_from_t c st
 
-let boss_turn glt st =
+(** [boss_fight glt st] is the new battle data if the boss chooses to fight. *)
+let boss_fight glt st =
   let c = boss_target glt st in
   let char = Party.find_character c Party.get_characters |> char_stats in
   let boss = cur_boss_stats glt st in
@@ -204,12 +203,21 @@ let boss_turn glt st =
   let dmged_hp = get_health c st - dmg in
   let new_hp = if dmged_hp > 0 then dmged_hp else 0 in
   let new_dmged_st = set_health glt c st new_hp in
-  let new_st = rm_dead new_hp new_dmged_st c |> change_turns glt in
+  let new_st = rm_dead new_hp new_dmged_st c in
   {hits = n;
    dmg = dmg;
    target = c;
    desc = write_fight_desc new_st c n dmg;
    new_st = new_st}
+
+let boss_turn glt st =
+  let tar = boss_target glt st in
+  let new_data = match boss_action glt st with
+    | Spell sp -> cast_boss_spell glt sp tar st |> magic_to_battle_data
+    | Skill sk -> cast_boss_skill glt sk tar st |> magic_to_battle_data
+    | Fight -> boss_fight glt st
+  in
+  {new_data with new_st = new_data.new_st |> change_turns glt}
 
 let num_hits b =
   b.hits
