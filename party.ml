@@ -113,7 +113,7 @@ let red_mage = {
 (** Charcter White Mage *)
 let white_mage = {
   name = "white mage"; 
-  stats = {str = 30; agl = 30; int = 49; vit = 676; mp = 180; hit_percent = 59; m_def = 118; fight_def = 51};
+  stats = {str = 30; agl = 30; int = 49; vit = 676; mp = 180; hit_percent = 59; m_def = 0; fight_def = 51};
   weapon = "Silver Hammer";
   spells = ["CURE";"FOG";"RUSE";"FIRE";"LIT";"LAMP";"MUTE";"INVS";"ICE";"DARK";
             "TMPR";"CUR2";"HEAL";"FIR2";"HOLD";"LIT2";"PURE";"AMUT";"ICE2";"CUR3";

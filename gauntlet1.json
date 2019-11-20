@@ -25,11 +25,9 @@
       },
       "sprite": [],
       "magic": {
-        "spell chance": 48,
+        "spell chance": 128,
         "spell list": [
-          "DARK",
-          "HOLD",
-          "STUN"
+          "DARK"
         ]
       },
       "special": {

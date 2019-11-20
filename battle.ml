@@ -1,8 +1,3 @@
-(** Notes:
-    - Implement Blinded (attacker's base chance to hit drops by 40%, and boss's
-      cth against that specific character increases by 40%)
-*)
-
 open State
 open Spells
 
@@ -54,13 +49,15 @@ let hit_roll st atker tar =
     else 168 in
   let agi = get_agil tar st in
   let evasion = if is_boss atker st then agi + 48 else agi in
-  let cth = base_cth + (get_hit_per atker st) - evasion in
+  let cth = if is_paralyzed tar st
+    then base_cth
+    else base_cth + (get_hit_per atker st) - evasion in
   if Random.int 200 <= cth then true
   else false
 
-(** [num_of_hits glt atker st] is the number of hits that the attacker [atker]
-    in state [st] gets. *)
-let num_of_hits glt atker st =
+(** [hits_per_turn glt atker st] is the number of hits that the attacker [atker]
+    in state [st] gets per turn. *)
+let hits_per_turn glt atker st =
   let boss = get_current_boss st in
   let base_hit = 1 + ((get_hit_per atker st) / 32) in
   if atker = boss then Gauntlet.boss_num_of_hits glt boss
@@ -69,12 +66,21 @@ let num_of_hits glt atker st =
     | "black belt" -> 2 * base_hit
     | char -> base_hit
 
+(** [num_of_hits st atker tar hits acc] is the number of successful hits that
+    [atker] lands on [tar] in state [st], given a total possible hits per turn
+    of [hits]. *)
+let rec num_of_hits st atker tar hits acc =
+  match hits with
+  | 0 -> acc
+  | n -> if hit_roll st atker tar
+    then acc + 1 |> num_of_hits st atker tar (n-1)
+    else acc |> num_of_hits st atker tar (n-1)
+
 (** [fight_dmg st a_hit d_agl d_def atk] is how much damage the attacker
     [atker] deals to target [tar] in state [st]. *)
 let fight_dmg st atker tar =
   let atk = get_atk atker st in
-  let dmg = if hit_roll st atker tar = false then 0
-    else (Random.int atk) + atk - (get_fight_def tar st) in
+  let dmg = (Random.int atk) + atk - (get_fight_def tar st) in
   if dmg <= 0 then 1
   else dmg
 
@@ -89,7 +95,7 @@ let rec total_hit_dmg st atker tar hits dmg =
     executes their fight attack on [tar] in [st]. *)
 let fight_attack glt st tar =
   let atker = get_current_fighter st in
-  let hits = num_of_hits glt atker st in
+  let hits = num_of_hits st atker tar (hits_per_turn glt atker st) 0 in
   let dmg = total_hit_dmg st atker tar hits 0 in
   let new_st = get_health tar st - dmg |> set_health glt tar st in
   {hits = hits;
@@ -219,7 +225,13 @@ let desc b =
 let new_st b =
   b.new_st
 
-(** NOTES
-    - Raises Party.UnknownCharacter("fighter") when Chaos is paralyzed and his
-      turn comes
+(** NOTES:
+    - Red mage dealt 5 hits before and after being blinded, but 71 dmg before
+      and 139, 128 after
+    - Red mage before: 5/71, 5/124, 5/72, 5/129, 5/89
+    - Red mage after: 5/118, 5/139, 5/128, 5/71, 5/160, 5/118
+    - Thief before: 4/65, 4/54, 4/63, 4/86, 4/85, 4/107, 4/90, 4/20, 4/48
+    - Thief after: 4/69, 2/69, 4/120, 4/121, 4/47
+    - White mage before: 2/2, 2/2, 2/2, 2/4, 1/3, 2/2
+    - White mage after: 2/2, 1/1, 1/1, 2/2, 1/1
 *)
