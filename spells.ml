@@ -442,8 +442,3 @@ let cast_boss_skill glt sk tar st =
     m_desc = desc;
     m_new_st = spell_data.m_new_st
   }
-
-(** NOTES
-    - Check FOG (defense raising spells)
-    - Check SABR
-*)

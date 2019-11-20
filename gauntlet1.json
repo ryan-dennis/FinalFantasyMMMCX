@@ -44,15 +44,18 @@
         "spell list": [
           "ICE3",
           "LIT3",
+          "CUR4",
           "FIR3",
-          "ICE2"
+          "ICE2",
+          "NUKE"
         ]
       },
       "special": {
         "skill chance": 64,
         "skill list": [
           "INFERNO",
-          "SWIRL"
+          "SWIRL",
+          "TORNADO"
         ]
       },
       "dialogue": "You've defeated Chaos!",
