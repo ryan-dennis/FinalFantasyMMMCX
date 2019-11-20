@@ -116,21 +116,29 @@ val is_valid_com: string->t -> Command.command -> bool
 (** [cure4_status name t] is [t] with [name] having full health and no status effects *)
 val cure4_status: string -> t -> t
 
+(**[is_poisoned] is true if the character is Poisoned *)
 val is_poisoned: string -> t -> bool
 
+(**[is_paralyzed] is true if the character is Paralyzed *)
 val is_paralyzed: string -> t -> bool
 
+(**[is_blinded] is true if the character is Blinded *)
 val is_blinded: string -> t -> bool
 
+(**[is_silenced] is true if the character is Silenced *)
 val is_silenced: string -> t -> bool
 
+(**[used_heal] is t with the character's heal field set to false*)
 val used_heal: string -> t -> t
 
+(**[used_pure] is t with the character's pure field set to false*)
 val used_pure: string -> t -> t
 
+(** [has_heal] is true if the character has potion heal left *)
 val has_heal: string -> t -> bool
 
+(** [has_pure] is true if the character has potion pure left *)
 val has_pure: string -> t -> bool
 
+(** [empty_state] returns an empty state with nothing in it *)
 val empty_state: t
-
