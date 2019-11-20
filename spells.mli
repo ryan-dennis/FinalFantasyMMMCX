@@ -6,13 +6,6 @@ type t = {
   m_new_st : State.t
 }
 
-(** Exception raised when an invalid target for a spell is chosen *)
-exception InvalidSpellTarget
-
-(** Exception raised when a character does not have sufficient MP to cast the
-    chosen spell *)
-exception NotEnoughMP
-
 (** The type of magic element. *)
 type element = Fire | Ice | Lightning | Poison | Status | None
 

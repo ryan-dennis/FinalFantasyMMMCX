@@ -25,75 +25,71 @@ let write_fight_desc st target hits dmg =
                      string_of_int hits; "times for"; string_of_int dmg;
                      "damage!"]
 
-(** [char_atk st] is the attack rating of the current fighter in [st]. *)
-let char_atk st =
-  let c = get_current_fighter st in
-  let char = Party.find_character c Party.get_characters in
-  let str_bonus = (Party.get_stats char).str / 2 in
-  let weapon = match c with
-    | "fighter" -> 45
-    | "thief" -> 33
-    | "black belt" -> 100 - str_bonus
-    | "red mage" -> 32
-    | "white mage" -> 18
-    | "black mage" -> 22
-    | c -> failwith "invalid character" in
+(** [get_atk atker st] is the attack rating of [atker] in [st]. *)
+let get_atk atker st =
+  let boss = get_current_boss st in
+  let str_bonus = get_strength atker st / 2 in
+  let weapon = if atker = boss then 0 else
+      match atker with
+      | "fighter" -> 45
+      | "thief" -> 33
+      | "black belt" -> 100 - str_bonus
+      | "red mage" -> 32
+      | "white mage" -> 18
+      | "black mage" -> 22
+      | c -> failwith "invalid character" in
   str_bonus + weapon
 
-(** [char_stats c] is the stats of character [c]. *)
-let char_stats c = Party.get_stats c
-
-(** [cur_boss_stats st] is the stats of the current boss in [st]. *)
-let cur_boss_stats glt st =
-  st |> get_current_boss |> Gauntlet.boss_stats glt
-
-(** [hit_roll hit agl] is whether the attacker with a hit % of [hit] hits a
-    target with an agility of [agl]. *)
-let hit_roll hit agl =
-  let cth = 168 + hit - (48 + agl) in
+(** [hit_roll st atker tar] is whether the attacker [atker] hits the target
+    [tar] in the state [st]. *)
+let hit_roll st atker tar =
+  let base_cth = if is_blinded atker st then 148
+    else if is_blinded tar st then 208
+    else 168 in
+  let cth = base_cth + (get_hit_per atker st) - (48 + (get_agil tar st)) in
   if Random.int 200 <= cth then true
   else false
 
-(** [num_of_hits c hit] is the number of hits that the character [c] with a
-    hit rate of [hit] gets. *)
-let num_of_hits c hit =
-  match c with
-  | "black belt" -> 2 * (1 + (hit/32))
-  | char -> 1 + (hit/32)
+(** [num_of_hits atker st] is the number of hits that the attacker [atker] in
+    state [st] gets. *)
+let num_of_hits atker st =
+  let base_hit = 1 + ((get_hit_per atker st) / 32) in
+  match atker with
+  | "black belt" -> 2 * base_hit
+  | char -> base_hit
 
-(** [fight_dmg st a_hit d_agl d_def atk] is how much damage an attacker with
-    a hit percent of [a_hit] and base attack of [atk] does to a defender with
-    an agility of [d_agl] and defense of [d_def]. *)
-let fight_dmg st (char : Party.stat) (boss : Gauntlet.stats) atk =
-  if hit_roll char.hit_percent boss.agl = false then 0
-  else let dmg = (Random.int atk) + atk - boss.def in
+(** [fight_dmg st a_hit d_agl d_def atk] is how much damage the attacker
+    [atker] deals to target [tar] in state [st]. *)
+let fight_dmg st atker tar =
+  let atk = get_atk atker st in
+  if hit_roll st atker tar = false then 0
+  else let dmg = (Random.int atk) + atk - (get_fight_def tar st) in
     if dmg <= 0 then 1
     else dmg
 
-(** [total_hit_dmg st a_hit d_agl d_def n atk acc] is how much damage a
-    character with a hit percent of [a_hit] and base attack of [atk] does to a
-    boss with an agility of [d_agl] and defense of [d_def], over the course
-    of [n] hits. *)
-let rec total_hit_dmg st char boss n atk acc =
-  match n with
-  | 0 -> acc
-  | n -> acc + fight_dmg st char boss atk |>
-         total_hit_dmg st char boss (n-1) atk
+(** [total_hit_dmg st atker tar n dmg] is how much damage an attacker [atker]
+    does to a target [tar] in state [st] over the course of [hits] hits. *)
+let rec total_hit_dmg st atker tar hits dmg =
+  if hits = 0 then dmg
+  else (dmg + fight_dmg st atker tar) |>
+       total_hit_dmg st atker tar (hits-1)
+
+(** [fight_attack glt st tar] is the new state after the current fighter
+    executes their fight attack on [tar] in [st]. *)
+let fight_attack glt st tar =
+  let atker = get_current_fighter st in
+  let hits = num_of_hits atker st in
+  let dmg = total_hit_dmg st atker tar hits 0 in
+  let new_st = get_health tar st - dmg |> set_health glt tar st |>
+               change_turns glt in
+  {hits = hits;
+   dmg = dmg;
+   target = tar;
+   desc = write_fight_desc st tar hits dmg;
+   new_st = new_st}
 
 let fight glt st c =
-  let b = get_current_boss st in
-  let char = char_stats c in
-  let c_name = Party.get_name c in
-  let boss = cur_boss_stats glt st in
-  let n = num_of_hits c_name char.hit_percent in
-  let dmg = total_hit_dmg st char boss n (char_atk st) 0 in
-  let new_st = get_health b st - dmg |> set_health glt b st |>
-               change_turns glt in
-  {hits = n;
-   dmg = dmg;
-   target = b;
-   desc = write_fight_desc st b n dmg;
-   new_st = new_st}
+  get_current_boss st |> fight_attack glt st
 
 (** [magic_to_battle_data spell_data] is the magic data [t] in the form of
     battle data. *)
@@ -117,6 +113,7 @@ type boss_attack =
   | Spell of spell
   | Skill of skill
   | Fight
+  | Status of Status.t
 
 (** [boss_spell_num] is what spell in the list the boss will cast. *)
 let boss_spell_num = ref 0
@@ -144,35 +141,13 @@ let boss_skill glt b =
     turn. *)
 let boss_action glt st =
   let b = get_current_boss st in
-  if (Random.int 128) + 1 <= Gauntlet.boss_spell_chance glt b
+  if is_paralyzed b st then Status Paralyzed
+  else if is_silenced b st then Status Silenced
+  else if (Random.int 128) + 1 <= Gauntlet.boss_spell_chance glt b
   then boss_spell glt b
   else if (Random.int 128) + 1 <= Gauntlet.boss_skill_chance glt b
   then boss_skill glt b
   else Fight
-
-(** [boss_hit_roll hit agl] is whether the boss with a hit % of [hit] hits
-    a character with an agility of [agl]. *)
-let boss_hit_roll hit agl =
-  let cth = 168 + hit - agl in
-  if Random.int 200 <= cth then true
-  else false
-
-(** [boss_fight_dmg st a_hit d_agl d_def atk] is how much damage a boss
-    [boss] in [st] with a base attack of [atk] can do to [char]. *)
-let boss_fight_dmg st (boss : Gauntlet.stats) (char : Party.stat) atk =
-  if boss_hit_roll boss.hit char.agl = false then 0
-  else let dmg = (Random.int atk) + atk - char.fight_def in
-    if dmg <= 0 then 1
-    else dmg
-
-(** [total_boss_hit_dmg st a_hit d_agl d_def n atk acc] is how much damage
-    a boss [boss] in [st] with a base attack of [atk] can do to [char] over
-    the course of [n] hits. *)
-let rec total_boss_hit_dmg st boss char n atk acc =
-  match n with
-  | 0 -> acc
-  | n -> acc + boss_fight_dmg st boss char atk |>
-         total_boss_hit_dmg st boss char (n-1) atk
 
 (** [boss_target glt st] is the character in [glt] who is targeted by the
     current boss in [st]. If the character chosen is dead, then a new target
@@ -187,37 +162,35 @@ let rec boss_target glt st =
   if is_dead st target then boss_target glt st
   else target
 
-(** [rm_dead new_hp st c] is the state [st] with character [c] removed from
-    the turn order if they are dead ([new_hp] <= 0). *)
-let rm_dead new_hp st c =
-  if new_hp > 0 then st
-  else remove_from_t c st
-
-(** [boss_fight glt st] is the new battle data if the boss chooses to fight. *)
-let boss_fight glt st =
-  let c = boss_target glt st in
-  let char = Party.find_character c Party.get_characters |> char_stats in
-  let boss = cur_boss_stats glt st in
-  let n = boss.hits_per in
-  let dmg = total_boss_hit_dmg st boss char n boss.str 0 in
-  let dmged_hp = get_health c st - dmg in
-  let new_hp = if dmged_hp > 0 then dmged_hp else 0 in
-  let new_dmged_st = set_health glt c st new_hp in
-  let new_st = rm_dead new_hp new_dmged_st c in
-  {hits = n;
-   dmg = dmg;
-   target = c;
-   desc = write_fight_desc new_st c n dmg;
-   new_st = new_st}
+(** [rm_dead new_hp st] is the state [st] with characters in [party] removed
+    from the turn order if they are dead. *)
+let rec rm_dead party st =
+  match party with
+  | [] -> st
+  | h::t -> if is_dead st h then remove_from_t h st |> rm_dead t
+    else rm_dead t st
 
 let boss_turn glt st =
   let tar = boss_target glt st in
   let new_data = match boss_action glt st with
     | Spell sp -> cast_boss_spell glt sp tar st |> magic_to_battle_data
     | Skill sk -> cast_boss_skill glt sk tar st |> magic_to_battle_data
-    | Fight -> boss_fight glt st
+    | Fight -> fight_attack glt st tar
+    | Status status ->
+      match status with
+      | Paralyzed -> {
+          hits = 0;
+          dmg = 0;
+          target = tar;
+          desc = get_current_boss st ^ "is paralyzed and cannot attack!";
+          new_st = empty_state
+        }
+      | Silenced -> fight_attack glt st tar
+      | _ -> failwith "not a valid boss attack"
   in
-  {new_data with new_st = new_data.new_st |> change_turns glt}
+  {new_data with new_st = new_data.new_st |>
+                          rm_dead (get_party st) |>
+                          change_turns glt}
 
 let num_hits b =
   b.hits

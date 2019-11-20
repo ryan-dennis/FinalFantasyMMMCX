@@ -9,10 +9,6 @@ type t = {
   m_new_st : State.t
 }
 
-exception InvalidSpellTarget
-
-exception NotEnoughMP
-
 (******************************************************************************
    PLAYER CHARACTER MAGIC
  ******************************************************************************)
@@ -156,8 +152,7 @@ let is_valid_target st sp tar =
     try ignore(Party.find_character tar Party.get_characters);
       if friendly then true else false
     with Party.UnknownCharacter _ ->
-      if (is_boss st tar) && friendly = false then true
-      else raise InvalidSpellTarget
+      (is_boss st tar) && friendly = false
 
 (** [write_spell_desc st tar hit effect] is the description of the last turn,
     if the last turn a player character cast a spell. *)
@@ -179,7 +174,7 @@ let write_spell_desc st sp tar hit effect =
     | StrHitUp -> ["raised their strength and hit rate!"]
     | AglUp -> ["raised their agility!"]
   in
-  let tar = if cur_fighter = tar then "himself" else tar in
+  let tar = if cur_fighter = tar then "themself" else tar in
   if hit = false
   then String.concat " " [cur_fighter; "tried to cast"; sp.sp_name; "on"; tar;
                           "but it failed!"]
@@ -338,12 +333,9 @@ let update_mp c sp st =
   set_magic_points c_name (get_magic_points c_name st - sp.sp_mp) st
 
 let is_enough_mp sp c st =
-  if sp.sp_mp <= get_magic_points (Party.get_name c) st
-  then true
-  else raise NotEnoughMP
+  sp.sp_mp <= get_magic_points (Party.get_name c) st
 
 let cast_spell glt st sp c tar =
-  ignore (is_valid_target st sp tar); ignore (is_enough_mp sp c st);
   let spell_data = match sp.sp_effect with
     | Damage -> cast_damage_spell glt st sp tar
     | StatusAilment | HP300Status -> cast_status_spell glt st sp tar
@@ -450,3 +442,8 @@ let cast_boss_skill glt sk tar st =
     m_desc = desc;
     m_new_st = spell_data.m_new_st
   }
+
+(** NOTES
+    - Check FOG (defense raising spells)
+    - Check SABR
+*)
