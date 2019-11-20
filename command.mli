@@ -12,6 +12,7 @@ type command =
   | Drink of object_phrase
   | Show
   | Quit
+  | Pass
 
 (** Raised when a malformed command is encountered *)
 exception Malformed 

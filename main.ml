@@ -61,23 +61,32 @@ let attack_response (b:Battle.t) (curr:string) : string =
 
 let drink_comm g s curr pot = 
   match pot with
-  | Heal -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " healed.\n\n")); 
-    heal_eff g s
-  | Pure -> ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " purified their status effects.\n\n"));
-    pure_eff g s
+  | Heal -> if has_heal curr s then
+      (ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " healed.\n\n")); 
+       used_heal curr s |> heal_eff g)
+    else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ " is out of heal potions!\n\n")); 
+          s)
+  | Pure -> if has_pure curr s then
+      (ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ " purified their status effects.\n\n"));
+       used_pure curr s |> pure_eff g)
+    else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ " is out of pure potions!\n\n")); 
+          s)
 
 let magic_help g s spell ch = 
   ANSITerminal.(print_string [white] "\nEnter the target for the spell: ");
   let sp_t = get_spell spell in
   let tar = read_line () in
   let curr = get_current_fighter s in
-  if is_valid_target s sp_t tar && has_spell ch spell then 
+  if is_valid_target s sp_t tar && has_spell ch spell && is_enough_mp sp_t ch s then 
     (let b = magic g s spell ch tar in
      let msg = "\n" ^ (desc b) ^ "\n" in 
      ANSITerminal.(print_string [green] msg);
      minisleep 1.5 "";  new_st b)
   else if not (has_spell ch spell) then 
     (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ " does not have that spell! Pick another.\n\n")); 
+     s)
+  else if not (is_enough_mp sp_t ch s) then
+    (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ " does not have enough magic points! Pick another spell.\n\n")); 
      s)
   else ((print_endline ""; reject "target"; print_endline ""; s))
 
@@ -119,7 +128,7 @@ let rec repl g s =
       let curr = get_current_fighter s in
       let state_party = get_party s in
       let state_hp = stat_str state_party s "" in
-      ANSITerminal.(print_string [Underlined; cyan] "Party:\n");
+      ANSITerminal.(print_string [Underlined; cyan] "Party Health:\n");
       ANSITerminal.(print_string [cyan] (state_hp ^ "\n"));
       ANSITerminal.(print_string [blue] ("The " ^ curr ^ "'s current status effects: " ^ 
                                          (get_status curr s |> List.map string_of_status |> 
@@ -151,7 +160,10 @@ let rec repl g s =
         (*else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ "'s status prevents him from drinking potions\n\n")); 
               repl g s)   *)                    
         | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
-          ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s spells: " ^ spell_str ^ "\n\n")); repl g s
+          let magic_points = get_magic_points curr s in
+          ANSITerminal.(print_string [green] ("\nThe " ^ curr ^ "'s magic points: " ^ (string_of_int magic_points)));
+          ANSITerminal.(print_string [green] ("\nSpells: " ^ spell_str ^ "\n\n")); repl g s
+        | Pass -> change_turns g s |> repl g
         | Quit -> ANSITerminal.(print_string [red] "\nQuiting game...\n\n"); 
           (* ignore(Sys.command "printf '\\e[8;24;80t'");  *)
           exit 0
@@ -163,9 +175,10 @@ let rec repl g s =
       else (
         (* ANSITerminal.(print_string [yellow] ("" ^ curr ^ " attacked.\n\n")); *)
         let b = boss_turn g s in 
+        let msg = desc b in
         let s' = new_st b in 
-        ANSITerminal.(print_string [yellow] (attack_response b boss));
-        minisleep 1.5 "";
+        ANSITerminal.(print_string [yellow] msg);
+        minisleep 1.5 "\n";
         repl g s')
 
 let rec game_start f = 

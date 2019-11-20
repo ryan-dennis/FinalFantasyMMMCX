@@ -6,6 +6,7 @@ type command =
   | Drink of object_phrase
   | Show
   | Quit
+  | Pass
 
 exception Malformed
 
@@ -27,6 +28,7 @@ let comm_help c t =
   | "drink" -> if is_empty t then raise Malformed else Drink (List.nth t 0)
   | "magic" -> if is_empty t then Show else raise Malformed
   | "quit" -> if is_empty t then Quit else raise Malformed
+  | "pass" -> if is_empty t then Pass else raise Malformed
   | _ -> raise Malformed
 
 let get_command clst = 
@@ -38,7 +40,8 @@ let get_command clst =
 let parse str = 
   String.split_on_char ' ' str |> get_command |> function
   | Fight -> Fight
-  | Magic s -> Magic s(*(if is_empty s then raise Malformed else s)*)
-  | Drink p -> Drink p(*(if is_empty p then raise Malformed else p)*)
+  | Magic s -> Magic s
+  | Drink p -> Drink p
   | Show -> Show
+  | Pass -> Pass
   | Quit -> Quit

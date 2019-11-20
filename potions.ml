@@ -11,7 +11,7 @@ exception Invalid_potion
 
 let heal_eff g (st : State.t) =
   let c = get_current_fighter st in
-  let amt = 32 - Random.int 15 in
+  let amt = 150 - Random.int 51 in
   set_health g c st (get_health c st + amt) |> change_turns g
 
 let pure_eff g (st : State.t) =
