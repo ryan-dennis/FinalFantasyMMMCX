@@ -116,3 +116,11 @@ val is_valid_com: string->t -> Command.command -> bool
 (** [cure4_status name t] is [t] with [name] having full health and no status effects *)
 val cure4_status: string -> t -> t
 
+val is_poisoned: string -> t -> bool
+
+val is_paralyzed: string -> t -> bool
+
+val is_blinded: string -> t -> bool
+
+val is_silenced: string -> t -> bool
+

@@ -4,7 +4,6 @@ open Party
 open Gauntlet 
 open Status
 open Command
-
 (** Represents the state of the game being played *)
 type t = {
   health : (string*int) list; 
@@ -20,6 +19,8 @@ type t = {
   agility: (string*int) list;
   hit_percent: (string*int) list;
   fight_defense : (string*int) list;
+  pure: (string*bool) list;
+  heal: (string*bool) list;
 }
 
 (** [get_party_health gtl party acc] is [acc] with the (name,vit) of every
@@ -62,7 +63,7 @@ let rec get_party_def party acc =
 let rec get_party_mp party acc = 
   match party with 
   | [] -> acc 
-  | x::t -> get_party_health t ((get_name x,(get_stats x).mp)::acc) 
+  | x::t -> get_party_mp t ((get_name x,(get_stats x).mp)::acc) 
 
 (** [get_bs gtl boss] is the health of [boss] in [gtl] *)
 let get_bs gtl boss = (boss_stats gtl boss).hp 
@@ -101,6 +102,11 @@ let rec status_helper acc (lst: string list) =
   | [] -> acc
   | x::t -> status_helper ((x,[])::acc) t 
 
+(** [init_pot lst] is an assoc list with each name in [lst] paired with true *)
+let rec init_pot = function
+  | [] -> []
+  | h::t -> (h,true):: init_pot t
+
 (** [init state gtl party] initializes the first state of the game. Every 
     Party memeber has full health and magic points as well as the boss. The
     turnover is the official turnover including all 4 players. Current boss is the 
@@ -117,7 +123,10 @@ let init_state gtl party =
    strength = (boss, get_bstr gtl boss)::(get_party_str party []);
    agility = (boss, get_bagl gtl boss)::(get_party_agility party []);
    hit_percent = (boss, get_bhits_per gtl boss)::(get_party_hit_per party []);
-   fight_defense = (boss, get_bdef gtl boss)::(get_party_def party [])}
+   fight_defense = (boss, get_bdef gtl boss)::(get_party_def party []);
+   pure = init_pot (boss::(party_helper party []));
+   heal = init_pot (boss::(party_helper party []));
+  }
 
 (** [helper name lst] is the health of [name] of the character in 
     [lst] or raises UnknownCharacter if not in [lst] *)
@@ -148,7 +157,8 @@ let set_health gtl name t num =
    turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
    current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
    strength = t.strength; agility = t.agility;
-   hit_percent = t.hit_percent; fight_defense = t.fight_defense}
+   hit_percent = t.hit_percent; fight_defense = t.fight_defense; pure = t.pure; 
+   heal = t.heal}
 
 (** [set_magic_points name num t] is [t] with the mp of [name] set to [num] *)
 let set_magic_points name num t = 
@@ -156,7 +166,8 @@ let set_magic_points name num t =
    turnorder= t.turnorder; party=t.party;current_boss=t.current_boss;next_boss=t.next_boss;
    current_fighter = t.current_fighter; next_fighter= t.next_fighter; status's = t.status's;
    strength = t.strength; agility = t.agility; 
-   hit_percent = t.hit_percent; fight_defense = t.fight_defense}
+   hit_percent = t.hit_percent; fight_defense = t.fight_defense; pure=t.pure; 
+   heal = t.heal}
 
 (** [set_strength name num t] is [t] with the strength of [name] set to [num] *)
 let set_strength name t num = 
@@ -164,7 +175,8 @@ let set_strength name t num =
    turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
    current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
    strength =  List.rev (helper2 name (if num< 0 then 0 else num) t.strength []); agility = t.agility;
-   hit_percent = t.hit_percent; fight_defense = t.fight_defense}
+   hit_percent = t.hit_percent; fight_defense = t.fight_defense; pure=t.pure; 
+   heal = t.heal}
 
 (** [set_agil name num t] is [t] with the agil of [name] set to [num] *)
 let set_agil name t num = 
@@ -172,7 +184,8 @@ let set_agil name t num =
    turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
    current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
    strength = t.strength; agility =  List.rev (helper2 name (if num< 0 then 0 else num) t.agility []);
-   hit_percent = t.hit_percent; fight_defense = t.fight_defense}
+   hit_percent = t.hit_percent; fight_defense = t.fight_defense; pure=t.pure; 
+   heal = t.heal}
 
 (** [set_hip_percent name num t] is [t] with the hit_percent of [name] set to [num] *)
 let set_hit_percent name t num = 
@@ -180,7 +193,9 @@ let set_hit_percent name t num =
    turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
    current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
    strength = t.strength; agility = t.agility;
-   hit_percent = List.rev (helper2 name (if num< 0 then 0 else num) t.hit_percent []); fight_defense = t.fight_defense}
+   hit_percent = List.rev (helper2 name (if num< 0 then 0 else num) t.hit_percent []);
+   fight_defense = t.fight_defense;pure=t.pure; 
+   heal = t.heal}
 
 (** [set_fight_def name num t] is [t] with the fight_defense of [name] set to [num] *)
 let set_fight_def name t num = 
@@ -189,7 +204,9 @@ let set_fight_def name t num =
    current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
    strength = t.strength; agility = t.agility;
    hit_percent = t.hit_percent; 
-   fight_defense =  List.rev (helper2 name (if num< 0 then 0 else num) t.fight_defense [])}         
+   fight_defense =  List.rev (helper2 name (if num< 0 then 0 else num) t.fight_defense []);
+   pure=t.pure; heal = t.heal
+  }         
 
 (** [get_next name lst head] is [head] if [name] is the last element in [lst] else 
     it is the element following [name] in [lst]  *)
@@ -222,7 +239,8 @@ let remove_from_t name state =
    next_boss= state.next_boss; current_fighter = state.current_fighter;
    next_fighter= (check state.current_fighter state.next_fighter t); status's = state.status's;
    strength = state.strength; agility = state.agility; 
-   hit_percent = state.hit_percent; fight_defense = state.fight_defense}      
+   hit_percent = state.hit_percent; fight_defense = state.fight_defense; pure=state.pure; 
+   heal = state.heal}      
 
 (** [get_health name t] is the health of chracter with name [name] in 
     state [t]  *)
@@ -298,7 +316,8 @@ let status_remove name status state =
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
    status's = helper2 name stats state.status's [];strength = state.strength; 
-   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense}     
+   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense;
+   pure= state.pure; heal = state.heal}     
 
 (** [is_poisoned name t] is true if [name] has status effect Poisoned in state [t] *)
 let is_poisoned name t = 
@@ -307,6 +326,14 @@ let is_poisoned name t =
 (** [is_paralysed name t] is true if [name] has status effect Paralyzed in state [t] *)
 let is_paralyzed name t = 
   List.mem Paralyzed (get_status name t)      
+
+(** [is_blinded name t] is true if [name] has status effect Blinded in state [t] *)
+let is_blinded name t = 
+  List.mem Blinded (get_status name t)  
+
+(** [is_silenced name t] is true if [name] has status effect Silenced in state [t] *)
+let is_silenced name t = 
+  List.mem Silenced (get_status name t)  
 
 (** [cure_para name t] is [t] with Paralyzed remove by random chance. if [name]
     is a PC then 25% chance and if [name] is an enemy then 10% chance *)
@@ -336,7 +363,8 @@ let change_turns gtl t =
    current_fighter = n.next_fighter; 
    next_fighter = get_next n.next_fighter n.turnorder (List.nth n.turnorder 0); 
    status's = n.status's;strength = n.strength;  agility = n.agility; 
-   hit_percent = n.hit_percent; fight_defense = n.fight_defense}  
+   hit_percent = n.hit_percent; fight_defense = n.fight_defense; pure=t.pure; 
+   heal = t.heal}  
 
 (** [find_char lst acc] is the character list [acc] with the characters whose 
     names are in [lst] in the order they are in [lst] *)
@@ -359,7 +387,8 @@ let reset_state gtl t =
    strength = (boss, get_bstr gtl boss)::(get_party_str party []);
    agility = (boss, get_bagl gtl boss)::(get_party_agility party []);
    hit_percent = (boss, get_bhits_per gtl boss)::(get_party_hit_per party []);
-   fight_defense = (boss, get_bdef gtl boss)::(get_party_def party [])}  
+   fight_defense = (boss, get_bdef gtl boss)::(get_party_def party []);
+   heal = init_pot (boss::t.party); pure = init_pot (boss::t.party)}  
 
 (** [status_add name status state] is [state] with the status effect [status]
     added to [name]'s status effects *)
@@ -369,7 +398,8 @@ let status_add name status state =
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
    status's = helper2 name stats state.status's []; strength = state.strength; 
-   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense} 
+   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense;
+   pure = state.pure; heal = state.heal} 
 
 (** [pure_status nmae state] is [state] but with [name] has no status effects *)
 let pure_status name state = 
@@ -377,7 +407,8 @@ let pure_status name state =
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
    status's = helper2 name [] state.status's []; strength = state.strength; 
-   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense}
+   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense; 
+   pure = state.pure; heal = state.heal}
 
 (** [cure4_status name state] is [t] after [name]'s health has been revived and 
     status effects have been removed. *)
@@ -388,7 +419,8 @@ let cure4_status name state =
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
    status's = helper2 name [] state.status's []; strength = state.strength; 
-   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense}
+   agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense;
+   pure = state.pure; heal = state.heal}
 
 (** [is_valid_com name t com] is true if [name] does not have a status effect
     preventing them to perform [com], false otherwise. *)
