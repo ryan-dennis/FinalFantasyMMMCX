@@ -412,10 +412,9 @@ let pure_status name state =
 
 (** [cure4_status name state] is [t] after [name]'s health has been revived and 
     status effects have been removed. *)
-let cure4_status name state = 
-  let h = (find_character name get_characters) in 
-  let hp = char_og_health h in  
-  {health = List.rev (helper2 name hp state.health []); magic_points = state.magic_points; turnorder = state.turnorder;
+let cure4_status name state gtl  = 
+  let h = max_hp name state gtl in   
+  {health = List.rev (helper2 name h state.health []); magic_points = state.magic_points; turnorder = state.turnorder;
    party = state.party; current_boss = state.current_boss; next_boss = state.next_boss; 
    current_fighter = state.current_fighter; next_fighter = state.next_fighter; 
    status's = helper2 name [] state.status's []; strength = state.strength; 

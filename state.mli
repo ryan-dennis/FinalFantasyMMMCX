@@ -114,7 +114,7 @@ val pure_status: string -> t -> t
 val is_valid_com: string->t -> Command.command -> bool
 
 (** [cure4_status name t] is [t] with [name] having full health and no status effects *)
-val cure4_status: string -> t -> t
+val cure4_status: string -> t -> Gauntlet.t -> t
 
 (**[is_poisoned] is true if the character is Poisoned *)
 val is_poisoned: string -> t -> bool
