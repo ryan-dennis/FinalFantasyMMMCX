@@ -134,6 +134,9 @@ let find_boss glt b =
 let boss_stats glt b =
   (find_boss glt b).stats
 
+let boss_num_of_hits glt b =
+  ((find_boss glt b).stats).hits_per
+
 let boss_sprite glt b =
   (find_boss glt b).sprite
 

@@ -50,13 +50,16 @@ let hit_roll st atker tar =
   if Random.int 200 <= cth then true
   else false
 
-(** [num_of_hits atker st] is the number of hits that the attacker [atker] in
-    state [st] gets. *)
-let num_of_hits atker st =
+(** [num_of_hits glt atker st] is the number of hits that the attacker [atker]
+    in state [st] gets. *)
+let num_of_hits glt atker st =
+  let boss = get_current_boss st in
   let base_hit = 1 + ((get_hit_per atker st) / 32) in
-  match atker with
-  | "black belt" -> 2 * base_hit
-  | char -> base_hit
+  if atker = boss then Gauntlet.boss_num_of_hits glt boss
+  else if atker = "black belt" then 2 * base_hit
+  else match atker with
+    | "black belt" -> 2 * base_hit
+    | char -> base_hit
 
 (** [fight_dmg st a_hit d_agl d_def atk] is how much damage the attacker
     [atker] deals to target [tar] in state [st]. *)
@@ -78,10 +81,9 @@ let rec total_hit_dmg st atker tar hits dmg =
     executes their fight attack on [tar] in [st]. *)
 let fight_attack glt st tar =
   let atker = get_current_fighter st in
-  let hits = num_of_hits atker st in
+  let hits = num_of_hits glt atker st in
   let dmg = total_hit_dmg st atker tar hits 0 in
-  let new_st = get_health tar st - dmg |> set_health glt tar st |>
-               change_turns glt in
+  let new_st = get_health tar st - dmg |> set_health glt tar st in
   {hits = hits;
    dmg = dmg;
    target = tar;
@@ -89,7 +91,8 @@ let fight_attack glt st tar =
    new_st = new_st}
 
 let fight glt st c =
-  get_current_boss st |> fight_attack glt st
+  let data = get_current_boss st |> fight_attack glt st in
+  {data with new_st = change_turns glt data.new_st}
 
 (** [magic_to_battle_data spell_data] is the magic data [t] in the form of
     battle data. *)
@@ -103,7 +106,8 @@ let magic_to_battle_data t =
   }
 
 let magic glt st s c tar =
-  cast_spell glt st (get_spell s) c tar |> magic_to_battle_data
+  let data = cast_spell glt st (get_spell s) c tar |> magic_to_battle_data in
+  {data with new_st = change_turns glt data.new_st}
 
 (******************************************************************************
    BOSS AI

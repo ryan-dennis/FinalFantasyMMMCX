@@ -13,9 +13,7 @@ type t
 val fight : Gauntlet.t -> State.t -> Party.t -> t
 
 (** [magic glt st s c tar] is the new state after the spell with name [s] is
-    cast by the character [c] on target [tar]. Raises [InvalidSpellTarget] if
-    invalid spell target is selected, or [NotEnoughMP] if the character does
-    not have enough MP to cast the given spell. *)
+    cast by the character [c] on target [tar]. *)
 val magic : Gauntlet.t -> State.t -> string -> Party.t -> string -> t
 
 (** [boss_turn glt st] is the new state after the boss during [st] from

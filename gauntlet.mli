@@ -50,6 +50,10 @@ val final : t -> boss_id
 (** [boss_stats g b] is the stats of boss [b] in gauntlet [g]. *)
 val boss_stats : t -> boss_id -> stats
 
+(** [boss_num_of_hits g b] is the number of hits for boss [b] in gauntlet
+    [g]. *)
+val boss_num_of_hits : t -> boss_id -> int
+
 (** [boss_sprite g b] is the sprite of boss [b] in gauntlet [g]. *)
 val boss_sprite : t -> boss_id -> string list
 

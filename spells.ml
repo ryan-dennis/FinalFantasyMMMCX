@@ -345,7 +345,7 @@ let cast_spell glt st sp c tar =
   in
   let st = spell_data.m_new_st in
   {spell_data with
-   m_new_st = st |> update_mp c sp |> change_turns glt}
+   m_new_st = st |> update_mp c sp}
 
 
 (******************************************************************************
