@@ -18,6 +18,10 @@ type t = {
    PLAYER CHARACTER TURN
  ******************************************************************************)
 
+(** [is_boss atker st] is whether [atker] is the current boss in [st]. *)
+let is_boss atker st =
+  (get_current_boss st) = atker
+
 (** [write_fight_desc st target hits dmg] is the description of the last turn,
     if the last turn was a fight attack. *)
 let write_fight_desc st target hits dmg =
@@ -27,9 +31,10 @@ let write_fight_desc st target hits dmg =
 
 (** [get_atk atker st] is the attack rating of [atker] in [st]. *)
 let get_atk atker st =
-  let boss = get_current_boss st in
-  let str_bonus = get_strength atker st / 2 in
-  let weapon = if atker = boss then 0 else
+  let str = get_strength atker st in
+  let str_bonus = if is_boss atker st
+    then str else str / 2 in
+  let weapon = if is_boss atker st then 0 else
       match atker with
       | "fighter" -> 45
       | "thief" -> 33
@@ -43,10 +48,13 @@ let get_atk atker st =
 (** [hit_roll st atker tar] is whether the attacker [atker] hits the target
     [tar] in the state [st]. *)
 let hit_roll st atker tar =
-  let base_cth = if is_blinded atker st then 148
+  let base_cth = if is_blinded atker st && is_blinded tar st then 168
+    else if is_blinded atker st then 128
     else if is_blinded tar st then 208
     else 168 in
-  let cth = base_cth + (get_hit_per atker st) - (48 + (get_agil tar st)) in
+  let agi = get_agil tar st in
+  let evasion = if is_boss atker st then agi + 48 else agi in
+  let cth = base_cth + (get_hit_per atker st) - evasion in
   if Random.int 200 <= cth then true
   else false
 
@@ -65,10 +73,10 @@ let num_of_hits glt atker st =
     [atker] deals to target [tar] in state [st]. *)
 let fight_dmg st atker tar =
   let atk = get_atk atker st in
-  if hit_roll st atker tar = false then 0
-  else let dmg = (Random.int atk) + atk - (get_fight_def tar st) in
-    if dmg <= 0 then 1
-    else dmg
+  let dmg = if hit_roll st atker tar = false then 0
+    else (Random.int atk) + atk - (get_fight_def tar st) in
+  if dmg <= 0 then 1
+  else dmg
 
 (** [total_hit_dmg st atker tar n dmg] is how much damage an attacker [atker]
     does to a target [tar] in state [st] over the course of [hits] hits. *)
@@ -186,8 +194,8 @@ let boss_turn glt st =
           hits = 0;
           dmg = 0;
           target = tar;
-          desc = get_current_boss st ^ "is paralyzed and cannot attack!";
-          new_st = empty_state
+          desc = (get_current_boss st) ^ " is paralyzed and cannot attack!";
+          new_st = st
         }
       | Silenced -> fight_attack glt st tar
       | _ -> failwith "not a valid boss attack"
@@ -210,3 +218,8 @@ let desc b =
 
 let new_st b =
   b.new_st
+
+(** NOTES
+    - Raises Party.UnknownCharacter("fighter") when Chaos is paralyzed and his
+      turn comes
+*)

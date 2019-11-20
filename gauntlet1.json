@@ -1,10 +1,78 @@
 {
   "start": {
-    "id": "Chaos",
-    "dialogue": "It's Chaos!"
+    "id": "Kary",
+    "dialogue": "It's Kary!"
   },
-  "final": "Cloud",
+  "final": "Chaos",
   "bosses": [
+    {
+      "id": "Kary",
+      "stats": {
+        "hp": 700,
+        "agility": 60,
+        "defense": 60,
+        "magic defense": 183,
+        "strength": 60,
+        "hit rate": 63,
+        "hits per turn": 6,
+        "weaknesses": [],
+        "resistances": [
+          "Poison",
+          "Fire",
+          "Ice",
+          "Lightning"
+        ]
+      },
+      "sprite": [],
+      "magic": {
+        "spell chance": 48,
+        "spell list": [
+          "DARK",
+          "HOLD",
+          "STUN"
+        ]
+      },
+      "special": {
+        "skill chance": 0,
+        "skill list": []
+      },
+      "dialogue": "You've defeated Kary!",
+      "next boss": "Tiamat"
+    },
+    {
+      "id": "Tiamat",
+      "stats": {
+        "hp": 1000,
+        "agility": 72,
+        "defense": 80,
+        "magic defense": 200,
+        "strength": 49,
+        "hit rate": 80,
+        "hits per turn": 4,
+        "weaknesses": [],
+        "resistances": [
+          "Fire",
+          "Ice",
+          "Lightning"
+        ]
+      },
+      "sprite": [],
+      "magic": {
+        "spell chance": 0,
+        "spell list": []
+      },
+      "special": {
+        "skill chance": 64,
+        "skill list": [
+          "THUNDER",
+          "POISON",
+          "BLIZZARD",
+          "BLAZE"
+        ]
+      },
+      "dialogue": "You've defeated Tiamat!",
+      "next boss": "Chaos"
+    },
     {
       "id": "Chaos",
       "stats": {
@@ -58,57 +126,7 @@
           "TORNADO"
         ]
       },
-      "dialogue": "You've defeated Chaos!",
-      "next boss": "Sephiroth"
-    },
-    {
-      "id": "Sephiroth",
-      "stats": {
-        "hp": 10,
-        "agility": 10,
-        "defense": 10,
-        "magic defense": 10,
-        "strength": 10,
-        "hit rate": 100,
-        "hits per turn": 2,
-        "weaknesses": [],
-        "resistances": []
-      },
-      "sprite": [],
-      "magic": {
-        "spell chance": 0,
-        "spell list": []
-      },
-      "special": {
-        "skill chance": 0,
-        "skill list": []
-      },
-      "dialogue": "You've defeated Sephiroth!",
-      "next boss": "Cloud"
-    },
-    {
-      "id": "Cloud",
-      "stats": {
-        "hp": 10,
-        "agility": 10,
-        "defense": 10,
-        "magic defense": 10,
-        "strength": 10,
-        "hit rate": 100,
-        "hits per turn": 2,
-        "weaknesses": [],
-        "resistances": []
-      },
-      "sprite": [],
-      "magic": {
-        "spell chance": 0,
-        "spell list": []
-      },
-      "special": {
-        "skill chance": 0,
-        "skill list": []
-      },
-      "dialogue": "You've defeated Cloud! Congratulations, you've completed the gauntlet!",
+      "dialogue": "You've defeated Chaos! Congratulations, you've completed the gauntlet!",
       "next boss": ""
     }
   ]

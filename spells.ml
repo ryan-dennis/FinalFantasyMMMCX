@@ -210,8 +210,7 @@ let dmg_status_hit_roll glt st sp tar =
     else 148 in
   let mdef = if is_boss st tar then (boss_stats glt tar).mdef
     else (get_char_stats tar).m_def in
-  let cth =
-    base_cth + sp.sp_acc - mdef in
+  let cth = base_cth + sp.sp_acc - mdef in
   if Random.int 200 <= cth then true
   else false
 
@@ -281,7 +280,7 @@ let cast_heal_spell glt st sp tar =
   let new_st = match sp.sp_effect with
     | HPRec -> old_hp + hp_healed st sp tar |>
                set_health glt tar st
-    | FullHP -> cure4_status tar st
+    | FullHP -> cure4_status tar st glt
     | _ -> failwith "not a heal spell"
   in
   let hp_rec = get_health tar new_st - old_hp in
@@ -427,8 +426,6 @@ let t_init st = {
 }
 
 let cast_boss_skill glt sk tar st =
-  let tar = if is_friendly sk.sk_spell then get_current_boss st
-    else tar in
   let party = get_party st in
   let sp = sk.sk_spell in
   let spell_data = match sk.sk_target with
