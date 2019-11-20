@@ -124,3 +124,13 @@ val is_blinded: string -> t -> bool
 
 val is_silenced: string -> t -> bool
 
+val used_heal: string -> t -> t
+
+val used_pure: string -> t -> t
+
+val has_heal: string -> t -> bool
+
+val has_pure: string -> t -> bool
+
+val empty_state: t
+

@@ -124,8 +124,8 @@ let init_state gtl party =
    agility = (boss, get_bagl gtl boss)::(get_party_agility party []);
    hit_percent = (boss, get_bhits_per gtl boss)::(get_party_hit_per party []);
    fight_defense = (boss, get_bdef gtl boss)::(get_party_def party []);
-   pure = init_pot (boss::(party_helper party []));
-   heal = init_pot (boss::(party_helper party []));
+   pure = init_pot (party_helper party []);
+   heal = init_pot (party_helper party []);
   }
 
 (** [helper name lst] is the health of [name] of the character in 
@@ -388,7 +388,7 @@ let reset_state gtl t =
    agility = (boss, get_bagl gtl boss)::(get_party_agility party []);
    hit_percent = (boss, get_bhits_per gtl boss)::(get_party_hit_per party []);
    fight_defense = (boss, get_bdef gtl boss)::(get_party_def party []);
-   heal = init_pot (boss::t.party); pure = init_pot (boss::t.party)}  
+   heal = init_pot t.party; pure = init_pot t.party}  
 
 (** [status_add name status state] is [state] with the status effect [status]
     added to [name]'s status effects *)
@@ -433,3 +433,36 @@ let is_valid_com name t com =
   | Drink n -> if is_paralyzed name t then false else if 
       List.mem Silenced st then false else true
   | _ -> true    
+
+(**[used_heal name t] is [t] with field heal of [name] set to [false]*)
+let used_heal name t = 
+  {health = t.health; magic_points = t.magic_points;
+   turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
+   current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
+   strength = t.strength; agility = t.agility;
+   hit_percent = t.hit_percent; fight_defense = t.fight_defense; pure=t.pure; 
+   heal = helper2 name false t.heal []}
+
+(**[used_pure name t] is [t] with field pure of [name] set to [false]*)
+let used_pure name t = 
+  {health = t.health; magic_points = t.magic_points;
+   turnorder= t.turnorder; party = t.party;current_boss=t.current_boss;next_boss=t.next_boss;
+   current_fighter = t.current_fighter; next_fighter = t.next_fighter; status's = t.status's;
+   strength = t.strength; agility = t.agility; hit_percent = t.hit_percent; 
+   fight_defense = t.fight_defense; pure= helper2 name false t.pure []; 
+   heal = t.heal} 
+
+(** [has_heal name t] is [true] if [name] has potion heal*)
+let has_heal name t = 
+  List.assoc name t.heal
+
+(** [has_pure name t] is [true] if [name] has potion pure *)
+let has_pure name t = 
+  List.assoc name t.pure        
+
+(** [empty_state] is an empty state *)
+let empty_state = 
+  {health = []; magic_points = []; turnorder= []; party = [];
+   current_boss= "";next_boss= "";current_fighter = ""; next_fighter = ""; 
+   status's = []; strength = []; agility = []; hit_percent = []; 
+   fight_defense = []; pure= []; heal = []} 
