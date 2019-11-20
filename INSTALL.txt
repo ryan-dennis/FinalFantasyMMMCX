@@ -3,14 +3,14 @@ Navigate to that folder in Unix and type "unzip src.zip," then "make play."
 The game is started by typing "make play," and then the file "gauntlet1.json," 
 which is currently the only valid gauntlet to be played through. 
 The player can then form a party by typing the names of three of the given 
-characters individually and hitting enter after each (hint: use black belt, he 
-is the only character that deals significant damage; this will be balanced later). 
+characters individually and hitting enter after each. 
 After the first battle begins, the valid commands are: fight, drink (potion), 
-magic, cast (spell), and quit. Fight will deal damage; drink is currently not 
-yet implemented and will work (but won't have any effect); magic will give the 
-current attacker's list of spells, and cast (spell) is unimplemented but will 
-deal damage as a placeholder; quit will exit the game. 
-There are three bosses, though only the first is implemented with realistic 
-stats. The player will fight each boss in sequence, then the game will end when 
-the player has defeated all three or all three of their party members have been 
-defeated.
+magic, cast (spell), pass, and quit. Fight will deal damage; drink (pure/heal) will
+have the character drink the relevant potion; magic will give the current
+attacker's list of spells; cast (spell) will have the character cast the
+given spell (which should match how it is displayed from magic exactly) at the
+target that will be prompted for; pass will skip that character's turn (necessary
+if they are paralyzed); and quit will exit the game. 
+There are three bosses. The player will fight each boss in sequence, then the
+game will end when the player has defeated all three or all three of their
+party members have been defeated.
