@@ -35,28 +35,28 @@ let rec get_party_health party acc =
 let rec get_party_str party acc = 
   match party with 
   | [] -> acc 
-  | x::t -> get_party_health t ((get_name x,(get_stats x).str)::acc) 
+  | x::t -> get_party_str t ((get_name x,(get_stats x).str)::acc) 
 
 (** [get_party_agility gtl party acc] is [acc] with the (name,agl) of every
     character in [party]  *)
 let rec get_party_agility party acc = 
   match party with 
   | [] -> acc 
-  | x::t -> get_party_health t ((get_name x,(get_stats x).agl)::acc) 
+  | x::t -> get_party_agility t ((get_name x,(get_stats x).agl)::acc) 
 
 (** [get_party_hit_per gtl party acc] is [acc] with the (name,hit_percent) of every
     character in [party]  *)
 let rec get_party_hit_per party acc = 
   match party with 
   | [] -> acc 
-  | x::t -> get_party_health t ((get_name x,(get_stats x).hit_percent)::acc) 
+  | x::t -> get_party_hit_per t ((get_name x,(get_stats x).hit_percent)::acc) 
 
 (** [get_party_def gtl party acc] is [acc] with the (name,fight_def) of every
     character in [party]  *)
 let rec get_party_def party acc = 
   match party with 
   | [] -> acc 
-  | x::t -> get_party_health t ((get_name x,(get_stats x).fight_def)::acc) 
+  | x::t -> get_party_def t ((get_name x,(get_stats x).fight_def)::acc) 
 
 (** [get_party_health gtl party acc] is [acc] with the (name,mp) of every
     character in [party]  *)
