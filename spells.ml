@@ -395,6 +395,8 @@ let get_skill s =
   List.find (fun x -> x.sk_spell.sp_name = s) skill_list
 
 let cast_boss_spell glt sp tar st =
+  let tar = if is_friendly sp then get_current_boss st
+    else tar in
   let spell_data = match sp.sp_effect with
     | Damage -> cast_damage_spell glt st sp tar
     | StatusAilment | HP300Status -> cast_status_spell glt st sp tar
@@ -425,6 +427,8 @@ let t_init st = {
 }
 
 let cast_boss_skill glt sk tar st =
+  let tar = if is_friendly sk.sk_spell then get_current_boss st
+    else tar in
   let party = get_party st in
   let sp = sk.sk_spell in
   let spell_data = match sk.sk_target with

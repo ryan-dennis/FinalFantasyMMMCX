@@ -33,7 +33,7 @@ let get_atk atker st =
       match atker with
       | "fighter" -> 45
       | "thief" -> 33
-      | "black belt" -> 100 - str_bonus
+      | "black belt" -> 80 - str_bonus
       | "red mage" -> 32
       | "white mage" -> 18
       | "black mage" -> 22
