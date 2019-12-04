@@ -1,17 +1,17 @@
 (** Dimensions: 70 across, 30 vertically 
     Boss box: 37 across, 20 vertically
     Character box: 19 across, 20 vertically
-    Characters: 10 px by 10 px, 10 characters across by 5 lines
-    Boss: 30 px by 30 px, 30 characters across by 15 lines *)
+    Characters: 12 px by 12 px, 10 characters across by 5 lines
+    Boss: 40 px by 40 px, 30 characters across by 15 lines *)
 
 open Party
 open State
 (** Dimensions of the frame. *)
-let arena = 56
-let b1_top = 37
+let arena = 70
+let b1_top = 44
 let b2_top = arena - b1_top
 let b3_top = 10
-let b1_bot = 24
+let b1_bot = 31
 let b2_bot = arena - b1_bot
 let b3_bot = 10
 let offset = b1_top - b1_bot - 1
@@ -87,7 +87,7 @@ let frame =
                                   "║"; String.make b2_top ' ';
                                   "╠"; hor_frame b3_top "";
                                   "╗"]) |>
-     List.append (frame_sides_gap 7 []) |>
+     List.append (frame_sides_gap 13 []) |>
      List.rev) |>
   List.rev |>
   List.cons (String.concat "" ["╔"; hor_frame b1_top "";

@@ -6,6 +6,7 @@ open Battle
 open Potions
 open Status
 open Spells
+open Display
 
 let minisleep (sec: float) s =
   print_endline s;
