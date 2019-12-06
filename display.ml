@@ -1,13 +1,13 @@
 (** Dimensions: 70 across, 30 vertically 
     Boss box: 37 across, 20 vertically
     Character box: 19 across, 20 vertically
-    Characters: 12 px by 12 px, 10 characters across by 5 lines
-    Boss: 40 px by 40 px, 30 characters across by 15 lines *)
+    Characters: 15 px by 24 px, 15 characters across by 12 lines
+    Boss: 40 px by 40 px, 40 characters across by 20 lines *)
 
 open Party
 open State
 (** Dimensions of the frame. *)
-let arena = 70
+let arena = 75
 let b1_top = 44
 let b2_top = arena - b1_top
 let b3_top = 10
@@ -87,7 +87,7 @@ let frame =
                                   "║"; String.make b2_top ' ';
                                   "╠"; hor_frame b3_top "";
                                   "╗"]) |>
-     List.append (frame_sides_gap 13 []) |>
+     List.append (frame_sides_gap 25 []) |>
      List.rev) |>
   List.rev |>
   List.cons (String.concat "" ["╔"; hor_frame b1_top "";
@@ -97,34 +97,52 @@ let frame =
 let empty_frame = frame |> String.concat "\n"
 
 (**
-   ╔═════════════════════════════════════╦═══════════════════╗
-   ║                                     ║                   ║
-   ║                                     ║                   ║
-   ║                                     ║                   ║
-   ║                                     ║                   ║
-   ║                                     ║                   ║
-   ║                                     ║                   ║
-   ║                                     ║                   ║
-   ║                                     ║                   ╠══════════╗
-   ║                                     ║                   ║          ║
-   ║                                     ║                   ║          ║
-   ║                                     ║                   ║          ║
-   ║                                     ║                   ║          ║
-   ║                                     ║                   ║          ║
-   ║                                     ║                   ║          ║
-   ║                                     ║                   ╠══════════╣
-   ║                                     ║                   ║          ║
-   ║                                     ║                   ║          ║
-   ║                                     ║                   ║          ║
-   ║                                     ║                   ║          ║
-   ║                                     ║                   ║          ║
-   ╠════════════════════════╦════════════╩═══════════════════╣          ║
-   ║                        ║                                ╠══════════╣
-   ║                        ║  FIGHT                         ║          ║
-   ║                        ║                                ║          ║
-   ║                        ║  MAGIC                         ║          ║
-   ║                        ║                                ║          ║
-   ║                        ║  DRINK                         ║          ║
-   ║                        ║                                ║          ║
-   ╚════════════════════════╩════════════════════════════════╩══════════╝
+   ╔════════════════════════════════════════════╦═══════════════════════════════╗
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║           
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ║
+   ║                                            ║                               ╠══════════╗
+   ║                                            ║                               ║          ║
+   ║                                            ║                               ║          ║
+   ║                                            ║                               ║          ║
+   ║                                            ║                               ║          ║
+   ║                                            ║                               ║          ║
+   ║                                            ║                               ║          ║
+   ║                                            ║                               ╠══════════╣
+   ║                                            ║                               ║          ║
+   ║                                            ║                               ║          ║
+   ║                                            ║                               ║          ║
+   ║                                            ║                               ║          ║
+   ║                                            ║                               ║          ║
+   ╠═══════════════════════════════╦════════════╩═══════════════════════════════╣          ║
+   ║                               ║                                            ╠══════════╣
+   ║                               ║  FIGHT                                     ║          ║
+   ║                               ║                                            ║          ║
+   ║                               ║  MAGIC                                     ║          ║
+   ║                               ║                                            ║          ║
+   ║                               ║  DRINK                                     ║          ║
+   ║                               ║                                            ║          ║
+   ╚═══════════════════════════════╩════════════════════════════════════════════╩══════════╝
 *)
