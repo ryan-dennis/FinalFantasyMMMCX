@@ -26,24 +26,25 @@ let party_tests = [
   (fun _ -> assert_equal ["FIR2";"ICE";"LIT2"] (get_spells red_mage);)                         
 ]
 
-let glt1 = "gauntlet1.json" |> Yojson.Basic.from_file |> from_json;;
+(** GAUNTLET TESTS *)
+let glt1 = "testgauntlet.json" |> Yojson.Basic.from_file |> from_json;;
 let chaos_stats = boss_stats glt1 "Chaos"
-let chaos_spells = ["ICE3";"LIT3";"FIR3";"ICE2"]
-let chaos_skills = ["INFERNO";"SWIRL"]
+let chaos_spells = ["ICE3";"LIT3";"CUR4";"FIR3";"ICE2";"NUKE"]
+let chaos_skills = ["INFERNO";"SWIRL";"TORNADO"]
 
 let gauntlet_tests = [
   "start boss" >:: (fun _ -> assert_equal "Chaos" (start_boss glt1));
   "start dialogue" >::
   (fun _ -> assert_equal "It's Chaos!" (start_dialogue glt1));
-  "final boss" >:: (fun _ -> assert_equal "Cloud" (final glt1));
-  "Chaos hp" >:: (fun _ -> assert_equal 2000 (chaos_stats.hp));
-  "Chaos agility" >:: (fun _ -> assert_equal 100 (chaos_stats.agl));
-  "Chaos defense" >:: (fun _ -> assert_equal 100 (chaos_stats.def));
-  "Chaos magic defense" >:: (fun _ -> assert_equal 200 (chaos_stats.mdef));
-  "Chaos strength" >:: (fun _ -> assert_equal 100 (chaos_stats.str));
-  "Chaos hit rate" >:: (fun _ -> assert_equal 200 (chaos_stats.hit));
-  "Chaos weaknesses" >:: (fun _ -> assert_equal [] (chaos_stats.weak));
-  "Chaos resistances" >:: (fun _ -> assert_equal ["ICE"] (chaos_stats.resist));
+  "final boss" >:: (fun _ -> assert_equal "Professor Clarkson" (final glt1));
+  "Chaos hp" >:: (fun _ -> assert_equal 1500 (chaos_stats.hp));
+  "Chaos agility" >:: (fun _ -> assert_equal 60 (chaos_stats.agl));
+  "Chaos defense" >:: (fun _ -> assert_equal 60 (chaos_stats.def));
+  "Chaos magic defense" >:: (fun _ -> assert_equal 120 (chaos_stats.mdef));
+  "Chaos strength" >:: (fun _ -> assert_equal 60 (chaos_stats.str));
+  "Chaos hit rate" >:: (fun _ -> assert_equal 120 (chaos_stats.hit));
+  "Chaos weaknesses" >:: (fun _ -> assert_equal ["Ice"] (chaos_stats.weak));
+  "Chaos resistances" >:: (fun _ -> assert_equal ["Fire"] (chaos_stats.resist));
   "Chaos spell chance" >::
   (fun _ -> assert_equal 64 (boss_spell_chance glt1 "Chaos"));
   "Chaos spells" >::
@@ -52,12 +53,13 @@ let gauntlet_tests = [
   (fun _ -> assert_equal 64 (boss_skill_chance glt1 "Chaos"));
   "Chaos skills" >::
   (fun _ -> assert_equal chaos_skills (boss_skills glt1 "Chaos"));
-  "Chaos next is Sephiroth" >::
-  (fun _ -> assert_equal "Sephiroth" (next glt1 "Chaos"));
+  "Chaos next is Mutability" >::
+  (fun _ -> assert_equal "Mutability" (next glt1 "Chaos"));
   "Chaos dialogue" >::
-  (fun _ -> assert_equal "You've defeated Chaos!" (dialogue glt1 "Chaos"))
+  (fun _ -> assert_equal "It's Mutability!" (dialogue glt1 "Chaos"))
 ]
 
+(** STATE TESTS *)
 let init = init_state glt1 [thief;red_mage;white_mage]
 let r_set = set_health "red mage" init 25 
 let b_set = set_health "Chaos" init 100
