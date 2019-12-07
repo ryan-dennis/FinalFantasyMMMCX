@@ -19,16 +19,19 @@ type stats = {
   resist : string list
 }
 
+(** The type of castable - spell or skill - in the format (source, name). *)
+type castable = string * string
+
 (** The type of magic. *)
 type magic = {
   spell_chance : int;
-  spell_list : string list
+  spell_list : castable list
 }
 
 (** The type of special. *)
 type special = {
   skill_chance : int;
-  skill_list : string list
+  skill_list : castable list
 }
 
 (** The type of boss. *)
@@ -74,18 +77,23 @@ let stats_of_json j = {
   resist = j |> member "resistances" |> to_list |> List.map to_string;
 }
 
+(** [castable_of_json j] is the spell/skill in a boss's spells/skills list in
+    the gauntlet [j] represents. *)
+let castable_of_json j =
+  (j |> member "source" |> to_string, j |> member "name" |> to_string)
+
 (** [magic_of_json j] is the magic abilities of a boss in the gauntlet [j]
     represents. *)
 let magic_of_json j = {
   spell_chance = j |> member "spell chance" |> to_int;
-  spell_list = j |> member "spell list" |> to_list |> List.map to_string
+  spell_list = j |> member "spell list" |> to_list |> List.map castable_of_json
 }
 
 (** [special_of_json j] is the special abilities of a boss in the gauntlet [j]
     represents. *)
 let special_of_json j = {
   skill_chance = j |> member "skill chance" |> to_int;
-  skill_list = j |> member "skill list" |> to_list |> List.map to_string
+  skill_list = j |> member "skill list" |> to_list |> List.map castable_of_json
 }
 
 (** [check_sprite sprite] is [sprite] if it is a valid sprite (each line is
@@ -144,13 +152,23 @@ let boss_spell_chance glt b =
   (find_boss glt b).magic.spell_chance
 
 let boss_spells glt b =
-  (find_boss glt b).magic.spell_list
+  match (find_boss glt b).magic.spell_list |> List.split with (src,_) -> src
+
+let boss_spell_name glt b sp =
+  match (find_boss glt b).magic.spell_list |> List.assoc_opt sp with
+  | Some spellname -> spellname
+  | None -> sp
 
 let boss_skill_chance glt b =
   (find_boss glt b).special.skill_chance
 
 let boss_skills glt b =
-  (find_boss glt b).special.skill_list
+  match (find_boss glt b).special.skill_list |> List.split with (src,_) -> src
+
+let boss_skill_name glt b sk =
+  match (find_boss glt b).special.skill_list |> List.assoc_opt sk with
+  | Some skillname -> skillname
+  | None -> sk
 
 let next glt b =
   (find_boss glt b).next

@@ -1,130 +1,186 @@
 {
   "start": {
-    "id": "Kary",
-    "dialogue": "It's Kary!"
+    "id": "Chaos",
+    "dialogue": "What’s this? You dare to challenge me? Chaos, the primary antagonist of the first Final Fantasy, a game that legitimized the role-playing genre and kickstarted a franchise now on its fifteenth main installment along with countless other spin-offs across all other forms of media? Chaos, whose disintegrating death animation was considered innovative for NES at the time and probably indirectly inspired Thanos? Chaos, whose backstory is too fundamentally confusing to monologue about instead? Know despair, fool! Hope does not exist here!"
   },
-  "final": "Chaos",
+  "final": "Professor Clarkson",
   "bosses": [
     {
-      "id": "Kary",
+      "id": "Chaos",
       "stats": {
-        "hp": 700,
+        "hp": 1500,
         "agility": 60,
         "defense": 60,
-        "magic defense": 183,
+        "magic defense": 120,
         "strength": 60,
-        "hit rate": 63,
-        "hits per turn": 6,
+        "hit rate": 120,
+        "hits per turn": 4,
         "weaknesses": [],
-        "resistances": [
-          "Poison",
-          "Fire",
-          "Ice",
-          "Lightning"
-        ]
+        "resistances": []
       },
       "sprite": [],
       "magic": {
-        "spell chance": 128,
+        "spell chance": 64,
         "spell list": [
-          "DARK"
+          {
+            "name": "ICE3",
+            "source": "ICE3"
+          },
+          {
+            "name": "LIT3",
+            "source": "LIT3"
+          },
+          {
+            "name": "CUR4",
+            "source": "CUR4"
+          },
+          {
+            "name": "FIR3",
+            "source": "FIR3"
+          },
+          {
+            "name": "ICE2",
+            "source": "ICE2"
+          },
+          {
+            "name": "NUKE",
+            "source": "NUKE"
+          }
         ]
       },
       "special": {
-        "skill chance": 0,
-        "skill list": []
+        "skill chance": 64,
+        "skill list": [
+          {
+            "name": "INFERNO",
+            "source": "INFERNO"
+          },
+          {
+            "name": "SWIRL",
+            "source": "SWIRL"
+          },
+          {
+            "name": "TORNADO",
+            "source": "TORNADO"
+          }
+        ]
       },
-      "dialogue": "You've defeated Kary!",
-      "next boss": "Tiamat"
+      "dialogue": "Ha! You may have defeated me this time. But I will be reborn once more. So even as you die, again and again, I shall return. Born again in this endless cycle I have created! I am ever-changing and all-powerful! All will sink into discord, for it is not the forces of darkness that I get my true power from...",
+      "next boss": "Mutability"
     },
     {
-      "id": "Tiamat",
+      "id": "Mutability",
       "stats": {
-        "hp": 1000,
+        "hp": 2000,
         "agility": 72,
         "defense": 80,
         "magic defense": 200,
         "strength": 49,
         "hit rate": 80,
-        "hits per turn": 4,
-        "weaknesses": [],
+        "hits per turn": 2,
+        "weaknesses": [
+          "Ice"
+        ],
         "resistances": [
-          "Fire",
-          "Ice",
-          "Lightning"
+          "Fire"
         ]
       },
       "sprite": [],
       "magic": {
-        "spell chance": 0,
-        "spell list": []
-      },
-      "special": {
-        "skill chance": 64,
-        "skill list": [
-          "THUNDER",
-          "POISON",
-          "BLIZZARD",
-          "BLAZE"
+        "spell chance": 64,
+        "spell list": [
+          {
+            "name": "!",
+            "source": "NUKE"
+          },
+          {
+            "name": "NULL POINTER EXCEPTION",
+            "source": "INV2"
+          }
         ]
       },
-      "dialogue": "You've defeated Tiamat!",
-      "next boss": "Chaos"
+      "special": {
+        "skill chance": 128,
+        "skill list": [
+          {
+            "name": "REF",
+            "source": "FLASH"
+          },
+          {
+            "name": "INDEX OUT OF BOUNDS",
+            "source": "TRANCE"
+          },
+          {
+            "name": "THIS EXPRESSION HAS TYPE LOSER BUT AN EXPRESSION WAS EXPECTED OF TYPE WORTHY CHALLENGER",
+            "source": "STINGER"
+          }
+        ]
+      },
+      "dialogue": "So you have triumphed yet again! But you have not seen my final form. Know that despite these fleeting victories, you cannot surpass me. I possess great knowledge you could never hope to fully understand. Achieving victory against me stands between you and a bright future - a challenge so many have failed. Prepare to be my latest victim!",
+      "next boss": "Professor Clarkson"
     },
     {
-      "id": "Chaos",
+      "id": "Professor Clarkson",
       "stats": {
-        "hp": 2000,
+        "hp": 2500,
         "agility": 100,
         "defense": 100,
         "magic defense": 200,
         "strength": 100,
         "hit rate": 200,
-        "hits per turn": 2,
-        "weaknesses": [
-          "Fire"
-        ],
+        "hits per turn": 5,
+        "weaknesses": [],
         "resistances": [
-          "Lightning"
+          "Poison",
+          "Lightning",
+          "Fire",
+          "Ice"
         ]
       },
-      "sprite": [
-        "       ▄██████████████████████",
-        "     ▄████████████████████████",
-        "   ▄██████████████████████████",
-        "  ▄███████████████████████████",
-        " ▄████████████████████████████",
-        "▄██▀▀█▀ ▀█████████████████████",
-        "█▀       ▄████████████████████",
-        "▀        ▄████████████████████",
-        "        ▄█████▀ ██████████████",
-        "       ▄██████ ▀██████████████",
-        "       ████████ ██████████████",
-        "       ▀██████▀   █████▀██████",
-        "        ▀█████    ▀████       ",
-        "       ▄▄████▀     ▀███▄      ",
-        "     ▀███████▄      ▀████▄     "
-      ],
+      "sprite": [],
       "magic": {
         "spell chance": 64,
         "spell list": [
-          "ICE3",
-          "LIT3",
-          "CUR4",
-          "FIR3",
-          "ICE2",
-          "NUKE"
+          {
+            "name": "PRAGMATIC PROGRAMMER",
+            "source": "SABR"
+          },
+          {
+            "name": "WHAT'S HARVARD",
+            "source": "FIR3"
+          },
+          {
+            "name": "SHAKE IT OFF",
+            "source": "CUR4"
+          },
+          {
+            "name": "ERROR: 2 OUT OF 366 TEST CASES",
+            "source": "FADE"
+          },
+          {
+            "name": "FAILURE: 234 OUT OF 366 TEST CASES",
+            "source": "NUKE"
+          }
         ]
       },
       "special": {
         "skill chance": 64,
         "skill list": [
-          "INFERNO",
-          "SWIRL",
-          "TORNADO"
+          {
+            "name": "CMSX _DO NOT REPLY_: [CS3110] - GRADES RELEASED FOR PRELIM",
+            "source": "TORNADO"
+          },
+          {
+            "name": "ICLICKER QUESTION",
+            "source": "TRANCE"
+          },
+          {
+            "name": "UNEXPECTED MEME",
+            "source": "INK"
+          }
         ]
       },
-      "dialogue": "You've defeated Chaos! Congratulations, you've completed the gauntlet!",
+      "dialogue": "What?! You’ve won! But that’s not possible... perhaps you have potential after all?",
       "next boss": ""
     }
   ]

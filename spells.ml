@@ -154,9 +154,9 @@ let is_valid_target st sp tar =
     with Party.UnknownCharacter _ ->
       (is_boss st tar) && friendly = false
 
-(** [write_spell_desc st tar hit effect] is the description of the last turn,
-    if the last turn a player character cast a spell. *)
-let write_spell_desc st sp tar hit effect =
+(** [write_spell_desc glt st tar hit effect] is the description of the last
+    turn, if the last turn a player character cast a spell. *)
+let write_spell_desc glt st sp tar hit effect =
   let cur_fighter = get_current_fighter st in
   let spell_desc = match sp.sp_effect with
     | Damage ->
@@ -166,19 +166,22 @@ let write_spell_desc st sp tar hit effect =
       dmg_desc
     | StatusAilment -> ["inflicted" ; effect ^ "!"]
     | HP300Status -> ["inflicted"; effect ^ "!"]
-    | HPRec -> ["healed them for"; effect; "HP!"]
-    | FullHP -> ["healed them completely!"]
-    | RestoreStatus -> ["cured their"; effect ^ "!"]
-    | DefUp -> ["raised their defense!"]
-    | StrUp -> ["raised their strength!"]
-    | StrHitUp -> ["raised their strength and hit rate!"]
-    | AglUp -> ["raised their agility!"]
+    | HPRec -> ["healed him for"; effect; "HP!"]
+    | FullHP -> ["healed him completely!"]
+    | RestoreStatus -> ["cured his"; effect ^ "!"]
+    | DefUp -> ["raised his defense!"]
+    | StrUp -> ["raised his strength!"]
+    | StrHitUp -> ["raised his strength and hit rate!"]
+    | AglUp -> ["raised his agility!"]
   in
-  let tar = if cur_fighter = tar then "themself" else tar in
+  let tar = if cur_fighter = tar then "himself" else tar in
+  let sp_name = if is_boss st cur_fighter
+    then boss_spell_name glt (get_current_boss st) sp.sp_name
+    else sp.sp_name in
   if hit = false
-  then String.concat " " [cur_fighter; "tried to cast"; sp.sp_name; "on"; tar;
+  then String.concat " " [cur_fighter; "tried to cast"; sp_name; "on"; tar;
                           "but it failed!"]
-  else [cur_fighter; "cast"; sp.sp_name; "on"; tar; "and"] @ spell_desc |>
+  else [cur_fighter; "cast"; sp_name; "on"; tar; "and"] @ spell_desc |>
        String.concat " "
 
 (** [is_resistant glt st sp tar] is whether the target [tar] in state [st] is
@@ -236,7 +239,7 @@ let cast_damage_spell glt st sp tar =
   {
     m_dmg = dmg;
     m_target = tar;
-    m_desc = string_of_int dmg |> write_spell_desc st sp tar true;
+    m_desc = string_of_int dmg |> write_spell_desc glt st sp tar true;
     m_new_st = new_st
   }
 
@@ -262,7 +265,7 @@ let cast_status_spell glt st sp tar =
   {
     m_dmg = 0;
     m_target = tar;
-    m_desc = string_of_status status |> write_spell_desc st sp tar hit;
+    m_desc = string_of_status status |> write_spell_desc glt st sp tar hit;
     m_new_st = if hit then status_add tar status st else st
   }
 
@@ -287,14 +290,14 @@ let cast_heal_spell glt st sp tar =
   {
     m_dmg = hp_rec;
     m_target = tar;
-    m_desc = string_of_int hp_rec |> write_spell_desc st sp tar true;
+    m_desc = string_of_int hp_rec |> write_spell_desc glt st sp tar true;
     m_new_st = new_st
   }
 
 (** [cast_restore_status_spell st sp tar] is the cast spell data after
     RestoreStatus spell [sp] is cast on player character [tar] in state
     [st]. *)
-let cast_restore_status_spell st sp tar =
+let cast_restore_status_spell glt st sp tar =
   let status = match sp.sp_eff with
     | EStatus status -> status
     | Eff e -> failwith "not a restore status spell"
@@ -302,20 +305,20 @@ let cast_restore_status_spell st sp tar =
   {
     m_dmg = 0;
     m_target = tar;
-    m_desc = string_of_status status |> write_spell_desc st sp tar true;
+    m_desc = string_of_status status |> write_spell_desc glt st sp tar true;
     m_new_st = status_remove tar status st
   }
 
-(** [cast_support_spell st sp tar] is the cast spell data after a support
+(** [cast_support_spell glt st sp tar] is the cast spell data after a support
     spell [sp] is cast on a player character [tar] in state [st]. *)
-let cast_support_spell st sp tar =
+let cast_support_spell glt st sp tar =
   let eff = match sp.sp_eff with
     | Eff e -> e
     | EStatus _ -> failwith "not a support spell" in
   {
     m_dmg = 0;
     m_target = tar;
-    m_desc = write_spell_desc st sp tar true "";
+    m_desc = write_spell_desc glt st sp tar true "";
     m_new_st = match sp.sp_effect with
       | DefUp -> get_fight_def tar st + eff |> set_fight_def tar st
       | StrUp -> get_strength tar st + eff |> set_strength tar st
@@ -339,8 +342,8 @@ let cast_spell glt st sp c tar =
     | Damage -> cast_damage_spell glt st sp tar
     | StatusAilment | HP300Status -> cast_status_spell glt st sp tar
     | HPRec | FullHP -> cast_heal_spell glt st sp tar
-    | RestoreStatus -> cast_restore_status_spell st sp tar
-    | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell st sp tar
+    | RestoreStatus -> cast_restore_status_spell glt st sp tar
+    | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell glt st sp tar
   in
   let st = spell_data.m_new_st in
   {spell_data with
@@ -400,8 +403,8 @@ let cast_boss_spell glt sp tar st =
     | Damage -> cast_damage_spell glt st sp tar
     | StatusAilment | HP300Status -> cast_status_spell glt st sp tar
     | HPRec | FullHP -> cast_heal_spell glt st sp tar
-    | RestoreStatus -> cast_restore_status_spell st sp tar
-    | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell st sp tar
+    | RestoreStatus -> cast_restore_status_spell glt st sp tar
+    | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell glt st sp tar
   in
   {spell_data with m_new_st = spell_data.m_new_st}
 
@@ -434,7 +437,8 @@ let cast_boss_skill glt sk tar st =
   in
   let b = get_current_boss st in
   let desc = match sk.sk_target with
-    | All -> String.concat " " [b; "cast"; sp.sp_name; "on the party!"]
+    | All -> String.concat " " [b; "cast"; boss_skill_name glt b sp.sp_name;
+                                "on the party!"]
     | Single -> spell_data.m_desc
   in
   {
