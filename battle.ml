@@ -224,14 +224,3 @@ let desc b =
 
 let new_st b =
   b.new_st
-
-(** NOTES:
-    - Red mage dealt 5 hits before and after being blinded, but 71 dmg before
-      and 139, 128 after
-    - Red mage before: 5/71, 5/124, 5/72, 5/129, 5/89
-    - Red mage after: 5/118, 5/139, 5/128, 5/71, 5/160, 5/118
-    - Thief before: 4/65, 4/54, 4/63, 4/86, 4/85, 4/107, 4/90, 4/20, 4/48
-    - Thief after: 4/69, 2/69, 4/120, 4/121, 4/47
-    - White mage before: 2/2, 2/2, 2/2, 2/4, 1/3, 2/2
-    - White mage after: 2/2, 1/1, 1/1, 2/2, 1/1
-*)
