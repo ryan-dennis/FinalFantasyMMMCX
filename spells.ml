@@ -28,7 +28,8 @@ type effectivity =
     ailment of EStatus
     Heal (HPRec, FullHP): always hits, heals a player character and/or removes
     all statuses
-    RestoreStatus (RestoreStatus): removes the status EStatus
+    RestoreStatus (RestoreStatus, Pure): removes the status EStatus or removes
+    all statuses
     Support (DefUp, StrUp, StrHitUp, AglUp): always hits, stat buffs that are
     applied to a player character
 *)
@@ -38,6 +39,7 @@ type effect =
   | HP300Status
   | HPRec
   | FullHP
+  | Pure
   | RestoreStatus
   | DefUp
   | StrUp
@@ -86,7 +88,7 @@ let spell_list = [
   spell "FIR2" (Eff 30) 24 Fire Damage mp3;
   spell "HOLD" (EStatus Paralyzed) 64 Status StatusAilment mp3;
   spell "LIT2" (Eff 30) 24 Lightning Damage mp3;
-  spell "PURE" (EStatus Poisoned) 0 None RestoreStatus mp4;
+  spell "PURE" (Eff 0) 0 None Pure mp4;
   spell "AMUT" (EStatus Silenced) 0 None RestoreStatus mp4;
   spell "ICE2" (Eff 40) 24 Ice Damage mp4;
   spell "CUR3" (Eff 66) 0 None HPRec mp5;
@@ -131,7 +133,8 @@ let get_spell s =
     teammates). *)
 let is_friendly sp =
   match sp.sp_effect with
-  | HPRec | FullHP | RestoreStatus | DefUp | StrUp | StrHitUp | AglUp -> true
+  | HPRec | FullHP | RestoreStatus | Pure | DefUp | StrUp | StrHitUp
+  | AglUp -> true
   | _ -> false
 
 (** [get_char_stats tar] is the stats of the character with the name [tar]. *)
@@ -169,6 +172,7 @@ let write_spell_desc glt st sp tar hit effect =
     | HPRec -> ["healed him for"; effect; "HP!"]
     | FullHP -> ["healed him completely!"]
     | RestoreStatus -> ["cured his"; effect ^ "!"]
+    | Pure -> ["cured all his status effects!"]
     | DefUp -> ["raised his defense!"]
     | StrUp -> ["raised his strength!"]
     | StrHitUp -> ["raised his strength and hit rate!"]
@@ -294,19 +298,31 @@ let cast_heal_spell glt st sp tar =
     m_new_st = new_st
   }
 
+(** [get_status sp] is the status caused by RestoreStatus spell [sp]. *)
+let get_status sp = match sp.sp_eff with
+  | EStatus status -> status
+  | _ -> failwith "not a RestoreStatus spell"
+
 (** [cast_restore_status_spell st sp tar] is the cast spell data after
     RestoreStatus spell [sp] is cast on player character [tar] in state
     [st]. *)
 let cast_restore_status_spell glt st sp tar =
-  let status = match sp.sp_eff with
-    | EStatus status -> status
-    | Eff e -> failwith "not a restore status spell"
+  let new_st = match sp.sp_effect with
+    | RestoreStatus -> status_remove tar (get_status sp) st
+    | Pure -> pure_status tar st
+    | _ -> failwith "not a restore status spell"
+  in
+  let new_desc = match sp.sp_effect with
+    | RestoreStatus -> get_status sp |> string_of_status |>
+                       write_spell_desc glt st sp tar true
+    | Pure -> write_spell_desc glt st sp tar true ""
+    | _ -> failwith "not a restore status spell"
   in
   {
     m_dmg = 0;
     m_target = tar;
-    m_desc = string_of_status status |> write_spell_desc glt st sp tar true;
-    m_new_st = status_remove tar status st
+    m_desc = new_desc;
+    m_new_st = new_st
   }
 
 (** [cast_support_spell glt st sp tar] is the cast spell data after a support
@@ -342,7 +358,7 @@ let cast_spell glt st sp c tar =
     | Damage -> cast_damage_spell glt st sp tar
     | StatusAilment | HP300Status -> cast_status_spell glt st sp tar
     | HPRec | FullHP -> cast_heal_spell glt st sp tar
-    | RestoreStatus -> cast_restore_status_spell glt st sp tar
+    | RestoreStatus | Pure -> cast_restore_status_spell glt st sp tar
     | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell glt st sp tar
   in
   let st = spell_data.m_new_st in
@@ -381,7 +397,7 @@ let skill_list = [
   skill "BLAZE" (Eff 64) 32 Fire Damage All;
   skill "INFERNO" (Eff 96) 32 Fire Damage All;
   skill "CREMATE" (Eff 24) 32 Fire Damage All;
-  skill "TRANCE" (EStatus Paralyzed) 0 None StatusAilment All;
+  skill "TRANCE" (EStatus Paralyzed) 64 None StatusAilment All;
   skill "POISON" (Eff 68) 32 Poison Damage All;
   skill "THUNDER" (Eff 76) 32 Lightning Damage All;
   skill "SNORTING" (EStatus Blinded) 24 Status StatusAilment Single;
@@ -403,7 +419,7 @@ let cast_boss_spell glt sp tar st =
     | Damage -> cast_damage_spell glt st sp tar
     | StatusAilment | HP300Status -> cast_status_spell glt st sp tar
     | HPRec | FullHP -> cast_heal_spell glt st sp tar
-    | RestoreStatus -> cast_restore_status_spell glt st sp tar
+    | RestoreStatus | Pure -> cast_restore_status_spell glt st sp tar
     | DefUp | StrUp | StrHitUp | AglUp -> cast_support_spell glt st sp tar
   in
   {spell_data with m_new_st = spell_data.m_new_st}
