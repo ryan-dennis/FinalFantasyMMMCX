@@ -410,7 +410,7 @@ let pure_status name state =
    agility = state.agility; hit_percent = state.hit_percent; fight_defense = state.fight_defense; 
    pure = state.pure; heal = state.heal}
 
-(** [cure4_status name state] is [t] after [name]'s health has been revived and 
+(** [cure4_status name state] is [state] after [name]'s health has been revived and 
     status effects have been removed. *)
 let cure4_status name state gtl  = 
   let h = max_hp name state gtl in   

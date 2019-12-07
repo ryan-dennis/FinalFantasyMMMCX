@@ -1,7 +1,7 @@
 (** Dimensions: 70 across, 30 vertically 
     Boss box: 37 across, 20 vertically
     Character box: 19 across, 20 vertically
-    Characters: 15 px by 24 px, 15 characters across by 12 lines
+    Characters: 16 px by 24 px, 16 characters across by 12 lines
     Boss: 40 px by 40 px, 40 characters across by 20 lines *)
 
 open Party
