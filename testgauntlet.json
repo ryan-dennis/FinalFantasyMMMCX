@@ -1,0 +1,191 @@
+{
+  "start": {
+    "id": "Chaos",
+    "dialogue": "It's Chaos!"
+  },
+  "final": "Professor Clarkson",
+  "bosses": [
+    {
+      "id": "Chaos",
+      "stats": {
+        "hp": 1500,
+        "agility": 60,
+        "defense": 60,
+        "magic defense": 120,
+        "strength": 60,
+        "hit rate": 120,
+        "hits per turn": 4,
+        "weaknesses": [
+          "Ice"
+        ],
+        "resistances": [
+          "Fire"
+        ]
+      },
+      "sprite": [],
+      "magic": {
+        "spell chance": 64,
+        "spell list": [
+          {
+            "name": "ICE3",
+            "source": "ICE3"
+          },
+          {
+            "name": "LIT3",
+            "source": "LIT3"
+          },
+          {
+            "name": "CUR4",
+            "source": "CUR4"
+          },
+          {
+            "name": "FIR3",
+            "source": "FIR3"
+          },
+          {
+            "name": "ICE2",
+            "source": "ICE2"
+          },
+          {
+            "name": "NUKE",
+            "source": "NUKE"
+          }
+        ]
+      },
+      "special": {
+        "skill chance": 64,
+        "skill list": [
+          {
+            "name": "INFERNO",
+            "source": "INFERNO"
+          },
+          {
+            "name": "SWIRL",
+            "source": "SWIRL"
+          },
+          {
+            "name": "TORNADO",
+            "source": "TORNADO"
+          }
+        ]
+      },
+      "dialogue": "It's Mutability!",
+      "next boss": "Mutability"
+    },
+    {
+      "id": "Mutability",
+      "stats": {
+        "hp": 2000,
+        "agility": 72,
+        "defense": 80,
+        "magic defense": 200,
+        "strength": 49,
+        "hit rate": 80,
+        "hits per turn": 2,
+        "weaknesses": [
+          "Ice"
+        ],
+        "resistances": [
+          "Fire"
+        ]
+      },
+      "sprite": [],
+      "magic": {
+        "spell chance": 64,
+        "spell list": [
+          {
+            "name": "!",
+            "source": "NUKE"
+          },
+          {
+            "name": "NULL POINTER EXCEPTION",
+            "source": "INV2"
+          }
+        ]
+      },
+      "special": {
+        "skill chance": 128,
+        "skill list": [
+          {
+            "name": "REF",
+            "source": "FLASH"
+          },
+          {
+            "name": "INDEX OUT OF BOUNDS",
+            "source": "TRANCE"
+          },
+          {
+            "name": "THIS EXPRESSION HAS TYPE LOSER BUT AN EXPRESSION WAS EXPECTED OF TYPE WORTHY CHALLENGER",
+            "source": "STINGER"
+          }
+        ]
+      },
+      "dialogue": "It's Professor Clarkson!",
+      "next boss": "Professor Clarkson"
+    },
+    {
+      "id": "Professor Clarkson",
+      "stats": {
+        "hp": 2500,
+        "agility": 100,
+        "defense": 100,
+        "magic defense": 200,
+        "strength": 100,
+        "hit rate": 200,
+        "hits per turn": 5,
+        "weaknesses": [],
+        "resistances": [
+          "Poison",
+          "Lightning",
+          "Fire",
+          "Ice"
+        ]
+      },
+      "sprite": [],
+      "magic": {
+        "spell chance": 64,
+        "spell list": [
+          {
+            "name": "PRAGMATIC PROGRAMMER",
+            "source": "SABR"
+          },
+          {
+            "name": "WHAT'S HARVARD",
+            "source": "FIR3"
+          },
+          {
+            "name": "SHAKE IT OFF",
+            "source": "CUR4"
+          },
+          {
+            "name": "ERROR: 2 OUT OF 366 TEST CASES",
+            "source": "FADE"
+          },
+          {
+            "name": "FAILURE: 234 OUT OF 366 TEST CASES",
+            "source": "NUKE"
+          }
+        ]
+      },
+      "special": {
+        "skill chance": 64,
+        "skill list": [
+          {
+            "name": "CMSX _DO NOT REPLY_: [CS3110] - GRADES RELEASED FOR PRELIM",
+            "source": "TORNADO"
+          },
+          {
+            "name": "ICLICKER QUESTION",
+            "source": "TRANCE"
+          },
+          {
+            "name": "UNEXPECTED MEME",
+            "source": "INK"
+          }
+        ]
+      },
+      "dialogue": "You've completed the gauntlet!",
+      "next boss": ""
+    }
+  ]
+}
