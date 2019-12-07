@@ -73,8 +73,7 @@ let thief = {
   name = "thief"; 
   stats = {str = 42; agl = 46; int = 30; vit = 660; mp = 120; hit_percent = 118; m_def = 0; fight_def=51};
   weapon = "Dragon Sword";
-  spells = ["CURE";"FOG";"FIRE";"LIT";"MUTE";"ICE";"DARK";"TMPR";"CUR2";"FIR2";
-            "HOLD";"LIT2";"ICE2";];
+  spells = ["FOG";"MUTE";"ICE";"DARK";"TMPR";"CUR2";"FIR2";"HOLD";"LIT2"];
   sprite = [
     "  ▄████▄████▄▄  ";
     " ████▀█████████▄";
@@ -119,15 +118,21 @@ let red_mage = {
   name = "red mage"; 
   stats = {str = 41; agl = 35; int = 40; vit = 591; mp = 150; hit_percent = 135; m_def = 0; fight_def = 51};
   weapon = "Sun Sword";
-  spells = ["CURE";"FOG";"RUSE";"FIRE";"LIT";"LAMP";"MUTE";"INVS";"ICE";"DARK";
-            "TMPR";"CUR2";"FIR2";"HOLD";"LIT2";"PURE";"AMUT";"ICE2";"CUR3";"FIR3";
-            "FOG2";"INV2";"LIT3";"ICE3";];
+  spells = ["CURE";"RUSE";"LIT";"LAMP";"MUTE";"ICE";"DARK";"TMPR";"HOLD";"PURE";
+            "AMUT";"ICE2";"CUR3";"FIR3";"FOG2";"INV2";"ICE3";];
   sprite = [
-    "██████████";
-    "█        █";
-    "█        █";
-    "█        █";
-    "██████████";
+    "    ▄▄████▄█▀▀  ";
+    "    ████████  ▄▄";
+    "   ▄██████████▀ ";
+    "▄▄████▀█▀▀▀▄    ";
+    "    █  █    ▀▄  ";
+    " ▄█ ▄▄▄█ ▄█▄ ▄█ ";
+    "▀  ▀ ▀▀▀▄███▄██ ";
+    "███ ██ ██▄▀████▄";
+    "▀█▀ ▀█ ▀▀▀█▄▀███";
+    " █   ▀█████   ██";
+    " █▄▄▄ █████ ▄▄▄█";
+    "     ▀▀▀▀▀▀    ▀";
   ];
 }
 
@@ -136,15 +141,21 @@ let white_mage = {
   name = "white mage"; 
   stats = {str = 30; agl = 30; int = 49; vit = 676; mp = 180; hit_percent = 59; m_def = 0; fight_def = 51};
   weapon = "Silver Hammer";
-  spells = ["CURE";"FOG";"RUSE";"FIRE";"LIT";"LAMP";"MUTE";"INVS";"ICE";"DARK";
-            "TMPR";"CUR2";"HEAL";"FIR2";"HOLD";"LIT2";"PURE";"AMUT";"ICE2";"CUR3";
-            "HEL2";"FIR3";"FOG2";"INV2";"LIT3";"STUN";"HEL3";"ICE3";"BLND";];
+  spells = ["FIRE";"LIT";"LAMP";"MUTE";"INVS";"DARK";"CUR2";"HEAL";"FIR2";"HOLD";
+            "LIT2";"PURE";"AMUT";"CUR3";"FOG2";"LIT3";"STUN";"HEL3";"ICE3";"BLND";];
   sprite = [
-    "██████████";
-    "█        █";
-    "█        █";
-    "█        █";
-    "██████████";
+    "    ▄▄▄▄▄▀▀▀▀▀▄ ";
+    "  ▄▀        ▄ █ ";
+    "▄▀▄██████▄   ▀▄ ";
+    " ▀▄ ▀█▀  ▀█   █ ";
+    "   █ ▀    █  ▄▀ ";
+    " ▄██  ▄▄███   █ ";
+    "█▄▄▄█▀▀▀▀▀▀▄▀ ▀▄";
+    "█▀  ██▀     █  █";
+    "█   ██▄▄       █";
+    "█   █▀█  ▄     █";
+    " █   █▄▀██ ▄█ ▄█";
+    "  ▀█████▀▀█████▀";
   ];
 }
 
@@ -153,12 +164,10 @@ let black_mage = {
   name = "black mage"; 
   stats = {str = 23; agl = 32; int = 69; vit = 470; mp = 215; hit_percent = 64; m_def = 118; fight_def = 51};
   weapon = "Mage staff";
-  spells = ["CURE";"FOG";"RUSE";"FIRE";"LIT";"LAMP";"MUTE";"INVS";"ICE";"DARK";
-            "TMPR";"CUR2";"HEAL";"FIR2";"HOLD";"LIT2";"PURE";"AMUT";"ICE2";"CUR3";
-            "HEL2";"FIR3";"FOG2";"INV2";"LIT3";"STUN";"CUR4";"HEL3";"ICE3";"BRAK";
-            "BLND";"SABR";"NUKE";"FADE";];
+  spells = ["FOG";"RUSE";"LAMP";"MUTE";"INVS";"TMPR";"CUR2";"HEAL";"HOLD";"LIT2";"PURE";"AMUT";
+            "HEL2";"FIR3";"STUN";"CUR4";"ICE3";"BRAK";"BLND";"SABR";"NUKE";"FADE"];
   sprite = [
-    "           ▄▄██ ";
+    "           ▄▄██ "; (* [(long string, [c1, c2, c3, c4, c5])] *)
     "        ▄▄████  ";
     "▄▄▄▄▄▄███████   ";
     " ▀▀▀████████▀   ";

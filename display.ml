@@ -11,10 +11,23 @@ let arena = 75
 let b1_top = 44
 let b2_top = arena - b1_top
 let b3_top = 12
-let b1_bot = 31
-let b2_bot = arena - b1_bot
+let b1_bot = 17
+let b_inter_bot = 9
+let b2_bot = arena - b1_bot - b_inter_bot-1
 let b3_bot = 12
-let offset = b1_top - b1_bot - 1
+let offset = 16
+
+(** [frame_sides b1 bi b2 b3 n acc] is a row of the frame that is not a
+    boundary with the given bounds. *)
+let rec frame_sidesi b1 bi b2 b3 n acc =
+  if n = 0 then acc
+  else (String.concat "" ["║"; String.make b1 ' ';
+                          "║"; String.make bi ' ';
+                          "║"; String.make b2 ' ';
+                          "║"; String.make b3 ' ';
+                          "║"])
+       ::acc |>
+       frame_sidesi b1 bi b2 b3 (n-1)
 
 (** [frame_sides b1 b2 b3 n acc] is a row of the frame that is not a
     boundary with the given bounds. *)
@@ -25,7 +38,7 @@ let rec frame_sides b1 b2 b3 n acc =
                           "║"; String.make b3 ' ';
                           "║"])
        ::acc |>
-       frame_sides b1 b2 b3 (n-1)
+       frame_sides b1 b2 b3 (n-1)       
 
 (** [frame_sides_gap n acc] is a row of the frame that is not a boundary
     after the character boxes on the right end. *)
@@ -50,10 +63,20 @@ let frame_side_bar b1 b2 b3 =
                     "╠"; hor_frame b3 "";
                     "╣"]
 
+(** [frame_side_bari b1 bi b2 b3] is the divider for the character boxes on the
+    right. *)
+let frame_side_bari b1 bi b2 b3 =
+  String.concat "" ["║"; String.make b1 ' ';
+                    "║"; String.make bi ' ';
+                    "║"; String.make b2 ' ';
+                    "╠"; hor_frame b3 "";
+                    "╣"]
+
 let frame_side_word word =
   String.concat "" ["║"; String.make b1_bot ' ';
                     "║"; String.make 2 ' ';
-                    word; String.make (b2_bot - (String.length word) - 2) ' ';
+                    word; String.make 2 ' '; "║";
+                    String.make b2_bot ' ';
                     "║"; String.make b3_bot ' ';
                     "║"]
 (** get the sprite of a character *)
@@ -63,19 +86,21 @@ let spr name =
 (** [frame] is the GUI frame as a string list. *)
 let frame =
   List.cons (String.concat "" ["╚"; hor_frame b1_bot "";
+                               "╩"; hor_frame b_inter_bot "";
                                "╩"; hor_frame b2_bot "";
                                "╩"; hor_frame b3_bot "";
                                "╝"])
-    (frame_sides b1_bot b2_bot b3_bot 1 [] |>
+    (frame_sidesi b1_bot b_inter_bot b2_bot b3_bot 1 [] |>
      List.cons (frame_side_word "DRINK") |>
-     List.append (frame_sides b1_bot b2_bot b3_bot 1 []) |>
+     List.append (frame_sidesi b1_bot b_inter_bot b2_bot b3_bot 1 []) |>
      List.cons (frame_side_word "MAGIC") |>
-     List.append (frame_sides b1_bot b2_bot b3_bot 1 []) |>
+     List.append (frame_sidesi b1_bot b_inter_bot b2_bot b3_bot 1 []) |>
      List.cons (frame_side_word "FIGHT") |>
-     List.cons (frame_side_bar b1_bot b2_bot b3_bot) |>
+     List.cons (frame_side_bari b1_bot b_inter_bot b2_bot b3_bot) |>
      List.rev)
   @
   List.cons (String.concat "" ["╠"; hor_frame b1_bot "";
+                               "╦"; hor_frame b_inter_bot "";
                                "╦"; hor_frame offset "";
                                "╩"; hor_frame b2_top "";
                                "╣"; String.make b3_bot ' ';
@@ -136,13 +161,13 @@ let empty_frame = frame |> String.concat "\n"
    ║                                            ║                               ║            ║
    ║                                            ║                               ║            ║
    ║                                            ║                               ║            ║
-   ╠═══════════════════════════════╦════════════╩═══════════════════════════════╣            ║
-   ║                               ║                                            ╠════════════╣
-   ║                               ║  FIGHT                                     ║            ║
-   ║                               ║                                            ║            ║
-   ║                               ║  MAGIC                                     ║            ║
-   ║                               ║                                            ║            ║
-   ║                               ║  DRINK                                     ║            ║
-   ║                               ║                                            ║            ║
-   ╚═══════════════════════════════╩════════════════════════════════════════════╩════════════╝
+   ╠═════════════════╦═════════╦════════════════╩═══════════════════════════════╣            ║
+   ║                 ║         ║                                                ╠════════════╣
+   ║                 ║  FIGHT  ║                                                ║            ║
+   ║                 ║         ║                                                ║            ║
+   ║                 ║  MAGIC  ║                                                ║            ║
+   ║                 ║         ║                                                ║            ║
+   ║                 ║  DRINK  ║                                                ║            ║
+   ║                 ║         ║                                                ║            ║
+   ╚═════════════════╩═════════╩════════════════════════════════════════════════╩════════════╝
 *)
