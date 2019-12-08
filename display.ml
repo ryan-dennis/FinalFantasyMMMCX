@@ -171,3 +171,34 @@ let empty_frame = frame |> String.concat "\n"
    ║                 ║         ║                                                ║            ║
    ╚═════════════════╩═════════╩════════════════════════════════════════════════╩════════════╝
 *)
+
+(* 
+print_endline empty_frame; 
+ANSITerminal.move_cursor 5 ~-20;  
+print_string "hello";  
+ANSITerminal.move_cursor 0 1; 
+print_string "hi";  
+ANSITerminal.move_cursor 0 1;  
+print_string "this";  
+ANSITerminal.move_cursor 0 1;  
+print_string "is";  
+ANSITerminal.move_cursor 0 1;  
+print_string "a frame"; 
+ANSITerminal.move_cursor ~-10 20;;
+*)
+
+(* let rec print_spr lst y =
+   match lst with
+   | [] -> ANSITerminal.set_cursor 100 100
+   | h::t -> (ANSITerminal.set_cursor 4 y; print_endline h; print_spr t (y+1)) *)
+
+(* 
+print_endline empty_frame;
+print_spr spr 14
+*)
+
+(* print_endline empty_frame;
+   print_spr sprite 7 14;
+   print_spr whit 55 9;
+   print_spr whit 55 22;
+   print_spr whit 55 35;; *)

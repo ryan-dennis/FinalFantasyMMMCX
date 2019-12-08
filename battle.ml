@@ -20,7 +20,7 @@ let is_boss atker st =
 (** [write_fight_desc st target hits dmg] is the description of the last turn,
     if the last turn was a fight attack. *)
 let write_fight_desc st target hits dmg =
-  String.concat " " [get_current_fighter st; "attacked"; target;
+  String.concat " " [get_current_fighter st |> String.capitalize_ascii; "attacked"; target;
                      string_of_int hits; "times for"; string_of_int dmg;
                      "damage!"]
 

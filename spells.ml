@@ -178,14 +178,14 @@ let write_spell_desc glt st sp tar hit effect =
     | StrHitUp -> ["raised his strength and hit rate!"]
     | AglUp -> ["raised his agility!"]
   in
-  let tar = if cur_fighter = tar then "himself" else tar in
+  let tar = if cur_fighter = tar then "himself" else String.capitalize_ascii tar in
   let sp_name = if is_boss st cur_fighter
     then boss_spell_name glt (get_current_boss st) sp.sp_name
     else sp.sp_name in
   if hit = false
-  then String.concat " " [cur_fighter; "tried to cast"; sp_name; "on"; tar;
+  then String.concat " " [String.capitalize_ascii cur_fighter; "tried to cast"; sp_name; "on"; tar;
                           "but it failed!"]
-  else [cur_fighter; "cast"; sp_name; "on"; tar; "and"] @ spell_desc |>
+  else [String.capitalize_ascii cur_fighter; "cast"; sp_name; "on"; tar; "and"] @ spell_desc |>
        String.concat " "
 
 (** [is_resistant glt st sp tar] is whether the target [tar] in state [st] is
