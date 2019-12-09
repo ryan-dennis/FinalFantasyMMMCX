@@ -51,7 +51,7 @@ let get_name (c:character) =
 (** Charcter fighter *)
 let fighter = {
   name = "fighter"; 
-  stats = {str = 69; agl = 43; int = 23; vit = 993; mp = 70; hit_percent = 187; m_def = 162; fight_def = 60};
+  stats = {str = 69; agl = 43; int = 23; vit = 993; mp = 70; hit_percent = 187; m_def = 60; fight_def = 60};
   weapon = "Sun Sword";
   spells = ["CURE";"FOG";"RUSE";"LAMP";"INVS";"PURE";];
   sprite = [
@@ -73,7 +73,7 @@ let fighter = {
 (** Charcter Thief *)
 let thief = {
   name = "thief"; 
-  stats = {str = 42; agl = 46; int = 30; vit = 660; mp = 120; hit_percent = 118; m_def = 0; fight_def=51};
+  stats = {str = 42; agl = 46; int = 30; vit = 660; mp = 120; hit_percent = 118; m_def = 75; fight_def=51};
   weapon = "Dragon Sword";
   spells = ["FOG";"MUTE";"ICE";"DARK";"TMPR";"CUR2";"FIR2";"HOLD";"LIT2"];
   sprite = [
@@ -95,7 +95,7 @@ let thief = {
 (** Charcter Black Belt *)
 let black_belt = {
   name = "black belt"; 
-  stats = {str = 35; agl = 36; int = 35; vit = 999; mp = 45; hit_percent = 152; m_def = 206; fight_def = 43};
+  stats = {str = 35; agl = 36; int = 35; vit = 999; mp = 45; hit_percent = 152; m_def = 59; fight_def = 43};
   weapon = "Fists";
   spells = ["CURE";"RUSE";"MUTE";"CUR2";"FIR3";];
   sprite = [
@@ -118,7 +118,7 @@ let black_belt = {
 (** Charcter Red Mage *)    
 let red_mage = {
   name = "red mage"; 
-  stats = {str = 41; agl = 35; int = 40; vit = 591; mp = 150; hit_percent = 135; m_def = 0; fight_def = 51};
+  stats = {str = 41; agl = 35; int = 40; vit = 591; mp = 150; hit_percent = 135; m_def = 81; fight_def = 51};
   weapon = "Sun Sword";
   spells = ["CURE";"RUSE";"LIT";"LAMP";"TMPR";"HOLD";"PURE";"ICE2";"CUR3";"FIR3";
             "FOG2";"INV2";];
@@ -141,7 +141,7 @@ let red_mage = {
 (** Charcter White Mage *)
 let white_mage = {
   name = "white mage"; 
-  stats = {str = 30; agl = 30; int = 49; vit = 676; mp = 180; hit_percent = 59; m_def = 0; fight_def = 51};
+  stats = {str = 30; agl = 30; int = 49; vit = 676; mp = 180; hit_percent = 59; m_def = 81; fight_def = 51};
   weapon = "Silver Hammer";
   spells = ["MUTE";"INVS";"DARK";"CUR2";"HOLD";"AMUT";"FOG2";"LIT3";"STUN";"HEL3";
             "CUR4";"BLND";];
@@ -164,7 +164,7 @@ let white_mage = {
 (** Charcter Black Mage *)
 let black_mage = {
   name = "black mage"; 
-  stats = {str = 23; agl = 32; int = 69; vit = 470; mp = 215; hit_percent = 64; m_def = 118; fight_def = 51};
+  stats = {str = 23; agl = 32; int = 69; vit = 470; mp = 215; hit_percent = 64; m_def = 81; fight_def = 51};
   weapon = "Mage staff";
   spells = ["MUTE";"INVS";"HOLD";"LIT2";"HEL2";"FIR3";"STUN";"ICE3";"SABR";"NUKE";
             "FADE";"BRAK";];
@@ -184,6 +184,23 @@ let black_mage = {
     "▄████▄▄██▄▀▀▄█▄ ";
   ];
 }
+
+(** [lump] is the sprite used when a character has been defeated and is at
+    0 HP. *)
+let lump = [
+  "                ";
+  "                ";
+  "                ";
+  "                ";
+  "                ";
+  "                ";
+  "                "; 
+  " ▄▄    ▄▄▄  ▄▄  ";
+  "████▄▄███████ ▀▄";
+  "███████████▀█ ▄▀";
+  "███▀▀▀█████  █▀ ";
+  "▀▄▄▄▄██████▄▀   ";
+]
 
 (** [get_characters] is the character list of all characters of the game *)
 let get_characters = [fighter;thief; black_belt; red_mage; white_mage; black_mage]
