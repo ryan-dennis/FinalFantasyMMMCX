@@ -3,7 +3,7 @@
     "id": "Chaos",
     "dialogue": "What’s this? You dare to challenge me? Chaos, the primary antagonist of the first Final Fantasy, a game that legitimized the role-playing genre and kickstarted a franchise now on its fifteenth main installment along with countless other spin-offs across all other forms of media? Chaos, whose disintegrating death animation was considered innovative for NES at the time and probably indirectly inspired Thanos? Chaos, whose backstory is too fundamentally confusing to monologue about instead? Know despair, fool! Hope does not exist here!"
   },
-  "final": "Professor Clarkson",
+  "final": "Prof. Clarkson",
   "bosses": [
     {
       "id": "Chaos",
@@ -173,10 +173,10 @@
         ]
       },
       "dialogue": "So you have triumphed yet again! But you have not seen my final form. Know that despite these fleeting victories, you cannot surpass me. I possess great knowledge you could never hope to fully understand. Achieving victory against me stands between you and a bright future - a challenge so many have failed. Prepare to be my latest victim!",
-      "next boss": "Professor Clarkson"
+      "next boss": "Prof. Clarkson"
     },
     {
-      "id": "Professor Clarkson",
+      "id": "Prof. Clarkson",
       "stats": {
         "hp": 2500,
         "agility": 100,
