@@ -10,6 +10,12 @@ open Display
 
 let boss_name_pos = 49
 
+(* let rec line_print s = 
+   ANSITerminal.set_cursor 100 100
+   if (String.length s) <= 46 then print_string s
+   else (ANSITerminal.(print_string  (String.sub s 0 46); 
+        line_print (String.sub s 46 ((String.length s) - 46))) *)
+
 (** *) 
 let minisleep (sec: float) s =
   print_endline s;
@@ -35,7 +41,8 @@ let setup_stats s c x y =
   ANSITerminal.(print_string [Bold; cyan] (String.capitalize_ascii c));
   ANSITerminal.set_cursor x (y+2);
   ANSITerminal.(print_string [default] "HP: "); 
-  ANSITerminal.(print_string [if hp < 100 then red else green] (string_of_int hp));
+  ANSITerminal.(print_string [if hp > 200 then green else if hp > 100 then yellow
+                              else red] (string_of_int hp));
   ANSITerminal.set_cursor x (y+3);
   ANSITerminal.(print_string [default] "MP: "); ANSITerminal.(print_string [blue] (string_of_int mp));
   ANSITerminal.set_cursor 100 100
@@ -94,17 +101,17 @@ let drink_comm g s curr pot =
   | Heal -> if has_heal curr s then
       (ANSITerminal.set_cursor 31 51; 
        ANSITerminal.(print_string [green] ("The " ^ curr ^ " healed.\n\n")); 
-       used_heal curr s |> heal_eff g)
+       minisleep 1.5 ""; used_heal curr s |> heal_eff g)
     else (ANSITerminal.set_cursor 31 51;
           ANSITerminal.(print_string [red] ("The " ^ curr ^ " is out of heal potions!\n\n")); 
-          s)
+          minisleep 1.5 ""; s)
   | Pure -> if has_pure curr s then
       (ANSITerminal.set_cursor 31 51;
        ANSITerminal.(print_string [green] ("The " ^ curr ^ " purified their status effects.\n\n"));
-       used_pure curr s |> pure_eff g)
+       minisleep 1.5 ""; used_pure curr s |> pure_eff g)
     else (ANSITerminal.set_cursor 31 51;
           ANSITerminal.(print_string [red] ("The " ^ curr ^ " is out of pure potions!\n\n")); 
-          s)
+          minisleep 1.5 ""; s)
 
 (** *)
 let magic_help g s spell ch = 
@@ -130,6 +137,9 @@ let magic_help g s spell ch =
   else ((ANSITerminal.set_cursor 31 52; reject "target"; print_endline ""; 
          minisleep 1.5 ""; s))
 
+(** *)
+(* let fight_help g s curr *)
+
 
 (******************************************************************************* 
    MAGIC BUGS AND THOUGHTS:
@@ -146,9 +156,9 @@ let magic_help g s spell ch =
 
 (******************************************************************************* 
    RANDOM BUGS AND THOUGHTS:
-   - add time delay for all responses (errors messages and whatnot)
+   - add time delay for all responses (errors messages and whatnot) ~
    - add functionality to allow user to enter any case for target
-   - *** longer strings in small response box ***
+   - *** longer strings in small response box *** 
    - disable typing during wait-time
  *******************************************************************************)
 
@@ -171,46 +181,47 @@ let screen_setup g s state_party boss =
   setup_stats s (get_name third) 80 50;
   setup_boss_stats s boss 3 boss_name_pos
 
-
 (** *)
 let rec repl g s = 
-  (* print current game display *)
   let state_party = get_party s in
   let boss = get_current_boss s in 
   screen_setup g s state_party boss;
   if not (check_alive s) then 
-    (ANSITerminal.(print_string [red] "\nAll party members are dead, you lost!\n\n"); 
+    (ANSITerminal.(print_string [red] "All party members are dead, you lost!"); 
      exit 0)
   else if is_dead s boss && boss = final g then 
-    (ANSITerminal.(print_string [Blink; green] (dialogue g boss ^ "\n\n")); 
+    (ANSITerminal.(print_string [green] ("\n" ^ dialogue g boss)); 
      exit 0)
   else if is_dead s boss then 
-    (ANSITerminal.(print_string [Blink; green] (dialogue g boss ^ "\n\n")); 
-     reset_state g s |> repl g) 
+    (ANSITerminal.(print_string [green] ("\n" ^ dialogue g boss)); 
+     print_string "\nPress enter to continue "; ignore(read_line ()); 
+     minisleep 1.5 ""; reset_state g s |> repl g) 
   else
-    (* ignore(Sys.command "clear"); *)
     let curr = get_current_fighter s in
     if List.mem curr char_names then
       let curr_char = find_character curr get_characters in
       let _ = ANSITerminal.set_cursor 31 49 in
       let _ = ANSITerminal.(print_string [Bold] ("Enter a command for " ^ (String.capitalize_ascii curr) ^ ": ")) in
-      (* let _ = ANSITerminal.set_cursor 100 100 in *)
       match parse (read_line ()) with
       | Fight -> if is_valid_com curr s Fight then 
           (let b = fight g s curr_char in
-           let msg = desc b in
            let s' = new_st b in 
-           ANSITerminal.set_cursor 31 51;
-           ANSITerminal.(print_string [green] (msg ^ "\n"));
-           minisleep 1.5 ""; repl g s' )
-        else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ "'s status prevents him from fighting\n\n")); 
-              repl g s)
+           let msg = desc b in
+           scoot g s msg curr_char; repl g s' )
+        else (ANSITerminal.set_cursor 31 51;
+              ANSITerminal.(print_string [red] 
+                              ("The " ^ curr ^ 
+                               "'s status prevents him from fighting")); 
+              minisleep 1.5 ""; repl g s)
       | Magic spell -> if is_valid_com curr s (Magic spell) then 
           (try magic_help g s spell curr_char |> repl g 
            with Not_found -> (ANSITerminal.set_cursor 31 52; reject "spell"; 
                               minisleep 1.5 ""; repl g s))
-        else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ "'s status prevents him from casting spells\n\n")); 
-              repl g s)
+        else (ANSITerminal.set_cursor 31 51; 
+              ANSITerminal.(print_string [red] 
+                              ("The " ^ curr ^ 
+                               "'s status prevents him from casting spells")); 
+              minisleep 1.5 ""; repl g s)
       | Drink pot -> (*if is_valid_com curr s (Drink pot) then *)
         (try drink pot |> drink_comm g s curr |> repl g 
          with Invalid_potion -> (ANSITerminal.set_cursor 31 51; reject "potion"; 
@@ -218,38 +229,62 @@ let rec repl g s =
       (*else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ "'s status prevents him from drinking potions\n\n")); 
             repl g s)   *)                    
       | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
-        let magic_points = get_magic_points curr s in
-        ANSITerminal.(print_string [green] ("The " ^ curr ^ "'s magic points: " ^ (string_of_int magic_points)));
-        ANSITerminal.(print_string [green] ("Spells: " ^ spell_str ^ "\n\n"));
+        ANSITerminal.set_cursor 31 51;
+        ANSITerminal.(print_string [green] ("Spells: " ^ spell_str));
         minisleep 1.5 ""; repl g s
       | Pass -> change_turns g s |> repl g
       | Quit -> ANSITerminal.set_cursor 31 51;
-        ANSITerminal.(print_string [red] "Quiting game...\n\n"); 
+        ANSITerminal.(print_string [red] "Quiting game..."); 
         ANSITerminal.set_cursor 100 100;
         (* ignore(Sys.command "printf '\\e[8;24;80t'");  *)
         exit 0
       | exception Malformed -> ANSITerminal.set_cursor 31 51; 
-        ANSITerminal.(print_string [red] "Invalid command. Try another.\n\n"); 
+        ANSITerminal.(print_string [red] "Invalid command. Try another."); 
         minisleep 1.5 ""; repl g s
       | exception Empty -> ANSITerminal.set_cursor 31 51; 
-        ANSITerminal.(print_string [red] "Please type a command.\n\n"); 
+        ANSITerminal.(print_string [red] "Please type a command."); 
         minisleep 1.5 ""; repl g s
-      (* else (ignore(Sys.command "clear");  *)
     else (
-      (* ANSITerminal.(print_string [yellow] ("" ^ curr ^ " attacked.\n\n")); *)
       let b = boss_turn g s in 
       let msg = desc b in
       let s' = new_st b in 
       ANSITerminal.set_cursor 31 49;
       ANSITerminal.(print_string [yellow] msg);
-      minisleep 1.5 "\n";
+      minisleep 1.5 "";
       repl g s')
 
 (** *)
-and scoot g s c = 
+and scoot g s msg ch = 
   let state_party = get_party s in
-  let boss = get_current_boss s in 
-  screen_setup g s state_party boss
+  let boss = get_current_boss s in
+  ANSITerminal.erase Screen;
+  let game_party_chars = List.map (fun x -> find_character x get_characters) state_party in
+  let first = List.nth game_party_chars 0 in
+  let second = List.nth game_party_chars 1 in
+  let third = List.nth game_party_chars 2 in
+  print_endline empty_frame;
+  print_spr (boss_sprite g boss) 10 16;
+  if ch = first then
+    (print_spr (first |> get_sprite) 50 9;
+     print_spr (second |> get_sprite) 54 22;
+     print_spr (third |> get_sprite) 54 35)
+  else if ch = second then (
+    print_spr (first |> get_sprite) 54 9;
+    print_spr (second |> get_sprite) 50 22;
+    print_spr (third |> get_sprite) 54 35
+  )
+  else (
+    print_spr (first |> get_sprite) 54 9;
+    print_spr (second |> get_sprite) 54 22;
+    print_spr (third |> get_sprite) 50 35
+  );
+  setup_stats s (get_name first) 80 36;
+  setup_stats s (get_name second) 80 43;
+  setup_stats s (get_name third) 80 50;
+  setup_boss_stats s boss 3 boss_name_pos;
+  ANSITerminal.set_cursor 31 49;
+  ANSITerminal.(print_string [green] msg);
+  minisleep 1.5 ""
 
 (** *)
 let rec game_start f = 
@@ -262,6 +297,7 @@ let rec game_start f =
     let game_party_chars = List.map (fun x -> find_character x get_characters) game_party_names in
     let start = init_state gaunt game_party_chars in 
     ANSITerminal.(print_string [cyan] ("\n" ^ start_dialogue gaunt ^ "\n\n"));
+    print_string "> Press enter to continue "; ignore(read_line ()); 
     repl gaunt start 
   with Sys_error m -> reject "file"; print_string "> "; game_start (read_line ())
 
