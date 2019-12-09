@@ -10,11 +10,34 @@ open Display
 
 let boss_name_pos = 49
 
-(* let rec line_print s = 
-   ANSITerminal.set_cursor 100 100
-   if (String.length s) <= 46 then print_string s
-   else (ANSITerminal.(print_string  (String.sub s 0 46); 
-        line_print (String.sub s 46 ((String.length s) - 46))) *)
+let color_helper h = 
+  match h with 
+  | "cyan" -> [ANSITerminal.cyan]
+  | "yellow" -> [ANSITerminal.yellow]
+  | "black" -> [ANSITerminal.black]
+  | "white" -> [ANSITerminal.white]
+  | "red" -> [ANSITerminal.red]
+  | "blue" -> [ANSITerminal.blue]
+  | "background white" -> [Background White]
+  | _ -> [ANSITerminal.default]
+
+let rec helper string color int x y= 
+  match string with 
+  | [] -> ()
+  | h:: t -> ANSITerminal.set_cursor x y; 
+    ANSITerminal.(print_string (color_helper (List.nth color int)) h);
+    helper t color (int+1) (x+1) y
+
+let rec pr s x y= 
+  match s with 
+  | [] -> ()
+  | (s1,lst)::t -> helper s1 lst 0 x y; pr t x (y+1)
+
+let rec line_print s slst y = 
+  ANSITerminal.set_cursor 31 y;
+  if (String.length s) <= 46 then ANSITerminal.(print_string slst s)
+  else (ANSITerminal.(print_string slst (String.sub s 0 46)); 
+        line_print (String.sub s 46 ((String.length s) - 46)) slst) (y + 1)
 
 (** *) 
 let minisleep (sec: float) s =
@@ -123,17 +146,20 @@ let magic_help g s spell ch =
   if is_valid_target s sp_t tar && has_spell ch spell && is_enough_mp sp_t ch s then 
     (let b = magic g s spell ch tar in
      let msg = (desc b) ^ "\n" in 
-     ANSITerminal.set_cursor 31 52;
-     ANSITerminal.(print_string [green] msg);
-     minisleep 1.5 "";  new_st b)
+     (* ANSITerminal.set_cursor 31 52;
+        ANSITerminal.(print_string [green] msg); *)
+     line_print msg [ANSITerminal.green] 52; minisleep 1.5 "";  new_st b)
   else if not (has_spell ch spell) then 
-    (ANSITerminal.set_cursor 31 52;
-     ANSITerminal.(print_string [red] ("The " ^ curr ^ " does not have that spell! Pick another.\n\n")); 
-     minisleep 1.5 ""; s)
+    (* (ANSITerminal.set_cursor 31 52;
+       ANSITerminal.(print_string [red] ("The " ^ curr ^ " does not have that spell! Pick another.\n\n"));  *)
+    (line_print ("The " ^ curr ^ " does not have that spell! Pick another.\n\n")
+       [ANSITerminal.red] 52; minisleep 1.5 ""; s)
   else if not (is_enough_mp sp_t ch s) then
-    (ANSITerminal.set_cursor 31 52;
-     ANSITerminal.(print_string [red] ("The " ^ curr ^ " does not have enough magic points! Pick another spell.\n\n")); 
-     minisleep 1.5 ""; s)
+    (* (ANSITerminal.set_cursor 31 52;
+       ANSITerminal.(print_string [red] ("The " ^ curr ^ " does not have enough magic points! Pick another spell.\n\n"));  *)
+    (line_print ("The " ^ curr 
+                 ^ " does not have enough magic points! Pick another spell.\n\n")
+       [ANSITerminal.red] 52; minisleep 1.5 ""; s)
   else ((ANSITerminal.set_cursor 31 52; reject "target"; print_endline ""; 
          minisleep 1.5 ""; s))
 
@@ -173,9 +199,12 @@ let screen_setup g s state_party boss =
   let third = List.nth game_party_chars 2 in
   print_endline empty_frame;
   print_spr (boss_sprite g boss) 10 16;
-  print_spr (first |> get_sprite) 54 9;
-  print_spr (second |> get_sprite) 54 22;
-  print_spr (third |> get_sprite) 54 35;
+  (* print_spr (first |> get_sprite) 54 9; *)
+  (* print_spr (second |> get_sprite) 54 22;
+     print_spr (third |> get_sprite) 54 35; *)
+  pr (first |> get_test) 54 9;
+  pr (second |> get_test) 54 22;
+  pr (third |> get_test) 54 35;
   setup_stats s (get_name first) 80 36;
   setup_stats s (get_name second) 80 43;
   setup_stats s (get_name third) 80 50;
@@ -194,7 +223,7 @@ let rec repl g s =
      exit 0)
   else if is_dead s boss then 
     (ANSITerminal.(print_string [green] ("\n" ^ dialogue g boss)); 
-     print_string "\nPress enter to continue "; ignore(read_line ()); 
+     print_string "\n\nPress enter to continue "; ignore(read_line ()); 
      minisleep 1.5 ""; reset_state g s |> repl g) 
   else
     let curr = get_current_fighter s in
@@ -217,11 +246,9 @@ let rec repl g s =
           (try magic_help g s spell curr_char |> repl g 
            with Not_found -> (ANSITerminal.set_cursor 31 52; reject "spell"; 
                               minisleep 1.5 ""; repl g s))
-        else (ANSITerminal.set_cursor 31 51; 
-              ANSITerminal.(print_string [red] 
-                              ("The " ^ curr ^ 
-                               "'s status prevents him from casting spells")); 
-              minisleep 1.5 ""; repl g s)
+        else (line_print ("The " ^ curr ^ 
+                          "'s status prevents him from casting spells") 
+                [ANSITerminal.red] 51; minisleep 1.5 ""; repl g s)
       | Drink pot -> (*if is_valid_com curr s (Drink pot) then *)
         (try drink pot |> drink_comm g s curr |> repl g 
          with Invalid_potion -> (ANSITerminal.set_cursor 31 51; reject "potion"; 
@@ -229,9 +256,8 @@ let rec repl g s =
       (*else (ANSITerminal.(print_string [red] ("\nThe " ^ curr ^ "'s status prevents him from drinking potions\n\n")); 
             repl g s)   *)                    
       | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
-        ANSITerminal.set_cursor 31 51;
-        ANSITerminal.(print_string [green] ("Spells: " ^ spell_str));
-        minisleep 1.5 ""; repl g s
+        line_print ("Spells: " ^ spell_str) [ANSITerminal.green] 51;
+        minisleep 2.5 ""; repl g s
       | Pass -> change_turns g s |> repl g
       | Quit -> ANSITerminal.set_cursor 31 51;
         ANSITerminal.(print_string [red] "Quiting game..."); 
@@ -248,8 +274,7 @@ let rec repl g s =
       let b = boss_turn g s in 
       let msg = desc b in
       let s' = new_st b in 
-      ANSITerminal.set_cursor 31 49;
-      ANSITerminal.(print_string [yellow] msg);
+      line_print msg [ANSITerminal.yellow] 49;
       minisleep 1.5 "";
       repl g s')
 
@@ -265,25 +290,24 @@ and scoot g s msg ch =
   print_endline empty_frame;
   print_spr (boss_sprite g boss) 10 16;
   if ch = first then
-    (print_spr (first |> get_sprite) 50 9;
-     print_spr (second |> get_sprite) 54 22;
-     print_spr (third |> get_sprite) 54 35)
+    (pr (first |> get_test) 50 9;
+     pr (second |> get_test) 54 22;
+     pr (third |> get_test) 54 35;)
   else if ch = second then (
-    print_spr (first |> get_sprite) 54 9;
-    print_spr (second |> get_sprite) 50 22;
-    print_spr (third |> get_sprite) 54 35
+    pr (first |> get_test) 54 9;
+    pr (second |> get_test) 50 22;
+    pr (third |> get_test) 54 35;
   )
   else (
-    print_spr (first |> get_sprite) 54 9;
-    print_spr (second |> get_sprite) 54 22;
-    print_spr (third |> get_sprite) 50 35
+    pr (first |> get_test) 54 9;
+    pr (second |> get_test) 54 22;
+    pr (third |> get_test) 50 35;
   );
   setup_stats s (get_name first) 80 36;
   setup_stats s (get_name second) 80 43;
   setup_stats s (get_name third) 80 50;
   setup_boss_stats s boss 3 boss_name_pos;
-  ANSITerminal.set_cursor 31 49;
-  ANSITerminal.(print_string [green] msg);
+  line_print msg [ANSITerminal.green] 49;
   minisleep 1.5 ""
 
 (** *)
