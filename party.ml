@@ -64,7 +64,7 @@ let fighter = {
     " ▄█████████████ ";
     " ████▄██▀██████▀";
     "  ▀ █ █   ▀█  █ ";
-    "  ▄▀█      ▄██▀ ";
+    "  ▄▄▄      ▄██▀ ";
     " ▀████▄▄▄███████";
     " █ ▀████▀▀▄▄ ▀█ ";
     "▄▀▀▀▄██   ▄██▄█ ";
@@ -72,7 +72,44 @@ let fighter = {
     "      █████     ";
     "     ▀████▀     ";
   ];
-  test = [];
+  test = [
+    ([" ";" ";"▄";"█";"▄";"█";"▄";"█";"█";"█";"█";"█";"█";"▄";" ";" "],
+     ["red";"red";"red";"red";"red";"red"; "red";"red";
+      "red";"red";"red";"red";"red";"red";"red";"red"]);
+    ([" ";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"▀"],
+     ["red";"red";"red";"red";"red";"red"; "red";"red";
+      "red";"red";"red";"red";"red";"red";"red";"red"]);
+    ([" ";"▄";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";" "],
+     ["red";"red";"red";"red";"red";"red"; "red";"red";
+      "red";"red";"red";"red";"red";"red";"red";"red"]);
+    ([" ";"█";"█";"█";"█";"▄";"█";"█";"▀";"█";"█";"█";"█";"█";"█";"▀"],
+     ["red";"red";"red";"red";"red";"red"; "red";"red";
+      "red";"red";"red";"red";"red";"red";"red";"red"]);
+    ([" ";" ";"▀";" ";"█";" ";"█";" ";" ";" ";"▀";"█";" ";" ";"█ "],
+     ["red";"red";"red";"red";"red";"red"; "white";"red";
+      "red";"red";"red";"red";"red";"red";"red";"red"]);
+    ([" ";" ";"▄";"▄";"▄";" ";" ";" ";" ";" ";" ";"▄";"█";"█";"▀";" "],
+     ["white";"white";"white";"white";"white";"white"; "white";"white";
+      "white";"white";"white";"white";"white";"white";"white";"white"]);
+    ([" ";"▀";"█";"█";"█";"█";"▄";"▄";"▄";"█";"█";"█";"█";"█";"█";"█"],
+     ["red";"red";"red";"red";"red";"red"; "red";"red";
+      "red";"red";"red";"red";"red";"red";"red";"red"]);
+    ([" ";"█";" ";"▀";"█";"█";"█";"█";"▀";"▀";"▄";"▄";" ";"▀";"█";" "],
+     ["red";"red";"red";"red";"red";"red"; "red";"red";
+      "red";"red";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow"]);
+    (["▄";"▀";"▀";"▀";"▄";"█";"█";" ";" ";" ";"▄";"█";"█";"▄";"█";" "],
+     ["yellow";"yellow";"yellow";"yellow";"yellow";"red"; "red";"yellow";
+      "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow"]);
+    (["▀";"▄";"▄";"▄";"▀";"▀";"█";"█";"█";"█";"▀";"▀";"▀";"▀";" ";" "],
+     ["yellow";"yellow";"yellow";"yellow";"yellow";"red"; "white";"white";
+      "white";"white";"red";"red";"red";"red";"red";"red"]);
+    ([" ";" ";" ";" ";" ";" ";"█";"█";"█";"█";"█";" ";" ";" ";" ";" "],
+     ["red";"red";"red";"red";"red";"red"; "red";"red";
+      "red";"red";"red";"red";"red";"red";"red";"red"]);
+    ([" ";" ";" ";" ";" ";"▀";"█";"█";"█";"█";"▀";" ";" ";" ";" ";" "],
+     ["red";"red";"red";"red";"red";"red"; "red";"red";
+      "red";"red";"red";"red";"red";"red";"red";"red"]);            
+  ];
 }
 
 (** Charcter Thief *)
@@ -107,13 +144,32 @@ let thief = {
      ["cyan";"cyan";"cyan";"cyan";"cyan";"cyan"; "cyan";"cyan";
       "cyan";"cyan";"cyan";"cyan";"cyan";"cyan";"cyan";"cyan"]);
     ([" ";" ";" ";"▄";"█";" ";"█";" ";" ";"█";" ";" ";"▄";"█";"▀";" "],
-     ["yellow";"yellow";"yellow";"yellow";"yellow";"cyan"; "white";"cyan";
+     ["cyan";"cyan";"cyan";"cyan";"cyan";"cyan"; "yellow";"cyan";
       "cyan";"cyan";"cyan";"cyan";"cyan";"cyan";"cyan";"cyan"]); 
     ([" ";"▄";"█";"█";"█";" ";" ";" ";" ";"▄";"█";"█";"█";"█";"█";"▄"],
+     ["white";"white";"white";"white";"white";"white";"white";"white";
+      "white";"white";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow"]);
+    (["▄";"▀";"▄";"▄";"▀";"█";"▄";"▄";"█";"█";"█";"▀";" ";" ";" ";"█"],
+     ["white";"white";"white";"white";"white";"white";"white";"white";
+      "white";"white";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow"]);
+    (["█";"▀";"▀";"▀";"█";"█";"▀";" ";" ";"█";"█";" ";" ";" ";" ";"█"],
+     ["yellow";"yellow";"yellow";"yellow";"yellow";"white";"white";"white";
+      "white";"white";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow"]);
+    (["█";" ";" ";" ";"█";"█";" ";" ";" ";"█";"█";"▄";" ";" ";"█";" "],
+     ["yellow";"yellow";"yellow";"yellow";"yellow";"white";"white";"white";
+      "white";"white";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow"]);
+    ([" ";"▀";"▀";"▀";" ";"█";"█";"█";"█";"█";"█";"█";"▄";"▀";" ";" "],
+     ["yellow";"yellow";"yellow";"yellow";"yellow";"white";"white";"white";
+      "white";"white";"white";"yellow";"yellow";"yellow";"yellow";"yellow"]);
+    ([" ";" ";" ";" ";" ";"▄";"█";"▄";"▄";"▄";"▄";"█";"█";"▄";" ";" "],
      ["yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
       "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow"]);
-    ([],
-     []);      
+    ([" ";" ";" ";" ";" ";" ";"█";"█";"█";"█";"█";"█";"▀";" ";" ";" "],
+     ["white";"white";"white";"white";"white";"white";"white";"white";
+      "white";"white";"white";"white";"white";"white";"white";"white"]);
+    ([" ";" ";" ";" ";" ";"▀";"█";"█";"█";"█";"█";"▀";" ";" ";" ";" "],
+     ["white";"white";"white";"white";"white";"white";"white";"white";
+      "white";"white";"white";"white";"white";"white";"white";"white"]);                 
   ];
 }
 
@@ -259,7 +315,7 @@ let white_mage = {
     "█▄▄▄█▀▀▀▀▀▀▄▀ ▀▄";
     "█▀  ██▀     █  █";
     "█▀  ██▄▄       █";
-    "█▀  █▀█  ▄     █";
+    "█▀  █▀█  ▄     █";
     " █   █▄▀██ ▄█ ▄█";
     "  ▀█████▀▀█████▀";
   ];
@@ -326,55 +382,56 @@ let black_mage = {
     " ██▄▀███ ████   ";
     "▄████▄▄██▄▀▀▄█▄ ";
   ];
-  test = [([" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";"▄";"▄";"█";"█";" "], 
-           ["black"; "black"; "black"; "black";"black"; 
-            "black"; "black"; "black";"black"; "black"; 
-            "black"; "yellow";"yellow"; "yellow"; "yellow"; "black";]);
-          ([" ";" ";" ";" ";" ";" ";" ";" ";"▄";"▄";"█";"█";"█";"█";" ";" "], 
-           ["black"; "black"; "black"; "black";"black"; 
-            "black"; "black"; "black";"yellow"; "yellow"; 
-            "yellow"; "yellow";"yellow"; "yellow"; "black"; "black";]);
-          (["▄";"▄";"▄";"▄";"▄";"▄";"█";"█";"█";"█";"█";"█";"█";" ";" ";" "], 
-           ["yellow"; "yellow"; "yellow"; "yellow";"yellow";"yellow"; 
-            "yellow"; "yellow"; "yellow";"yellow";"yellow"; 
-            "yellow"; "yellow"; "black";"black";"black"]);
-          ([" ";"▀";"▀";"▀";"█";"█";"█";"█";"█";"█";"█";"█";"▀";" ";" ";" "],
-           ["black"; "yellow"; "yellow"; "yellow"; "yellow"; "yellow"; "yellow"; 
-            "yellow";"yellow"; "yellow"; "yellow"; 
-            "yellow";"yellow"; "black"; "black"; "black";]);
-          ([" ";" ";" ";" ";" ";"▀";"▀";"▀";"▀";"▀";"█";"█";"█";"▄";" ";" "],
-           ["black"; "black"; "black"; "black"; "black"; "yellow"; "yellow"; 
-            "yellow";"yellow"; "yellow"; "yellow"; 
-            "yellow";"yellow"; "yellow"; "black"; "black";]);
-          ([" ";"▄";"▄";" ";"█";" ";" ";"█";" ";" ";" ";"█";"▀";"█";"▄";" "],
-           ["black"; "cyan"; "cyan"; "black"; "yellow"; "black"; "black"; 
-            "yellow";"black"; "black"; "black"; 
-            "yellow";"yellow"; "yellow"; "yellow"; "black";]);
-          ([" ";"█";"▄";"▄";" ";" ";" ";"▄";"▄";"▄";"▄";"▄";"▄";"█";" ";" "],
-           ["black"; "cyan"; "cyan"; "cyan"; "yellow"; "black"; "black"; 
-            "cyan";"cyan"; "cyan"; "cyan"; 
-            "cyan";"cyan"; "cyan"; "yellow"; "black";]); 
-          (["▄";"▄";"▀";"█";"█";"█";"▀";"▀";"▄";"▄";"▄";"█";"█";"▄";" ";" "],
-           ["yellow"; "yellow"; "cyan"; "cyan"; "cyan"; "cyan"; "cyan"; 
-            "cyan";"cyan"; "cyan"; "cyan"; 
-            "cyan";"cyan"; "cyan"; "black"; "black";]);
-          (["▀";"▀";"▄";"█";"█";"▄";"▄";" ";"█";"█";"█";"█";"█";"█";" ";" "], 
-           ["yellow"; "yellow"; "cyan"; "cyan"; "cyan"; "yellow"; "yellow"; 
-            "cyan";"cyan"; "cyan"; "cyan"; 
-            "cyan";"cyan"; "cyan"; "black"; "black";]);
-          ([" ";"█";" ";"█";"█";"▀";"▀";" ";"█";"█";"█";"█";"█";"▀";" ";" "], 
-           ["yellow"; "cyan"; "cyan"; "cyan"; "cyan"; "yellow"; "yellow"; 
-            "cyan";"cyan"; "cyan"; "cyan"; 
-            "cyan";"cyan"; "cyan"; "black"; "black";]);
-          ([" ";"█";"█";"▄";"▀";"█";"█";"█";" ";"█";"█";"█";"█";" ";" ";" "],
-           ["cyan"; "cyan"; "cyan"; "cyan"; "cyan"; "cyan"; "cyan"; 
-            "cyan";"cyan"; "cyan"; "cyan"; 
-            "cyan";"cyan"; "cyan"; "black"; "black";]);
-          (["▄";"█";"█";"█";"█";"▄";"▄";"█";"█";"▄";"▀";"▀";"▄";"█";"▄";" "], 
-           ["cyan"; "cyan"; "cyan"; "cyan"; "cyan"; "cyan"; "cyan"; 
-            "cyan";"cyan"; "cyan"; "cyan"; 
-            "cyan";"cyan"; "cyan"; "cyan"; "cyan";])                                               
-         ];
+  test = [
+    ([" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";"▄";"▄";"█";"█";" "], 
+     ["black"; "black"; "black"; "black";"black"; 
+      "black"; "black"; "black";"black"; "black"; 
+      "black"; "yellow";"yellow"; "yellow"; "yellow"; "black";]);
+    ([" ";" ";" ";" ";" ";" ";" ";" ";"▄";"▄";"█";"█";"█";"█";" ";" "], 
+     ["black"; "black"; "black"; "black";"black"; 
+      "black"; "black"; "black";"yellow"; "yellow"; 
+      "yellow"; "yellow";"yellow"; "yellow"; "black"; "black";]);
+    (["▄";"▄";"▄";"▄";"▄";"▄";"█";"█";"█";"█";"█";"█";"█";" ";" ";" "], 
+     ["yellow"; "yellow"; "yellow"; "yellow";"yellow";"yellow"; 
+      "yellow"; "yellow"; "yellow";"yellow";"yellow"; 
+      "yellow"; "yellow"; "black";"black";"black"]);
+    ([" ";"▀";"▀";"▀";"█";"█";"█";"█";"█";"█";"█";"█";"▀";" ";" ";" "],
+     ["black"; "yellow"; "yellow"; "yellow"; "yellow"; "yellow"; "yellow"; 
+      "yellow";"yellow"; "yellow"; "yellow"; 
+      "yellow";"yellow"; "black"; "black"; "black";]);
+    ([" ";" ";" ";" ";" ";"▀";"▀";"▀";"▀";"▀";"█";"█";"█";"▄";" ";" "],
+     ["black"; "black"; "black"; "black"; "black"; "yellow"; "yellow"; 
+      "yellow";"yellow"; "yellow"; "yellow"; 
+      "yellow";"yellow"; "yellow"; "black"; "black";]);
+    ([" ";"▄";"▄";" ";"█";" ";" ";"█";" ";" ";" ";"█";"▀";"█";"▄";" "],
+     ["black"; "cyan"; "cyan"; "black"; "yellow"; "black"; "black"; 
+      "yellow";"black"; "black"; "black"; 
+      "yellow";"yellow"; "yellow"; "yellow"; "black";]);
+    ([" ";"█";"▄";"▄";" ";" ";" ";"▄";"▄";"▄";"▄";"▄";"▄";"█";" ";" "],
+     ["black"; "cyan"; "cyan"; "cyan"; "yellow"; "black"; "black"; 
+      "cyan";"cyan"; "cyan"; "cyan"; 
+      "cyan";"cyan"; "cyan"; "yellow"; "black";]); 
+    (["▄";"▄";"▀";"█";"█";"█";"▀";"▀";"▄";"▄";"▄";"█";"█";"▄";" ";" "],
+     ["yellow"; "yellow"; "cyan"; "cyan"; "cyan"; "cyan"; "cyan"; 
+      "cyan";"cyan"; "cyan"; "cyan"; 
+      "cyan";"cyan"; "cyan"; "black"; "black";]);
+    (["▀";"▀";"▄";"█";"█";"▄";"▄";" ";"█";"█";"█";"█";"█";"█";" ";" "], 
+     ["yellow"; "yellow"; "cyan"; "cyan"; "cyan"; "yellow"; "yellow"; 
+      "cyan";"cyan"; "cyan"; "cyan"; 
+      "cyan";"cyan"; "cyan"; "black"; "black";]);
+    ([" ";"█";" ";"█";"█";"▀";"▀";" ";"█";"█";"█";"█";"█";"▀";" ";" "], 
+     ["yellow"; "cyan"; "cyan"; "cyan"; "cyan"; "yellow"; "yellow"; 
+      "cyan";"cyan"; "cyan"; "cyan"; 
+      "cyan";"cyan"; "cyan"; "black"; "black";]);
+    ([" ";"█";"█";"▄";"▀";"█";"█";"█";" ";"█";"█";"█";"█";" ";" ";" "],
+     ["cyan"; "cyan"; "cyan"; "cyan"; "cyan"; "cyan"; "cyan"; 
+      "cyan";"cyan"; "cyan"; "cyan"; 
+      "cyan";"cyan"; "cyan"; "black"; "black";]);
+    (["▄";"█";"█";"█";"█";"▄";"▄";"█";"█";"▄";"▀";"▀";"▄";"█";"▄";" "], 
+     ["cyan"; "cyan"; "cyan"; "cyan"; "cyan"; "cyan"; "cyan"; 
+      "cyan";"cyan"; "cyan"; "cyan"; 
+      "cyan";"cyan"; "cyan"; "cyan"; "cyan";])                                               
+  ];
 }
 
 (** [lump] is the sprite used when a character has been defeated and is at
@@ -393,6 +450,22 @@ let lump = [
   "███▀▀▀█████  █▀ ";
   "▀▄▄▄▄██████▄▀   ";
 ]
+
+let skull = [
+  "   █████████    ";
+  " █████████████  ";
+  " ██   ███   ██  ";
+  " ██   ███   ██  ";
+  " █████████████  ";
+  "  ██▀█▀█▀█▀██   ";
+  "   █▄█▄█▄█▄█    ";
+  " ███        ███ ";
+  "    ███  ███    ";
+  "      ████      ";
+  "    ███  ███    ";
+  " ███        ███ ";
+]
+
 
 (* let color_helper h = 
    match h with 
