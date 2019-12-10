@@ -452,18 +452,42 @@ let lump = [
 ]
 
 let skull = [
-  "   █████████    ";
-  " █████████████  ";
-  " ██   ███   ██  ";
-  " ██   ███   ██  ";
-  " █████████████  ";
-  "  ██▀█▀█▀█▀██   ";
-  "   █▄█▄█▄█▄█    ";
-  " ███        ███ ";
-  "    ███  ███    ";
-  "      ████      ";
-  "    ███  ███    ";
-  " ███        ███ ";
+  ([" ";" ";" ";"█";"█";"█";"█";"█";"█";"█";"█";"█";" ";" ";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";"█";"█";" ";" ";" ";"█";"█";"█";" ";" ";" ";"█";"█";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";"█";"█";" ";" ";" ";"█";"█";"█";" ";" ";" ";"█";"█";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";"█";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";" ";"█";"█";"▀";"█";"▀";"█";"▀";"█";"▀";"█";"█";" ";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";" ";" ";"█";"▄";"█";"▄";"█";"▄";"█";"▄";"█";" ";" ";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";"█";"█";"█";" ";" ";" ";" ";" ";" ";" ";"█";"█";"█";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";" ";" ";" ";"█";"█";"█";" ";" ";"█";"█";"█";" ";" ";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";" ";" ";" ";" ";" ";"█";"█";"█";"█";" ";" ";" ";" ";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";" ";" ";" ";"█";"█";"█";" ";" ";"█";"█";"█";" ";" ";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";]);
+  ([" ";"█";"█";"█";" ";" ";" ";" ";" ";" ";" ";"█";"█";"█";" ";" "],
+   ["white";"white";"white";"white";"white";"white";"white";"white";"white";
+    "white";"white";"white";"white";"white";"white";"white";])                  
 ]
 
 

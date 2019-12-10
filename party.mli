@@ -62,5 +62,7 @@ val has_spell: t -> spell -> bool
 
 val get_test: t -> (string list * string list) list
 
+val skull : (string list * string list) list
+
 
 
