@@ -8,19 +8,18 @@ type command =
   | Quit
   | Pass
 
+(** [Malformed] is the exception thrown when the command does not exist. *)
 exception Malformed
 
+(** [Empty] is the exception thrown when the input command is empty. *)
 exception Empty
 
-let rec string_of_list acc = function
-  | [] -> acc
-  | [e] -> acc ^ e
-  | h :: t -> string_of_list (h ^ ", " ^ acc) t
-
+(** [is_empty lst] is true if the list [lst] has no elements. False otherwise.*)
 let is_empty = function 
   | [] -> true
   | _::_ -> false
 
+(** [comm_help c t] is the [command] type corresponding to [c]. *)
 let comm_help c t = 
   match c with
   | "fight" -> if is_empty t then Fight else raise Malformed
@@ -31,12 +30,19 @@ let comm_help c t =
   | "pass" -> if is_empty t then Pass else raise Malformed
   | _ -> raise Malformed
 
+(** [get_command clst] is the command resulting from the first non-empty string
+    in the list [clst]. 
+    Raises: Empty exception if [clst] is empty or contains only spaces.*)
 let get_command clst = 
   let flst = List.filter (fun x -> x <> "") clst in
   match flst with
   | [] -> raise Empty
   | c :: t -> comm_help c t
 
+(** [parse str] is the command resulting from the input string [str]. 
+    Raises: Empty if [str] is the empty string or contains only spaces. 
+    Raises: Malformed if if the command is malformed. A command
+    is {i malformed} if the input is not a [command] type.*)
 let parse str = 
   String.split_on_char ' ' str |> get_command |> function
   | Fight -> Fight

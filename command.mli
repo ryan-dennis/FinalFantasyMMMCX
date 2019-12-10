@@ -1,8 +1,6 @@
 (** Command module takes in a command from the user and parses the command 
-    resulting in either a exception or returns a command.
-    edit more :) TODO *)
+    resulting in either a exception or returns a command. *)
 
-(** TODO Ryan you can do this *)
 type object_phrase = string
 
 (** type command represents the valid commands the user can call *)
