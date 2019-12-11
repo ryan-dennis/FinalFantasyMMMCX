@@ -332,7 +332,7 @@ let dead_boss_pr g b =
 let show_help curr_t = 
   let spell_str = get_spells curr_t |> string_of_list "" in 
   line_print ("Spells: " ^ spell_str) [ANSITerminal.green] 45;
-  ANSITerminal.set_cursor 31 47;
+  ANSITerminal.set_cursor 31 48;
   print_string "Press enter to continue";
   minisleep 0.05 "";
   wait_no_cursor ()
