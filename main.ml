@@ -379,10 +379,7 @@ and parse_help g s =
                                             repl g s))
     | Show -> show_help curr_t; repl g s
     | Pass -> change_turns g s |> repl g
-    | Paralyze -> let s' = status_add curr Paralyzed s in
-      let s'' = status_add curr Silenced s' in 
-      let s''' = status_add curr Poisoned s'' in 
-      status_add curr Blinded s''' |> repl g
+    | Paralyze -> status_add curr Paralyzed s |> repl g
     | Quit -> quit_help ()
     | exception Malformed -> mal_help (); repl g s
     | exception Empty -> emp_help (); repl g s
