@@ -19,6 +19,8 @@ let color_helper h =
   | "white" -> [ANSITerminal.white]
   | "red" -> [ANSITerminal.red]
   | "blue" -> [ANSITerminal.blue]
+  | "magenta" -> [ANSITerminal.magenta]
+  | "green" -> [ANSITerminal.green]
   | "background white" -> [Background White]
   | _ -> [ANSITerminal.default]
 
@@ -31,8 +33,8 @@ let rec helper string color int x y =
     ANSITerminal.(print_string (color_helper (List.nth color int)) h);
     helper t color (int+1) (x+1) y
 
-(** [pr s x y] is the colored sprite [s] printed starting at positions [x] and 
-    [y]. *)
+(** [pr s x y] is the colored sprite [s] printed starting at coordinates [x] 
+    and [y]. *)
 let rec pr s x y= 
   match s with 
   | [] -> ()
@@ -247,9 +249,9 @@ let screen_setup g s state_party boss =
   let third = List.nth game_party_chars 2 in
   print_endline empty_frame;
   print_spr (boss_sprite g boss) 10 10;
-  pr (first |> get_test) 54 3;
-  pr (second |> get_test) 54 16;
-  pr (third |> get_test) 54 29;
+  pr (if is_dead s (get_name first) then skull else first |> get_test) 54 3;
+  pr (if is_dead s (get_name second) then skull else second |> get_test) 54 16;
+  pr (if is_dead s (get_name third) then skull else third |> get_test) 54 29;
   setup_stats s (get_name first) 80 30;
   setup_stats s (get_name second) 80 37;
   setup_stats s (get_name third) 80 44;
@@ -325,6 +327,7 @@ let rec repl g s =
 and scoot g s msg ch = 
   let state_party = get_party s in
   let boss = get_current_boss s in
+  let sk = skull in
   ANSITerminal.erase Screen;
   let game_party_chars = 
     List.map (fun x -> find_character x get_characters) state_party in
@@ -333,20 +336,18 @@ and scoot g s msg ch =
   let third = List.nth game_party_chars 2 in
   print_endline empty_frame;
   print_spr (boss_sprite g boss) 10 10;
-  if ch = first then
-    (pr (first |> get_test) 50 3;
-     pr (second |> get_test) 54 16;
-     pr (third |> get_test) 54 29;)
+  if ch = first then (
+    pr (if is_dead s (get_name first) then sk else first |> get_test) 50 3;
+    pr (if is_dead s (get_name second) then sk else second |> get_test) 54 16;
+    pr (if is_dead s (get_name third) then sk else third |> get_test) 54 29;)
   else if ch = second then (
-    pr (first |> get_test) 54 3;
-    pr (second |> get_test) 50 16;
-    pr (third |> get_test) 54 29;
-  )
+    pr (if is_dead s (get_name first) then sk else first |> get_test) 54 3;
+    pr (if is_dead s (get_name second) then sk else second |> get_test) 50 16;
+    pr (if is_dead s (get_name third) then sk else third |> get_test) 54 29;)
   else (
-    pr (first |> get_test) 54 3;
-    pr (second |> get_test) 54 16;
-    pr (third |> get_test) 50 29;
-  );
+    pr (if is_dead s (get_name first) then sk else first |> get_test) 54 3;
+    pr (if is_dead s (get_name second) then sk else second |> get_test) 54 16;
+    pr (if is_dead s (get_name third) then sk else third |> get_test) 50 29;);
   setup_stats s (get_name first) 80 30;
   setup_stats s (get_name second) 80 37;
   setup_stats s (get_name third) 80 44;
@@ -368,9 +369,9 @@ and boss_scoot g s msg =
   print_endline "";
   print_endline empty_frame;
   print_spr (boss_sprite g boss) 14 10;
-  pr (first |> get_test) 54 3;
-  pr (second |> get_test) 54 16;
-  pr (third |> get_test) 54 29;
+  pr (if is_dead s (get_name first) then skull else first |> get_test) 54 3;
+  pr (if is_dead s (get_name second) then skull else second |> get_test) 54 16;
+  pr (if is_dead s (get_name third) then skull else third |> get_test) 54 29;
   setup_stats s (get_name first) 80 30;
   setup_stats s (get_name second) 80 37;
   setup_stats s (get_name third) 80 44;
