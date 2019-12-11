@@ -335,33 +335,35 @@ let rec repl g s =
   if not (check_alive s) then dead_team ()
   else if is_dead s boss && boss = final g then (dead_boss g boss; exit 0)
   else if is_dead s boss then (dead_boss_pr g boss; reset_state g s |> repl g) 
-  else
-    let curr = get_current_fighter s in
-    if List.mem curr char_names then
-      let curr_t = find_character curr get_characters in
-      let _ = ANSITerminal.(
-          print_string [default] ("Enter a command for " ^ 
-                                  (cap_all curr) ^ ": ")) in
-      match parse (read_line ()) with
-      | Fight -> if is_valid_com curr s Fight then f_help g s curr_t |> repl g
-        else (paryl_help curr "fighting"; repl g s)
-      | Magic spell -> let sp = String.uppercase_ascii spell in
-        if is_valid_com curr s (Magic sp) then 
-          (try magic_help g s sp curr_t |> repl g 
-           with Not_found -> (ANSITerminal.set_cursor 31 46; reject "spell"; 
-                              minisleep 1.5 ""; repl g s))
-        else (paryl_help curr "casting spells"; repl g s)
-      | Drink pot -> (try drink pot |> drink_comm g s curr |> repl g 
-                      with Invalid_potion -> (ANSITerminal.set_cursor 31 45;
-                                              reject "potion"; minisleep 1.5 "";
-                                              repl g s))
-      | Show -> show_help curr_t; repl g s
-      | Pass -> change_turns g s |> repl g
-      | Paralyze -> status_add curr Paralyzed s |> repl g
-      | Quit -> quit_help ()
-      | exception Malformed -> mal_help (); repl g s
-      | exception Empty -> emp_help (); repl g s
-    else boss_help g s |> repl g
+  else parse_help g s
+
+and parse_help g s =
+  let curr = get_current_fighter s in
+  if List.mem curr char_names then
+    let curr_t = find_character curr get_characters in
+    let _ = ANSITerminal.(
+        print_string [default] ("Enter a command for " ^ 
+                                (cap_all curr) ^ ": ")) in
+    match parse (read_line ()) with
+    | Fight -> if is_valid_com curr s Fight then f_help g s curr_t |> repl g
+      else (paryl_help curr "fighting"; repl g s)
+    | Magic spell -> let sp = String.uppercase_ascii spell in
+      if is_valid_com curr s (Magic sp) then 
+        (try magic_help g s sp curr_t |> repl g 
+         with Not_found -> (ANSITerminal.set_cursor 31 46; reject "spell"; 
+                            minisleep 1.5 ""; repl g s))
+      else (paryl_help curr "casting spells"; repl g s)
+    | Drink pot -> (try drink pot |> drink_comm g s curr |> repl g 
+                    with Invalid_potion -> (ANSITerminal.set_cursor 31 45;
+                                            reject "potion"; minisleep 1.5 "";
+                                            repl g s))
+    | Show -> show_help curr_t; repl g s
+    | Pass -> change_turns g s |> repl g
+    | Paralyze -> status_add curr Paralyzed s |> repl g
+    | Quit -> quit_help ()
+    | exception Malformed -> mal_help (); repl g s
+    | exception Empty -> emp_help (); repl g s
+  else boss_help g s |> repl g
 
 (** [scoot g s msg ch] is the character [ch] moved to the left and battle 
     message [msg] printed to the screen. *)
