@@ -1,9 +1,19 @@
+(**
+   We primarily approached testing by 
+*)
+
+(** Untestable modules:
+    - Battle
+    - Potions
+*)
+
 open OUnit2 
 open Yojson.Basic.Util
 open Party
 open Gauntlet
 open State
 open Status
+open Command
 
 let ch = get_characters
 let fighter = List.nth ch 0 
@@ -19,8 +29,8 @@ let party_tests = [
   (fun _ -> assert_equal [fighter;thief;black_belt;red_mage;white_mage;
                           black_mage] get_characters);
   "Testing add with 3 characters">:: 
-  (fun _ -> assert_equal [fighter; red_mage; white_mage]
-      (add ["fighter";"red mage";"white mage"] []));  
+  (fun _ -> assert_equal [fighter; black_belt; white_mage]
+      (add ["fighter";"black belt";"white mage"] []));  
   "Tetsing get_weapon of thief ">:: 
   (fun _ -> assert_equal "Dragon Sword" (get_weapon thief)); 
   "Testing get_spells of black belt ">:: 
@@ -39,15 +49,15 @@ let party_tests = [
   (fun _ -> assert_equal "thief" (get_name thief));
   "Testing get stats works for fighter ">:: 
   (fun _ -> assert_equal 
-      {str = 69; agl = 43; int = 23; vit = 993; mp = 70; hit_percent = 187; m_def = 162; fight_def = 60}
+      {str = 69; agl = 43; int = 23; vit = 993; mp = 70; hit_percent = 187; m_def = 60; fight_def = 60}
       (get_stats fighter));
   "Testing exception thrown">::
   (fun _ -> assert_raises (UnknownCharacter "mel") f );     
-
 ]
 
 (** GAUNTLET TESTS *)
 let glt1 = "testgauntlet.json" |> Yojson.Basic.from_file |> from_json;;
+let chaos_sprite = ["testsprite"; "testsprite"]
 let chaos_stats = boss_stats glt1 "Chaos"
 let chaos_spells = ["ICE3";"LIT3";"CUR4";"FIR3";"ICE2";"NUKE"]
 let chaos_skills = ["INFERNO";"SWIRL";"TORNADO"]
@@ -65,14 +75,22 @@ let gauntlet_tests = [
   "Chaos hit rate" >:: (fun _ -> assert_equal 120 (chaos_stats.hit));
   "Chaos weaknesses" >:: (fun _ -> assert_equal ["Ice"] (chaos_stats.weak));
   "Chaos resistances" >:: (fun _ -> assert_equal ["Fire"] (chaos_stats.resist));
+  "Chaos num of hits" >::
+  (fun _ -> assert_equal 4 (boss_num_of_hits glt1 "Chaos"));
+  "Chaos sprite" >::
+  (fun _ -> assert_equal chaos_sprite (boss_sprite glt1 "Chaos"));
   "Chaos spell chance" >::
   (fun _ -> assert_equal 64 (boss_spell_chance glt1 "Chaos"));
+  "Chaos ICE3 is icicle" >::
+  (fun _ -> assert_equal "icicle" (boss_spell_name glt1 "Chaos" "ICE3"));
   "Chaos spells" >::
   (fun _ -> assert_equal chaos_spells (boss_spells glt1 "Chaos"));
   "Chaos skill chance" >::
   (fun _ -> assert_equal 64 (boss_skill_chance glt1 "Chaos"));
   "Chaos skills" >::
   (fun _ -> assert_equal chaos_skills (boss_skills glt1 "Chaos"));
+  "Chaos INFERNO is fire" >::
+  (fun _ -> assert_equal "fire" (boss_skill_name glt1 "Chaos" "INFERNO"));
   "Chaos next is Mutability" >::
   (fun _ -> assert_equal "Mutability" (next glt1 "Chaos"));
   "Chaos dialogue" >::
@@ -80,11 +98,11 @@ let gauntlet_tests = [
 ]
 
 (** STATE TESTS *)
-let init = init_state glt1 [thief;red_mage;white_mage]
-let r_set = set_health glt1 "red mage" init 25 
+let init = init_state glt1 [thief;black_belt;white_mage]
+let r_set = set_health glt1 "black belt" init 25 
 let b_set = set_health glt1 "Chaos" init 100
 let t = get_turnorder init
-let rem_red = remove_from_t "red mage" init
+let rem_red = remove_from_t "black belt" init
 let r = get_turnorder rem_red
 let rem_red_white = remove_from_t "white mage" rem_red
 let rw = get_turnorder rem_red_white
@@ -105,12 +123,11 @@ let sil_bb = status_add "thief" Silenced init
 let par = status_add "thief" Paralyzed init
 let use_he = used_heal "white mage" init
 let use_pu = used_pure "white mage" use_he
-let dead = set_health glt1 "red mage" init 0
+let dead = set_health glt1 "black belt" init 0
 let dead2 = set_health glt1 "white mage" dead 0
 let dead3 = set_health glt1 "Chaos" dead2 0
 let dead4 = set_health glt1 "thief" dead2 0
 let mp = set_magic_points "thief" 5 init
-
 
 
 let state_tests = [
@@ -119,14 +136,14 @@ let state_tests = [
   "Testing init set next boss correctly">:: 
   (fun _ -> assert_equal "Mutability" (get_next_boss init));
   "Testing party is set correctly">:: 
-  (fun _ -> assert_equal ["white mage";"red mage";"thief"] (get_party init));
+  (fun _ -> assert_equal ["white mage";"black belt";"thief"] (get_party init));
   "Testing health was set correctly ">:: 
-  (fun _ -> assert_equal 591 (get_health "red mage" init));
+  (fun _ -> assert_equal 999 (get_health "black belt" init));
   "Testing set health works correctly">:: 
-  (fun _ -> assert_equal 25 (get_health "red mage" r_set));
+  (fun _ -> assert_equal 25 (get_health "black belt" r_set));
   "Testing get health for boss">:: 
   (fun _ -> assert_equal 1500 (get_health "Chaos" init)); 
-  "Testing setting red mage health doesn't affect another character">::
+  "Testing setting black belt health doesn't affect another character">::
   (fun _ -> assert_equal 1500 (get_health "Chaos" r_set));
   "Testing set on boss">:: 
   (fun _ -> assert_equal 100 (get_health "Chaos" b_set));
@@ -135,19 +152,19 @@ let state_tests = [
   "Testing remove from turnorder. size">::
   (fun _ -> assert_equal 3 (List.length r));
   "Testing remove from turnorder, Character removed">:: 
-  (fun _ -> assert_equal false (List.mem "red mage" r));
+  (fun _ -> assert_equal false (List.mem "black belt" r));
   "Testing remove from turnorder with two removed. Size">::
   (fun _ -> assert_equal 2 (List.length rw));
   "Testing remove from turnorder. White mage also removed">:: 
   (fun _ -> assert_equal false (List.mem "white mage" rw));
-  "Testing remove from turnorder. red mage still removed">:: 
-  (fun _ -> assert_equal false (List.mem "red mage" rw));
+  "Testing remove from turnorder. black belt still removed">:: 
+  (fun _ -> assert_equal false (List.mem "black belt" rw));
   "Testing remove from turnorder. Chaos not removed">:: 
   (fun _ -> assert_equal true (List.mem "Chaos" rw));
   "Testing status_add works.">:: 
   (fun _ -> assert_equal [Blinded] (get_status "white mage" blind));
-  "Testing status_add on white mage does not affect red mage">:: 
-  (fun _ -> assert_equal [] (get_status "red mage" blind));
+  "Testing status_add on white mage does not affect black belt">:: 
+  (fun _ -> assert_equal [] (get_status "black belt" blind));
   "Testing status_add does not duplicate">:: 
   (fun _ -> assert_equal [Blinded] (get_status "white mage" blind2));
   "Testing status_remove on Poisoned">:: 
@@ -159,11 +176,11 @@ let state_tests = [
   "Testing is_Poisoned. Should be true">::
   (fun _ -> assert_equal true (is_poisoned "white mage" remnone));
   "Testing is_Poisoned. Should be false">::
-  (fun _ -> assert_equal false (is_poisoned "red mage" remnone));
+  (fun _ -> assert_equal false (is_poisoned "black belt" remnone));
   "Testing is_Blinded. Should be true">::
   (fun _ -> assert_equal true (is_blinded "white mage" remnone));
   "Testing is_Blinded. Should be false">::
-  (fun _ -> assert_equal false (is_blinded "red mage" remnone));
+  (fun _ -> assert_equal false (is_blinded "black belt" remnone));
   "Testing is_Paralyzed. Should be false">::
   (fun _ -> assert_equal false (is_paralyzed "white mage" remnone));
   "Testing is_Paralyzed. Should be true">::
@@ -207,7 +224,7 @@ let state_tests = [
   "Testing removed the potion heal stays removed. Should return false">::
   (fun _ -> assert_equal false (has_heal "white mage" use_pu));
   "Testing is_dead returns true when character health is zero">::
-  (fun _ -> assert_equal true (is_dead dead "red mage"));
+  (fun _ -> assert_equal true (is_dead dead "black belt"));
   "Testing is_dead returns false when character health is above zero">::
   (fun _ -> assert_equal false (is_dead dead "white mage"));
   "Testing checl_alive with one player dead. Should be true">::
@@ -222,10 +239,69 @@ let state_tests = [
   (fun _ -> assert_equal 5 (get_magic_points "thief" mp));
 ]
 
+(** SPELLS TESTS *)
+(** Functions that cannot be tested:
+    - cast_spell, because it returns randomized values
+    - get_skill, because it returns a value of the unexposed type skill
+    - cast_boss_spell, because it returns randomized values
+    - cast_boss_skill, because it returns randomized values
+*)
+let sp_st = remove_from_t "Chaos" init |> change_turns glt1
+
+let nuke = Spells.get_spell "NUKE"
+let cur4 = Spells.get_spell "CUR4"
+let st_no_mp = set_magic_points "white mage" 0 sp_st
+
+let spell_tests = [
+  "friendly is invalid dmg target" >::
+  (fun _ -> assert_equal false
+      (Spells.is_valid_target sp_st nuke "white mage"));
+  "friendly is valid friendly target" >::
+  (fun _ -> assert_equal true
+      (Spells.is_valid_target sp_st cur4 "white mage"));
+  "not friendly is valid dmg target" >::
+  (fun _ -> assert_equal true
+      (Spells.is_valid_target sp_st nuke "Chaos"));
+  "not friendly is invalid friendly target" >::
+  (fun _ -> assert_equal false
+      (Spells.is_valid_target sp_st cur4 "Chaos"));
+  "white mage has enough mp" >::
+  (fun _ -> assert_equal true
+      (Spells.is_enough_mp cur4 white_mage sp_st));
+  "white mage does not have enough mp" >::
+  (fun _ -> assert_equal false
+      (Spells.is_enough_mp cur4 white_mage st_no_mp));
+]
+
+(** COMMAND TESTS *)
+let cmd_empty = try Some (parse "") with Empty -> None
+let magic_mal = try Some (parse "cast") with Malformed -> None
+let potion_mal = try Some (parse "drink") with Malformed -> None
+let mal = try Some (parse "malformed") with Malformed -> None
+
+let command_tests = [
+  "parse empty" >:: (fun _ -> assert_equal None cmd_empty);
+  "parse fight" >:: (fun _ -> assert_equal Fight (parse "fight"));
+  "parse magic" >::
+  (fun _ -> assert_equal (Magic "spell") (parse "cast spell"));
+  "parse malformed magic" >::
+  (fun _ -> assert_equal None magic_mal);
+  "parse drink" >::
+  (fun _ -> assert_equal (Drink "potion") (parse "drink potion"));
+  "parse malformed drink" >::
+  (fun _ -> assert_equal None potion_mal);
+  "parse show" >:: (fun _ -> assert_equal Show (parse "magic"));
+  "parse quit" >:: (fun _ -> assert_equal Quit (parse "quit"));
+  "parse pass" >:: (fun _ -> assert_equal Pass (parse "pass"));
+  "parse malformed" >:: (fun _ -> assert_equal None mal)
+]
+
 let suite = "search test suite" >::: List.flatten [
     party_tests;
     gauntlet_tests;
     state_tests;
+    spell_tests;
+    command_tests
   ]
 
 let _ = run_test_tt_main suite
