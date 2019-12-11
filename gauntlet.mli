@@ -82,3 +82,6 @@ val next : t -> boss_id -> boss_id
 
 (** [get_dlg g b] is the victory dialogue for boss [b] in gauntlet [g]. *)
 val dialogue : t -> boss_id -> string
+
+(** [color_mut] is the colored sprite of the boss Mutability *)
+val color_mut: (string list * string list) list 

@@ -1,11 +1,12 @@
-(** Dimensions: 70 across, 30 vertically 
-    Boss box: 37 across, 20 vertically
-    Character box: 19 across, 20 vertically
+(** Dimensions: 91 across, 47 vertically 
+    Boss box: 44 across, 27 vertically
+    Character box: 31 across, 27 vertically
     Characters: 16 px by 24 px, 16 characters across by 12 lines
-    Boss: 40 px by 40 px, 40 characters across by 20 lines *)
+    Boss: 40 px by 52 px, 40 characters across by 28 lines *)
 
 open Party
 open State
+
 (** Dimensions of the frame. *)
 let arena = 75
 let b1_top = 44
@@ -72,16 +73,15 @@ let frame_side_bari b1 bi b2 b3 =
                     "╠"; hor_frame b3 "";
                     "╣"]
 
+(** [frame_side_word word] is the row across the bottom half of the frame
+    with the five letter word [word] placed inside. *)
 let frame_side_word word =
   String.concat "" ["║"; String.make b1_bot ' ';
                     "║"; String.make 2 ' ';
                     word; String.make 2 ' '; "║";
                     String.make b2_bot ' ';
                     "║"; String.make b3_bot ' ';
-                    "║"]
-(** get the sprite of a character *)
-let spr name = 
-  find_character name get_characters |> get_sprite                    
+                    "║"]                   
 
 (** [frame] is the GUI frame as a string list. *)
 let frame =
@@ -119,6 +119,8 @@ let frame =
                                "╦"; hor_frame b2_top "";
                                "╗"; String.make (b3_top+1) ' '])
 
+(** [empty_frame] is the frame of the display with the words FIGHT, MAGIC and
+    DRINK in the but no character's *)
 let empty_frame = frame |> String.concat "\n"
 
 (**

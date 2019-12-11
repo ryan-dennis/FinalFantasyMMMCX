@@ -2,14 +2,13 @@
     weapons. Also include the functions for adding 3 charcters
     to a party. *)
 
-(** The abtract type representing a charcacter. (record) *)
+(** The abtract type representing a charcacter. *)
 type t
 
-(** Represents the type of the charcater's spells.
-    Each character gets up to 3 *)
+(** Represents the type of the charcater's spells.*)
 type spell = string
 
-(** Represents the type of the charcater's stats (record)*)
+(** Represents the type of the charcater's stats *)
 type stat = {
   str : int; 
   agl : int; 
@@ -21,7 +20,8 @@ type stat = {
   fight_def : int;  
 }
 
-(** Represents the type of the characters sprite to be displeys (string list list)*)
+(** Represents the type of the characters sprite to be displeys
+    (string list list)*)
 type sprite = string list
 
 (** Exception of an unknown character name  *)
@@ -60,9 +60,8 @@ val char_og_health : t -> int
 (** [has_spell t spell] returns [true] if [t] has [spell] and [false] otherwise *)
 val has_spell: t -> spell -> bool 
 
+(** [get_test c] is the colored sprite of the character [c] *)
 val get_test: t -> (string list * string list) list
 
+(** [skull] is the colored sprite representing when a character is at 0 vitality *)
 val skull : (string list * string list) list
-
-
-

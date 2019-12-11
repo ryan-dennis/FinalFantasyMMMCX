@@ -175,3 +175,147 @@ let next glt b =
 
 let dialogue glt b =
   (find_boss glt b).boss_dlg
+
+(** [color_mut] Is the colored sprite of boss Mutability *)
+let color_mut = [
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"▀";" ";" ";" ";"█";"█";"▄";"▀";
+    " ";"█";"▀";"▄";"▄";"▀";"▀";"▄"],
+   ["red";"yellow";"magenta";"white";"green";"cyan"; "magenta";"cyan";
+    "red";"cyan";"red";"white";"green";"yellow";"magenta";"yellow";
+    "red";"green";"cyan";"magenta";"yellow";"green"; "white";"red";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";"▀";"▄";"█";"▀";" ";
+    "▄";" ";"▄";" ";"▄";"█";"█"],
+   ["white";"cyan";"magenta";"red";"green";"yellow"; "magenta";"yellow";
+    "red";"yellow";"white";"magenta";"green";"cyan";"red";"yellow";
+    "white";"yellow";"green";"white";"red";"magenta"; "cyan";"yellow";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"▄";"▀";"▀";"▀";"▀";" ";"▄";"▄";"▄";"▀";
+    "▄";"▀";"▄";"▀";"▄";"▄"],
+   ["red";"yellow";"magenta";"white";"green";"magenta"; "cyan";"magenta";
+    "red";"cyan";"green";"white";"green";"yellow";"magenta";"yellow";
+    "red";"green";"cyan";"magenta";"yellow";"green"; "white";"cyan";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"█";"█";"█";"█";"█";"█";"█";"█";"█";" ";
+    "▄";"█";"█";"█";"█";" "],
+   ["cyan";"cyan";"magenta";"red";"green";"yellow"; "magenta";"yellow";
+    "red";"yellow";"white";"magenta";"white";"cyan";"red";"yellow";
+    "white";"yellow";"cyan";"magenta";"red";"green"; "white";"magenta";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"█";"▄";"▄";"▄";"▄";"▄";"▄";"▄";"▀";" ";
+    "▀";"█";"█";"█";"▄";"▄"],
+   ["yellow";"yellow";"magenta";"white";"red";"cyan"; "white";"green";
+    "green";"cyan";"red";"white";"green";"magenta";"magenta";"yellow";
+    "yellow";"green";"cyan";"magenta";"green";"red"; "yellow";"cyan";]); 
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"▀";"█";"▄";" ";"▄";" ";"▄";" ";" ";"▄";
+    " ";"▄";" ";"█";"▄";"▀"],
+   ["white";"cyan";"green";"yellow";"green";"red";"magenta";"red";
+    "white";"yellow";"white";"magenta";"green";"cyan";"red";"white";
+    "white";"yellow";"green";"white";"red";"white"; "cyan";"magenta";]); 
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"▀";" ";"▄";"▀";"▄";"▀";"▄";"█";"▄";"█";
+    "▀";"█";"█";"▀";"▄";"█"],
+   ["green";"yellow";"magenta";"white";"red";"magenta"; "cyan";"yellow";
+    "red";"white";"green";"cyan";"green";"yellow";"magenta";"yellow";
+    "magenta";"green";"cyan";"magenta";"yellow";"green"; "white";"red";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"▄";"█";"█";"█";"█";"█";"█";"█";"▄";"█";
+    "█";"█";"█";"▀";"▀";"▄"],
+   ["red";"yellow";"magenta";"white";"green";"cyan"; "magenta";"white";
+    "red";"cyan";"red";"white";"green";"yellow";"magenta";"yellow";
+    "red";"green";"cyan";"magenta";"yellow";"green"; "white";"yellow";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"█";"▄";"█";"▄";"█";"▄";"█";"█";"█";"█";
+    "▄";"▄";"█";"█";"▄";" ";],
+   ["white";"cyan";"cyan";"red";"green";"yellow"; "magenta";"yellow";
+    "red";"yellow";"white";"magenta";"white";"cyan";"red";"yellow";
+    "white";"yellow";"cyan";"magenta";"red";"green"; "white";"magenta";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"█";"▄";" ";"▄";"▀";" ";"▄";"█";"▄";" ";
+    "▄";"█";"█";"▀";"▀";" ";],
+   ["cyan";"yellow";"white";"white";"red";"cyan"; "green";"red";
+    "green";"cyan";"red";"white";"green";"magenta";"magenta";"yellow";
+    "yellow";"magenta";"cyan";"green";"green";"red"; "yellow";"cyan";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"▀";"▀";"█";"���";"▀";"▀";"█";"█";" ";" ";
+    " ";" ";"▄";"▀";"▀";"█";],
+   ["yellow";"yellow";"magenta";"white";"red";"cyan"; "white";"green";
+    "green";"cyan";"red";"white";"green";"magenta";"magenta";"yellow";
+    "yellow";"green";"cyan";"magenta";"green";"red"; "yellow";"green";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"▀";"▀";"▀";"▀";"▄";"▀";"█";"█";"▀";"█";
+    "▀";"█";"█";"▀";"▀";"█";],
+   ["green";"yellow";"magenta";"white";"red";"magenta"; "cyan";"yellow";
+    "red";"white";"green";"cyan";"green";"yellow";"magenta";"yellow";
+    "magenta";"red";"white";"magenta";"yellow";"green"; "white";"red";]);
+  (["▀";"▀";"▀";"▀";"▀";"▀";"█";"█";" ";"█";"█";"█";"▄";"█";"▄";"█";"▀";"█";
+    "▄";"▀";"▄";"▀";"▄";"▄";],
+   ["red";"yellow";"magenta";"white";"green";"cyan"; "magenta";"cyan";
+    "red";"cyan";"red";"yellow";"white";"red";"magenta";"yellow";
+    "red";"green";"cyan";"magenta";"yellow";"green"; "magenta";"cyan";]);
+  (["▀";" ";" ";" ";" ";" ";"█";"▀";"█";"█";"█";"█";"█";"█";"█";"█";"█";" ";
+    " ";"█";" ";"█";" ";"█";],
+   ["magenta";"yellow";"magenta";"white";"red";"magenta"; "cyan";"yellow";
+    "red";"white";"green";"cyan";"cyan";"yellow";"magenta";"yellow";
+    "magenta";"yellow";"cyan";"magenta";"yellow";"green"; "yellow";"green";]);
+  (["▄";"▄";"▄";"▄";"▄";"▄";"█";"█";"▄";"▄";"▀";"█";"▄";" ";" ";" ";"▄";"▀";
+    "▀";"▄";"▀";"▄";"▀";"▄";],
+   ["white";"cyan";"green";"yellow";"green";"red";"magenta";"red";
+    "white";"yellow";"white";"magenta";"green";"cyan";"red";"white";
+    "white";"yellow";"green";"white";"red";"white"; "cyan";"magenta";]); 
+  (["▀";"▄";"▄";"▄";"▄";"▄";"▄";"█";" ";"▀";"▀";"▄";" ";"▄";"▀";"█";"▀";" ";
+    "▀";"█";"▀";"█";"▄";" ";],
+   ["yellow";"yellow";"magenta";"white";"red";"cyan"; "white";"green";
+    "green";"cyan";"red";"white";"green";"magenta";"magenta";"yellow";
+    "yellow";"green";"cyan";"magenta";"green";"red"; "yellow";"cyan";]);
+  (["█";"▄";"▄";"▄";"▄";"▄";"▄";"▄";"▄";"█";"█";"█";"▀";"▀";"█";"▀";" ";"▀";
+    "▀";"█";"▀";"█";" ";"█";],
+   ["green";"yellow";"magenta";"white";"red";"magenta"; "cyan";"yellow";
+    "red";"white";"green";"cyan";"green";"yellow";"magenta";"yellow";
+    "magenta";"green";"cyan";"magenta";"yellow";"green"; "white";"red";]);
+  (["▄";"▄";" ";"▄";" ";"▄";"█";"▀";"█";"█";"█";"█";"▀";"█";"█";"▀";" ";"█";
+    "▀";"▄";" ";" ";"▀";" ";],
+   ["yellow";"yellow";"magenta";"white";"red";"cyan"; "white";"green";
+    "green";"cyan";"red";"white";"green";"magenta";"magenta";"yellow";
+    "yellow";"green";"cyan";"magenta";"green";"red"; "yellow";"green";]);
+  (["█";"█";"█";"█";"█";"█";"▄";"▀";"█";"█";"█";"█";"█";" ";" ";"█";"▀";"▀";
+    "▀";"▀";"▀";"▄";"█";"█";],
+   ["red";"white";"magenta";"yellow";"green";"cyan"; "magenta";"cyan";
+    "red";"cyan";"red";"white";"green";"yellow";"magenta";"yellow";
+    "red";"green";"cyan";"magenta";"yellow";"green"; "white";"red";]);
+  (["▄";"▀";"█";"▀";"█";"▀";"█";"▀";"█";"█";"█";"█";"▀";"▀";"▀";"█";"█";"█";
+    "█";"█";"█";"█";"█";"▄";],
+   ["magenta";"yellow";"magenta";"white";"red";"magenta"; "cyan";"yellow";
+    "red";"white";"green";"cyan";"cyan";"yellow";"magenta";"yellow";
+    "magenta";"yellow";"cyan";"magenta";"yellow";"green"; "yellow";"green";]);
+  (["▀";"▄";"▀";"▄";"▀";"▄";"▀";"▄";"▀";"▀";"▄";"█";"▀";"▀";"█";"█";"▄";"█";
+    "▄";"█";"▄";"█";"█";"█";],
+   ["cyan";"white";"yellow";"green";"cyan";"magenta"; "red";"green";
+    "green";"cyan";"red";"white";"green";"magenta";"red";"white";
+    "yellow";"green";"cyan";"white";"green";"magenta"; "red";"cyan";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"▀";" ";" ";"▀";" ";"▄";"▄";"▀";"▀";"█";
+    "▀";"█";"▀";"█";"▀";"█";],
+   ["green";"yellow";"magenta";"white";"red";"magenta"; "cyan";"yellow";
+    "red";"white";"green";"cyan";"green";"yellow";"magenta";"yellow";
+    "magenta";"red";"cyan";"magenta";"yellow";"green"; "white";"red";]);
+  (["▄";"▄";"▄";"▄";"▄";"▄";"▄";"▄";"▄";"▄";" ";"█";"▀";"▀";"▀";"▀";"▄";"█";
+    "▄";"█";"▄";" ";"▄";" "],
+   ["white";"cyan";"magenta";"red";"green";"yellow"; "magenta";"yellow";
+    "red";"yellow";"white";"magenta";"green";"cyan";"red";"yellow";
+    "white";"yellow";"green";"white";"red";"magenta"; "cyan";"yellow";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";"█";"█";" ";"▀";"█";"▄";"█";"▄";"█";"█";
+    "█";"█";"█";"▀";" ";"█";],
+   ["yellow";"yellow";"magenta";"white";"red";"cyan"; "white";"green";
+    "green";"cyan";"red";"white";"green";"magenta";"magenta";"yellow";
+    "red";"green";"cyan";"magenta";"green";"red"; "yellow";"green";]);
+  (["▄";"▄";"▄";"▄";"▀";"█";"▀";"█";" ";" ";"█";"█";" ";"▄";" ";"▄";"█";"█";
+    "█";"█";"█";"█";"█";"▄";],
+   ["magenta";"yellow";"magenta";"white";"red";"magenta"; "cyan";"yellow";
+    "red";"white";"green";"cyan";"cyan";"yellow";"white";"magenta";
+    "magenta";"yellow";"green";"magenta";"yellow";"green"; "white";"red";]);
+  (["▀";"▀";"▀";"▀";"▀";" ";"█";" ";"█";"█";"▄";"▀";"▄";"▄";"▄";"▀";"▀";"▀";
+    "▄";"█";"█";"▀";"█";"▀";],
+   ["red";"yellow";"magenta";"white";"green";"magenta"; "cyan";"magenta";
+    "red";"cyan";"green";"white";"green";"yellow";"magenta";"yellow";
+    "red";"green";"cyan";"green";"white";"magenta"; "red";"cyan";]);
+  (["█";"█";"█";"█";"▀";"█";"▄";"▀";"▀";"▀";"▀";"▀";"▄";" ";"▄";" ";"█";"█";
+    "▀";"▀";"▀";"▀";"█";"█";],
+   ["green";"yellow";"magenta";"white";"red";"magenta"; "cyan";"yellow";
+    "red";"white";"green";"cyan";"green";"yellow";"magenta";"yellow";
+    "magenta";"green";"cyan";"magenta";"yellow";"green"; "white";"yellow";]);
+  (["▀";"▀";"▀";"▀";"█";"▄";" ";"▀";"▄";"▄";"▄";"▄";" ";"█";"█";" ";"▀";"█";
+    " ";"▀";" ";"▀";"▀";"▄"],
+   ["cyan";"magenta";"white";"green";"yellow";"cyan"; "red";"white";
+    "green";"cyan";"red";"white";"yellow";"cyan";"green";"magenta";
+    "red";"magenta";"yellow";"white";"green";"cyan"; "red";"yellow";]);                                        
+]    

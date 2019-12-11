@@ -2,10 +2,13 @@
     weapons, spells, and sprite. As well as a method to get all characters and 
     adding for adding into a party. *)
 
+(** represents the type of spells the characters have *)
 type spell = string 
 
+(** the type of a sprite of a character *)
 type sprite = string list 
 
+(** represents the stats every character comes with *)
 type stat = {
   str : int; 
   agl : int; 
@@ -17,6 +20,8 @@ type stat = {
   fight_def : int;  
 }
 
+(** Represents the type of character. Conatins all of the information needed 
+    for each character of the game. *)
 type character = {
   name : string; 
   stats : stat; 
@@ -44,6 +49,7 @@ let get_weapon c = c.weapon
 (** [get_sprite c] is the sprite of character [c] *)
 let get_sprite c = c.sprite
 
+(** [get_test c] is the colored sprite of the character [c] used in display *)
 let get_test c = c.test
 
 (** [get_name c] is the name of character [c] *)
@@ -308,13 +314,13 @@ let white_mage = {
   sprite = [
     "    ▄▄▄▄▄▀▀▀▀▀▄ ";
     "  ▄▀        ▄ █ ";
-    "▄▀▄██████▄   ▀▄ ";
+    "▄▀▄█����████▄   ▀▄ ";
     " ▀▄ ▀▀▀  ▀█   █ ";
     "   █ ▀   █  ▄▀ ";
     " ▄██  ▄▄███   █ ";
     "█▄▄▄█▀▀▀▀▀▀▄▀ ▀▄";
-    "█▀  ██▀     █  █";
-    "█▀  ██▄▄       █";
+    "█▀  ██▀ ��   █  █";
+    "█▀  ██▄�� ��     █";
     "█▀  █▀█  ▄     █";
     " █   █▄▀██ ▄█ ▄█";
     "  ▀█████▀▀█████▀";
@@ -367,7 +373,6 @@ let black_mage = {
   weapon = "Mage staff";
   spells = ["MUTE";"INVS";"HOLD";"LIT2";"HEL2";"FIR3";"STUN";"ICE3";"SABR";
             "NUKE";"FADE";"BRAK";];
-  (* [(long string, [c1, c2, c3, c4, c5])] *)
   sprite = [
     "           ▄▄██ "; 
     "        ▄▄████  ";
@@ -451,6 +456,8 @@ let lump = [
   "▀▄▄▄▄██████▄▀   ";
 ]
 
+(** [skull] is a colored sprite of a skull to represent the character's when 
+    dead. This occurs when the vit is 0 *)
 let skull = [
   ([" ";" ";" ";"█";"█";"█";"█";"█";"█";"█";"█";"█";" ";" ";" ";" "],
    ["white";"white";"white";"white";"white";"white";"white";"white";"white";
@@ -499,6 +506,8 @@ let skull = [
    | "white" -> [ANSITerminal.white]
    | "red" -> [ANSITerminal.red]
    | "blue" -> [ANSITerminal.blue]
+   | "magenta" -> [ANSITerminal.magenta]
+   | "green" -> [ANSITerminal.green]
    | "background white" -> [Background White]
    | _ -> [ANSITerminal.default]
 
@@ -532,7 +541,7 @@ let rec add lst acc  =
   | [] -> List.rev acc
   | x::t -> add t ((find_character x get_characters)::acc)
 
-(** [char_og_health char] is the health of [char] *)
+(** [char_og_health char] is the original health of [char] *)
 let char_og_health char = 
   char.stats.vit   
 
