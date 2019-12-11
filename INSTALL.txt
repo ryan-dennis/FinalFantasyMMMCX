@@ -14,3 +14,10 @@ target that will be prompted for; pass will skip that character's turn
 There are three bosses. The player will fight each boss in sequence, then the
 game will end when the player has defeated all three or all three of their
 party members have been defeated.
+
+Notes:
+- Case does not matter, except for potions, which will have to be all lowercase
+- The gauntlet may be difficult, so (SPOILERS) the best strategy consists of:
+    - Pick fighter, black belt, and black mage in your party (in that order)
+    - Use exclusively "fight" for fighter and black belt
+    - Use exclusively "cast SABR" for black mage on black belt or fighter
