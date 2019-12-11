@@ -479,6 +479,7 @@ let color_clark = [
     "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";]); 
 ] 
 
+(** [color_chaos] is the colored sprite of the boss chaos  *)
 let color_chaos = [
   ([" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";
     " ";" ";" ";" ";" ";" ";],

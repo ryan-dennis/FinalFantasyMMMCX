@@ -11,7 +11,8 @@ open Command
 (** Represents the type of state *)
 type t
 
-(** [init_state] returns the initial state of the game *)
+(** [init_state gtl party] returns the initial state of the game with 
+    gauntlet [gtl] and characters of [party] *)
 val init_state : Gauntlet.t -> Party.t list -> t  
 
 (** [get_health s t] is the health of [s] in [t] *)
@@ -66,8 +67,8 @@ val set_strength: string-> t-> int -> t
     value [num] *)
 val set_agil: string-> t-> int -> t
 
-(** [set_hip_percent name num t] returns [t] with new hit_percent for [name] with
-    value [num] *)
+(** [set_hip_percent name num t] returns [t] with new hit_percent for [name]
+    with value [num] *)
 val set_hit_percent: string-> t-> int -> t
 
 (** [set_fight_def name num t] returns [t] with new fight_def for [name] with
@@ -81,15 +82,17 @@ val remove_from_t: string -> t -> t
     state [t] is alive *)
 val check_alive: t -> bool 
 
-(** [is_dead] returns true if the character's health is less than or equal to zero *)
+(** [is_dead t name] returns true if the character's [name] health
+    is less than or equal to zero in state [t]*)
 val is_dead: t->string-> bool 
 
-(** [change_turns t] is [t] with the current_fighter and next_fighter updated *)
+(** [change_turns glt t] is [t] with the current_fighter and 
+    next_fighter updated with gauntlet [glt]*)
 val change_turns : Gauntlet.t -> t -> t
 
-(** [reset_state gtl t] resets the state from the previous battle to revive all 
-    health and magic points; change the current boss to the next boss in the gauntlet
-    and create a new turnorder *)
+(** [reset_state gtl t] resets the state [t] from the previous battle to revive 
+    all health and magic points; change the current boss to the next boss in the 
+    gauntlet [gtl] and create a new turnorder *)
 val reset_state: Gauntlet.t -> t -> t 
 
 (** [status_add name status state] is [state] with [name] adding 
@@ -98,12 +101,12 @@ val reset_state: Gauntlet.t -> t -> t
 val status_add: string -> Status.t -> t -> t
 
 (** [status_remove name status state] is [state] with [name] no longer 
-    having [status] as a status effect. If [name] never had [status] to begin with 
-    then nothing is changed  *)
+    having [status] as a status effect. If [name] never had [status] to begin 
+    with then nothing is changed  *)
 val status_remove: string -> Status.t -> t -> t
 
-(** [get_status] is the current status effects of the given player at this 
-    state. *)
+(** [get_status name t] is the current status effects of the given player [name] 
+    at state [t] *)
 val get_status: string -> t -> Status.t list 
 
 (** [pure_status name state] removes all status effects from [name] and returns
@@ -114,32 +117,38 @@ val pure_status: string -> t -> t
    [name] to perform. *)
 val is_valid_com: string->t -> Command.command -> bool
 
-(** [cure4_status name t] is [t] with [name] having full health and no status effects *)
+(** [cure4_status name t] is [t] with [name] having full health and no status
+    effects *)
 val cure4_status: string -> t -> Gauntlet.t -> t
 
-(**[is_poisoned] is true if the character is Poisoned *)
+(**[is_poisoned name t] is true if the character [name] is Poisoned in [t] *)
 val is_poisoned: string -> t -> bool
 
-(**[is_paralyzed] is true if the character is Paralyzed *)
+(**[is_paralyzed name t] is true if the character [name] is Paralyzed in [t] *)
 val is_paralyzed: string -> t -> bool
 
-(**[is_blinded] is true if the character is Blinded *)
+(**[is_blinded name t] is true if the character [name] is Blinded [t] *)
 val is_blinded: string -> t -> bool
 
-(**[is_silenced] is true if the character is Silenced *)
+(**[is_silenced name t] is true if the character [name] is Silenced in [t] *)
 val is_silenced: string -> t -> bool
 
-(**[used_heal] is t with the character's heal field set to false*)
+(**[used_heal name t] is [t] with the character's [name] heal field set to 
+   false*)
 val used_heal: string -> t -> t
 
-(**[used_pure] is t with the character's pure field set to false*)
+(**[used_pure name t] is [t] with the character's [name] pure field set to 
+   false*)
 val used_pure: string -> t -> t
 
-(** [has_heal] is true if the character has potion heal left *)
+(** [has_heal name t] is true if the character [name] has potion heal left in 
+    [t] *)
 val has_heal: string -> t -> bool
 
-(** [has_pure] is true if the character has potion pure left *)
+(** [has_pure name t] is true if the character [name] has potion pure left in 
+    [t] *)
 val has_pure: string -> t -> bool
 
-(** [empty_state] returns an empty state with nothing in it *)
+(** [empty_state] returns an empty state with nothing in it. All fields set 
+    to empty list. *)
 val empty_state: t
