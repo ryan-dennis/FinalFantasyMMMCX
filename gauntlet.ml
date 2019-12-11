@@ -453,3 +453,7 @@ let color_clark = [
     "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
     "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";]); 
 ] 
+
+let get_color_sprite name = 
+  if name = "Prof. Clarkson" then color_clark else 
+  if name = "Mutability" then color_mut else [([],[])]
