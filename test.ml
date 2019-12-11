@@ -11,14 +11,14 @@
     the Party, Gauntlet, State, Status, and Command modules.
 
     This still left many functions untested, however; in particular, we were
-    unable to test any functions from the Battle, Main, and Potions modules,
-    as each had some random component that would've made it impossible to
-    automatically test. To that end, since we have developed a game, we instead
-    used arguably a form of black box testing by playing the game repeatedly.
-    For example, if we wanted to test Potions, then we would try all possible
-    Potions-related options in the game (ex. drinking each potion) to ensure
-    the expected output. While this method was most useful for testing the
-    aforementioned modules, since we did develop a game where each module was
+    unable to test any functions (using OUnit) from the Battle, Main, and Potions 
+    modules, as each had some random component that would've made it impossible 
+    to automatically test. To that end, since we have developed a game, we 
+    instead used arguably a form of black box testing by playing the game 
+    repeatedly. For example, if we wanted to test Potions, then we would try 
+    all possible Potions-related options in the game (ex. drinking each potion) 
+    to ensure the expected output. While this method was most useful for testing 
+    the aforementioned modules, since we did develop a game where each module was
     a crucial aspect of gameplay, we used it to test every module to some
     extent as well. Thus, this was our primary form of testing because of its
     flexibility.
