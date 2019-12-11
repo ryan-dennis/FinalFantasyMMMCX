@@ -1,10 +1,33 @@
-(**
-   We primarily approached testing by 
-*)
+(** Test Plan:
+    We implemented automatic OUnit testing by writing a test for every exposed
+    function in each module. In situations where the function returned a value
+    of an unexposed type, we tested those by having other functions that
+    returned exposed types take those values in as input, then checked to
+    ensure that they returned the expected values. Because we built a game
+    where essentially every function is a helper function to be used to some
+    degree by the Main module, we developed test cases using black box testing
+    to ensure that our modules would work properly with one another, without
+    focusing so much on how exactly they did so. This approach was used for
+    the Party, Gauntlet, State, Status, and Command modules.
 
-(** Untestable modules:
-    - Battle
-    - Potions
+    This still left many functions untested, however; in particular, we were
+    unable to test any functions from the Battle, Main, and Potions modules,
+    as each had some random component that would've made it impossible to
+    automatically test. To that end, since we have developed a game, we instead
+    used arguably a form of black box testing by playing the game repeatedly.
+    For example, if we wanted to test Potions, then we would try all possible
+    Potions-related options in the game (ex. drinking each potion) to ensure
+    the expected output. While this method was most useful for testing the
+    aforementioned modules, since we did develop a game where each module was
+    a crucial aspect of gameplay, we used it to test every module to some
+    extent as well. Thus, this was our primary form of testing because of its
+    flexibility.
+
+    This testing approach demonstrates the correctness of the system because we
+    know the system is correct when the game plays as expected. By playing the
+    game to test, we therefore know for a fact whether the system is correct,
+    because being able to play the game is the only indicator of correctness of
+    our system.
 *)
 
 open OUnit2 
