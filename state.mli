@@ -8,6 +8,7 @@ open Command
     to the enemy and party memebers but those will be implemented later. 
     State also will hold what the turn order is for the party memebers and enemy *)
 
+(** Represents the type of state *)
 type t
 
 (** [init_state] returns the initial state of the game *)
