@@ -10,6 +10,42 @@ open Display
 
 let boss_name_pos = 43
 
+let title = [
+  "  ▐                       ▐                                  ";
+  "▀█▀▀█                   ▀█▀▀█           █▀█▀█                ";
+  " █▐ ▐                    █▐ ▐           ▌ █ ▐                ";
+  " █▐  ▀█▀ █   █▀ ██  ▀█▀  █▐   ██   █   █▀ █   ██   █▀█▐█▀ ▀█▀";
+  " █▐   █  █▌  █  ██▌  █   █▐   ██▌  █▌  █  █   ██▌ █  ▐ █   █ ";
+  " █▐   █  ██  █  █ █  █   █▐   █ █  ██  █  █   █ █ █    ▐█ █▌ ";
+  " █▐ ▐ █  ██▌ █ ▐█ █  █   █▐ ▐▐█ █  ██▌ █  █  ▐█ █ █     █ █  ";
+  " █▐██ █  █▐█ █ ▐█ █  █   █▐██▐█ █  █▐█ █  █  ▐█ █ ▐█    ▐█▌  ";
+  " █▐ ▐ █  █ █ █ ▐█ █  █   █▐ ▐▐█ █  █ █ █  █  ▐█ █  ▐█    █   ";
+  " █▐   █  █ █▌█ ▐█ █  █   █▐  ▐█ █  █ █▌█  █  ▐█ █   ▐█   █   ";
+  " █▐   █  █ ▐██ █  █  █   █▐  █  █  █ ▐██  █  █  █    █   █   ";
+  " █▐   █  █  ██ ████  █   █▐  ████  █  ██  █  ████   ▐█   █   ";
+  " █▐   █  █  ▐█ █  █  █ ▐ █▐  █  █  █  ▐█  █  █  █   █    █   ";
+  " █▐  ▄█▄ █▄  █ █▄ █▄ █▄█ █▐  █▄ █▄ █▄  █ ▄█▄ █▄ █▄▐█    ▄█▄  ";
+  " █▐                      █▐                                  ";
+  " █▐                      █▐                                  ";
+  " █▐                      █▐                                  ";
+  " █                       █                                   ";
+  " ▌                       ▌                                   "
+]
+
+(** [print_title x y t] prints the title [t] to the screen at coordinates
+    [x] and [y]. *)
+let rec print_title x y = function
+  | [] -> ANSITerminal.set_cursor 100 100
+  | h::t -> (ANSITerminal.set_cursor x y; 
+             ANSITerminal.(print_string [red] h); 
+             print_title x (y+1) t)
+
+(** [cap_all s] is [s] with the first letter of every word capitalized. *)
+let cap_all s = 
+  let clst = String.split_on_char ' ' s in
+  let nlst = List.map (fun x -> String.capitalize_ascii x) clst in
+  String.concat " " nlst
+
 (** [color_helper h] is the style list from [h]. *)
 let color_helper h = 
   match h with 
@@ -89,20 +125,13 @@ let rec string_of_list acc = function
   | [e] -> acc ^ e
   | h :: t -> string_of_list (h ^ ", " ^ acc) t
 
-(** [print_spr lst x y] is the sprite [lst] printed in the initial position [x] 
-    and [y]. *)
-let rec print_spr lst x y =
-  match lst with
-  | [] -> ANSITerminal.set_cursor 100 100
-  | h::t -> (ANSITerminal.set_cursor x y; print_endline h; print_spr t x (y+1))
-
 (** [setup_stats s c x y] prints the stats of character [c] from state [s] in 
     the [x] and [y] starting positions. *)
 let setup_stats s c x y = 
   let hp = get_health c s in
   let mp = get_magic_points c s in
   ANSITerminal.set_cursor x y;
-  ANSITerminal.(print_string [Bold; cyan] (String.capitalize_ascii c));
+  ANSITerminal.(print_string [Bold; cyan] (cap_all c));
   ANSITerminal.set_cursor x (y+2);
   ANSITerminal.(print_string [default] "HP: "); 
   ANSITerminal.(print_string [if hp > 200 then green 
@@ -118,7 +147,7 @@ let setup_stats s c x y =
 let setup_boss_stats s b x y = 
   let hp = get_health b s in
   ANSITerminal.set_cursor x y;
-  ANSITerminal.(print_string [Bold; yellow] (String.capitalize_ascii b));
+  ANSITerminal.(print_string [Bold; yellow] (cap_all b));
   ANSITerminal.set_cursor x (y+2);
   ANSITerminal.(print_string [default] "HP: "); 
   ANSITerminal.(print_string [if hp < 100 then red else green] 
@@ -196,7 +225,7 @@ let magic_help g s spell ch =
   let friendly = is_friendly sp_t in
   let tar = read_line () in
   let tar' = (fun x -> if friendly then String.lowercase_ascii x 
-               else String.capitalize_ascii x) tar in 
+               else cap_all x) tar in 
   let curr = get_current_fighter s in
   if is_valid_target s sp_t tar' && 
      has_spell ch spell && 
@@ -209,17 +238,17 @@ let magic_help g s spell ch =
        [ANSITerminal.red] 46; minisleep 1.5 ""; s)
   else if not (is_enough_mp sp_t ch s) then
     (line_print ("The " ^ curr 
-                 ^ " does not have enough magic points! Pick another spell.\n\n")
+                 ^ " does not have enough magic points! Pick another spell.\n")
        [ANSITerminal.red] 46; minisleep 1.5 ""; s)
   else ((ANSITerminal.set_cursor 31 46; reject "target"; print_endline ""; 
          minisleep 1.5 ""; s))
 
-(******************************************************************************* 
+(****************************************************************************** 
    RANDOM BUGS AND THOUGHTS:
-   - add functionality to allow user to enter any case for target
-   - lockup after player selection
+   - lockup after player selection -> fixed?
+   - test not enough magic points
    - ******DOCUMENT******
- *******************************************************************************)
+ ******************************************************************************)
 
 (** [mal_help ()] prints the response when a [Malformed] exception is 
     encountered. *)
@@ -251,7 +280,7 @@ let screen_setup g s state_party boss =
   let second = List.nth game_party_chars 1 in
   let third = List.nth game_party_chars 2 in
   print_endline empty_frame;
-  print_spr (boss_sprite g boss) 10 10;
+  pr (get_color_sprite boss) 10 10;
   pr (if is_dead s (get_name first) then skull else first |> get_test) 54 3;
   pr (if is_dead s (get_name second) then skull else second |> get_test) 54 16;
   pr (if is_dead s (get_name third) then skull else third |> get_test) 54 29;
@@ -259,6 +288,26 @@ let screen_setup g s state_party boss =
   setup_stats s (get_name second) 80 37;
   setup_stats s (get_name third) 80 44;
   setup_boss_stats s boss 3 boss_name_pos
+
+(** [paryl_help curr f] prints the message indicating that the player cannot
+    do something because they are paralyzed. *)
+let paryl_help curr m = 
+  line_print ("The " ^ curr ^ "'s status prevents him from " ^ m ^ "!") 
+    [ANSITerminal.red] 45; minisleep 1.5 ""
+
+(** [dead_boss g b] prints the battle message from defeating boss [b] in 
+    gauntlet [g]. *)
+let dead_boss g b = 
+  ANSITerminal.set_cursor 100 100;
+  ANSITerminal.(print_string [green] ("\n" ^ dialogue g b ^ "\n\n"))
+
+(** [dead_boss_pr g b] prints the battle message from defeating boss [b] in 
+    gauntlet [g], then prompts the user for an enter key. *)
+let dead_boss_pr g b = 
+  dead_boss g b;
+  print_string "Press enter to continue "; 
+  wait_no_cursor (); 
+  minisleep 1.5 ""
 
 (** [repl g s] is the read-evaluate-print-loop for assessing player commands
     in the gauntlet [g] with state [s]. Quits once the player types the quit 
@@ -269,44 +318,29 @@ let rec repl g s =
   screen_setup g s state_party boss;
   ANSITerminal.set_cursor 31 43;
   if not (check_alive s) then dead_team ()
-  else if is_dead s boss && boss = final g then 
-    (ANSITerminal.set_cursor 100 100;
-     ANSITerminal.(print_string [green] ("\n" ^ dialogue g boss ^ "\n\n")); 
-     exit 0)
-  else if is_dead s boss then 
-    (ANSITerminal.set_cursor 100 100;
-     ANSITerminal.(print_string [green] ("\n" ^ dialogue g boss)); 
-     print_string "\n\nPress enter to continue "; wait_no_cursor (); 
-     minisleep 1.5 ""; reset_state g s |> repl g) 
+  else if is_dead s boss && boss = final g then (dead_boss g boss; exit 0)
+  else if is_dead s boss then (dead_boss_pr g boss; reset_state g s |> repl g) 
   else
     let curr = get_current_fighter s in
     if List.mem curr char_names then
-      let curr_char = find_character curr get_characters in
+      let curr_t = find_character curr get_characters in
       let _ = ANSITerminal.(
           print_string [default] ("Enter a command for " ^ 
-                                  (String.capitalize_ascii curr) ^ ": ")) in
+                                  (cap_all curr) ^ ": ")) in
       match parse (read_line ()) with
-      | Fight -> if is_valid_com curr s Fight then 
-          (let b = fight g s curr_char in
-           let s' = new_st b in 
-           let msg = desc b in
-           scoot g s msg curr_char; repl g s' )
-        else (
-          line_print ("The " ^ curr ^ "'s status prevents him from fighting!") 
-            [ANSITerminal.red] 45; minisleep 1.5 ""; repl g s)
+      | Fight -> if is_valid_com curr s Fight then f_help g s curr_t |> repl g
+        else (paryl_help curr "fighting"; repl g s)
       | Magic spell -> let sp = String.uppercase_ascii spell in
         if is_valid_com curr s (Magic sp) then 
-          (try magic_help g s sp curr_char |> repl g 
+          (try magic_help g s sp curr_t |> repl g 
            with Not_found -> (ANSITerminal.set_cursor 31 46; reject "spell"; 
                               minisleep 1.5 ""; repl g s))
-        else (line_print ("The " ^ curr ^ 
-                          "'s status prevents him from casting spells!") 
-                [ANSITerminal.red] 45; minisleep 1.5 ""; repl g s)
+        else (paryl_help curr "casting spells"; repl g s)
       | Drink pot -> (try drink pot |> drink_comm g s curr |> repl g 
                       with Invalid_potion -> (ANSITerminal.set_cursor 31 45;
                                               reject "potion"; minisleep 1.5 "";
                                               repl g s))
-      | Show -> let spell_str = get_spells curr_char |> string_of_list "" in 
+      | Show -> let spell_str = get_spells curr_t |> string_of_list "" in 
         line_print ("Spells: " ^ spell_str) [ANSITerminal.green] 45;
         minisleep 2.5 ""; repl g s
       | Pass -> change_turns g s |> repl g
@@ -331,7 +365,7 @@ and scoot g s msg ch =
   let second = List.nth game_party_chars 1 in
   let third = List.nth game_party_chars 2 in
   print_endline empty_frame;
-  print_spr (boss_sprite g boss) 10 10;
+  pr (get_color_sprite boss) 10 10;
   if ch = first then (
     pr (if is_dead s (get_name first) then sk else first |> get_test) 50 3;
     pr (if is_dead s (get_name second) then sk else second |> get_test) 54 16;
@@ -364,7 +398,7 @@ and boss_scoot g s msg =
   let third = List.nth game_party_chars 2 in
   print_endline "";
   print_endline empty_frame;
-  print_spr (boss_sprite g boss) 14 10;
+  pr (get_color_sprite boss) 14 10;
   pr (if is_dead s (get_name first) then skull else first |> get_test) 54 3;
   pr (if is_dead s (get_name second) then skull else second |> get_test) 54 16;
   pr (if is_dead s (get_name third) then skull else third |> get_test) 54 29;
@@ -373,6 +407,15 @@ and boss_scoot g s msg =
   setup_stats s (get_name third) 80 44;
   setup_boss_stats s boss 3 boss_name_pos;
   line_print msg [ANSITerminal.yellow] 43
+
+(** [f_help g s curr_char] is the character [curr_char] in state [s] moved to 
+    the right and the response printed to the screen. *)
+and f_help g s curr_char = 
+  let b = fight g s curr_char in
+  let s' = new_st b in 
+  let msg = desc b in
+  scoot g s msg curr_char;
+  s'
 
 (** [boss_help g s] is the state after the current boss has taken its turn 
     in state [s] and gauntlet [g]. *)
@@ -405,8 +448,13 @@ let rec game_start f =
 let main () = 
   ignore(Sys.command "printf '\\e[8;50;120t'");
   ignore(Sys.command "clear");
-  ANSITerminal.(print_string [Bold; red] "\n\n\t\t\t\t\t\tFINAL FANTASY MMMCX");
-  minisleep 1.5 "";
+  print_title 32 10 title;
+  ANSITerminal.set_cursor 1 1;
+  minisleep 0.05 "";
+  let m = "\t\t\t\t\t\tPress enter to continue" in
+  ANSITerminal.(print_string [default; Blink] m);
+  wait_no_cursor ();
+  (* minisleep 2.5 ""; *)
   game_start "gauntlet1.json"
 
 let () = main ()
