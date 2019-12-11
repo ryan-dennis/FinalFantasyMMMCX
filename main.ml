@@ -156,10 +156,19 @@ let setup_boss_stats s b x y =
 
 (** [string_of_status stat] is the string form of the status [stat]. *)
 let string_of_status = function
-  | Poisoned -> "poisoned"
-  | Blinded -> "blinded"
-  | Paralyzed -> "paralyzed"
-  | Silenced -> "silenced"
+  | Poisoned -> "POI"
+  | Blinded -> "BLI"
+  | Paralyzed -> "PAR"
+  | Silenced -> "SIL"
+
+(** [print_status s y slst] prints all statuses in [slst] starting from line [y]
+    with a new line separating each status. *)
+let rec print_status s y slst = 
+  match slst with
+  | [] -> ()
+  | h :: t -> ANSITerminal.set_cursor 73 y; 
+    ANSITerminal.(print_string [red] h);
+    print_status s (y+1) t
 
 (** [char_names] is the list of names of all characters in the game. *)
 let char_names = List.map (get_name) get_characters
@@ -243,13 +252,6 @@ let magic_help g s spell ch =
   else ((ANSITerminal.set_cursor 31 46; reject "target"; print_endline ""; 
          minisleep 1.5 ""; s))
 
-(****************************************************************************** 
-   RANDOM BUGS AND THOUGHTS:
-   - lockup after player selection -> fixed?
-   - test not enough magic points
-   - ******DOCUMENT******
- ******************************************************************************)
-
 (** [mal_help ()] prints the response when a [Malformed] exception is 
     encountered. *)
 let mal_help () = 
@@ -270,6 +272,21 @@ let dead_team () =
   ANSITerminal.set_cursor 100 100;
   print_endline "\n"; exit 0
 
+(** [status_help s party] prints all statuses of the party. *)
+let status_help s party = 
+  let first = List.nth party 0 in
+  let second = List.nth party 1 in
+  let third = List.nth party 2 in
+  let flst = get_status (get_name first) s |> 
+             List.map (fun x -> string_of_status x) in
+  let slst = get_status (get_name second) s |> 
+             List.map (fun x -> string_of_status x) in
+  let tlst = get_status (get_name third) s |> 
+             List.map (fun x -> string_of_status x) in
+  print_status s 3 flst;
+  print_status s 16 slst;
+  print_status s 29 tlst
+
 (** [screen_setup g s state_party boss] initializes the display with normal 
     player and boss positions along with their stats. *)
 let screen_setup g s state_party boss = 
@@ -287,6 +304,7 @@ let screen_setup g s state_party boss =
   setup_stats s (get_name first) 80 30;
   setup_stats s (get_name second) 80 37;
   setup_stats s (get_name third) 80 44;
+  status_help s game_party_chars;
   setup_boss_stats s boss 3 boss_name_pos
 
 (** [paryl_help curr f] prints the message indicating that the player cannot
@@ -319,6 +337,7 @@ let show_help curr_t =
   minisleep 0.05 "";
   wait_no_cursor ()
 
+(** [quit_help ()] prints a message and then exits the game. *)
 let quit_help () = 
   ANSITerminal.set_cursor 31 45;
   ANSITerminal.(print_string [red] "Quiting game..."); 
@@ -337,6 +356,7 @@ let rec repl g s =
   else if is_dead s boss then (dead_boss_pr g boss; reset_state g s |> repl g) 
   else parse_help g s
 
+(** [parse_help g s] parses all commands and recurses appropriately. *)
 and parse_help g s =
   let curr = get_current_fighter s in
   if List.mem curr char_names then
@@ -359,7 +379,10 @@ and parse_help g s =
                                             repl g s))
     | Show -> show_help curr_t; repl g s
     | Pass -> change_turns g s |> repl g
-    | Paralyze -> status_add curr Paralyzed s |> repl g
+    | Paralyze -> let s' = status_add curr Paralyzed s in
+      let s'' = status_add curr Silenced s' in 
+      let s''' = status_add curr Poisoned s'' in 
+      status_add curr Blinded s''' |> repl g
     | Quit -> quit_help ()
     | exception Malformed -> mal_help (); repl g s
     | exception Empty -> emp_help (); repl g s
@@ -396,6 +419,7 @@ and scoot g s msg ch =
   setup_stats s (get_name third) 80 44;
   setup_boss_stats s boss 3 boss_name_pos;
   line_print msg [ANSITerminal.green] 43;
+  status_help s game_party_chars;
   minisleep 1.5 ""
 
 (** [scoot g s msg] is the boss in state [s] moved to the right and battle 
@@ -419,6 +443,7 @@ and boss_scoot g s msg =
   setup_stats s (get_name second) 80 37;
   setup_stats s (get_name third) 80 44;
   setup_boss_stats s boss 3 boss_name_pos;
+  status_help s game_party_chars;
   line_print msg [ANSITerminal.yellow] 43
 
 (** [f_help g s curr_char] is the character [curr_char] in state [s] moved to 
