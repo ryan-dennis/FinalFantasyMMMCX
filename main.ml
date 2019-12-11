@@ -309,6 +309,21 @@ let dead_boss_pr g b =
   wait_no_cursor (); 
   minisleep 1.5 ""
 
+(** [show_help curr_t] prints the spells of character [curr_t] to the screen
+    and then waits for a newline character. *)
+let show_help curr_t = 
+  let spell_str = get_spells curr_t |> string_of_list "" in 
+  line_print ("Spells: " ^ spell_str) [ANSITerminal.green] 45;
+  ANSITerminal.set_cursor 31 47;
+  print_string "Press enter to continue";
+  minisleep 0.05 "";
+  wait_no_cursor ()
+
+let quit_help () = 
+  ANSITerminal.set_cursor 31 45;
+  ANSITerminal.(print_string [red] "Quiting game..."); 
+  ANSITerminal.set_cursor 100 100; print_endline ""; exit 0
+
 (** [repl g s] is the read-evaluate-print-loop for assessing player commands
     in the gauntlet [g] with state [s]. Quits once the player types the quit 
     command, otherwise responds according to the command and recurses. *)
@@ -340,14 +355,10 @@ let rec repl g s =
                       with Invalid_potion -> (ANSITerminal.set_cursor 31 45;
                                               reject "potion"; minisleep 1.5 "";
                                               repl g s))
-      | Show -> let spell_str = get_spells curr_t |> string_of_list "" in 
-        line_print ("Spells: " ^ spell_str) [ANSITerminal.green] 45;
-        minisleep 2.5 ""; repl g s
+      | Show -> show_help curr_t; repl g s
       | Pass -> change_turns g s |> repl g
       | Paralyze -> status_add curr Paralyzed s |> repl g
-      | Quit -> ANSITerminal.set_cursor 31 45;
-        ANSITerminal.(print_string [red] "Quiting game..."); 
-        ANSITerminal.set_cursor 100 100; print_endline ""; exit 0
+      | Quit -> quit_help ()
       | exception Malformed -> mal_help (); repl g s
       | exception Empty -> emp_help (); repl g s
     else boss_help g s |> repl g
