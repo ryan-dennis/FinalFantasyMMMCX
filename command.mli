@@ -11,6 +11,7 @@ type command =
   | Show
   | Quit
   | Pass
+  | Paralyze
 
 (** Raised when a malformed command is encountered *)
 exception Malformed 

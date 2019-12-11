@@ -7,6 +7,7 @@ type command =
   | Show
   | Quit
   | Pass
+  | Paralyze
 
 (** [Malformed] is the exception thrown when the command does not exist. *)
 exception Malformed
@@ -28,6 +29,7 @@ let comm_help c t =
   | "magic" -> if is_empty t then Show else raise Malformed
   | "quit" -> if is_empty t then Quit else raise Malformed
   | "pass" -> if is_empty t then Pass else raise Malformed
+  | "paralyzeme" -> if is_empty t then Paralyze else raise Malformed
   | _ -> raise Malformed
 
 (** [get_command clst] is the command resulting from the first non-empty string
@@ -51,3 +53,4 @@ let parse str =
   | Show -> Show
   | Pass -> Pass
   | Quit -> Quit
+  | Paralyze -> Paralyze

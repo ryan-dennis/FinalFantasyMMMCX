@@ -193,12 +193,15 @@ let magic_help g s spell ch =
   ANSITerminal.set_cursor 31 44;
   ANSITerminal.(print_string [white] "Enter the target for the spell: ");
   let sp_t = get_spell spell in
-  let tar = read_line () |> String.lowercase_ascii in
+  let friendly = is_friendly sp_t in
+  let tar = read_line () in
+  let tar' = (fun x -> if friendly then String.lowercase_ascii x 
+               else String.capitalize_ascii x) tar in 
   let curr = get_current_fighter s in
-  if is_valid_target s sp_t tar && 
+  if is_valid_target s sp_t tar' && 
      has_spell ch spell && 
      is_enough_mp sp_t ch s then 
-    (let b = magic g s spell ch tar in
+    (let b = magic g s spell ch tar' in
      let msg = (desc b) ^ "\n" in 
      line_print msg [ANSITerminal.green] 46; minisleep 1.5 ""; new_st b)
   else if not (has_spell ch spell) then 
@@ -288,18 +291,17 @@ let rec repl g s =
            let s' = new_st b in 
            let msg = desc b in
            scoot g s msg curr_char; repl g s' )
-        else (ANSITerminal.set_cursor 31 45;
-              ANSITerminal.(print_string [red] 
-                              ("The " ^ curr ^ 
-                               "'s status prevents him from fighting")); 
-              minisleep 1.5 ""; repl g s)
-      | Magic spell -> if is_valid_com curr s (Magic spell) then 
-          (try magic_help g s spell curr_char |> repl g 
+        else (
+          line_print ("The " ^ curr ^ "'s status prevents him from fighting!") 
+            [ANSITerminal.red] 45; minisleep 1.5 ""; repl g s)
+      | Magic spell -> let sp = String.uppercase_ascii spell in
+        if is_valid_com curr s (Magic sp) then 
+          (try magic_help g s sp curr_char |> repl g 
            with Not_found -> (ANSITerminal.set_cursor 31 46; reject "spell"; 
                               minisleep 1.5 ""; repl g s))
         else (line_print ("The " ^ curr ^ 
-                          "'s status prevents him from casting spells") 
-                [ANSITerminal.red] 51; minisleep 1.5 ""; repl g s)
+                          "'s status prevents him from casting spells!") 
+                [ANSITerminal.red] 45; minisleep 1.5 ""; repl g s)
       | Drink pot -> (try drink pot |> drink_comm g s curr |> repl g 
                       with Invalid_potion -> (ANSITerminal.set_cursor 31 45;
                                               reject "potion"; minisleep 1.5 "";
@@ -308,19 +310,13 @@ let rec repl g s =
         line_print ("Spells: " ^ spell_str) [ANSITerminal.green] 45;
         minisleep 2.5 ""; repl g s
       | Pass -> change_turns g s |> repl g
+      | Paralyze -> status_add curr Paralyzed s |> repl g
       | Quit -> ANSITerminal.set_cursor 31 45;
         ANSITerminal.(print_string [red] "Quiting game..."); 
-        ANSITerminal.set_cursor 100 100;
-        exit 0
+        ANSITerminal.set_cursor 100 100; print_endline ""; exit 0
       | exception Malformed -> mal_help (); repl g s
       | exception Empty -> emp_help (); repl g s
-    else (
-      let b = boss_turn g s in 
-      let msg = desc b in
-      let s' = new_st b in 
-      boss_scoot g s msg;
-      minisleep 1.5 "";
-      repl g s')
+    else boss_help g s |> repl g
 
 (** [scoot g s msg ch] is the character [ch] moved to the left and battle 
     message [msg] printed to the screen. *)
@@ -378,6 +374,14 @@ and boss_scoot g s msg =
   setup_boss_stats s boss 3 boss_name_pos;
   line_print msg [ANSITerminal.yellow] 43
 
+(** [boss_help g s] is the state after the current boss has taken its turn 
+    in state [s] and gauntlet [g]. *)
+and boss_help g s = 
+  let b = boss_turn g s in 
+  let msg = desc b in
+  let s' = new_st b in 
+  boss_scoot g s msg; minisleep 1.5 ""; s'
+
 (** [game_start f] is the gauntlet started from file [f]. *)
 let rec game_start f = 
   try let gaunt = f |> Yojson.Basic.from_file |> from_json in 
@@ -401,12 +405,8 @@ let rec game_start f =
 let main () = 
   ignore(Sys.command "printf '\\e[8;50;120t'");
   ignore(Sys.command "clear");
-  ANSITerminal.(print_string [Bold; red] "\n\nFINAL FANTASY MMMCX\n");
-  print_endline "Enter a gauntlet file name to play.\n";
-  print_string "> ";
-  match read_line () with 
-  | exception End_of_file -> ()
-  | file_name when file_name = "quit" -> exit 0
-  | file_name -> game_start file_name
+  ANSITerminal.(print_string [Bold; red] "\n\n\t\t\t\t\t\tFINAL FANTASY MMMCX");
+  minisleep 1.5 "";
+  game_start "gauntlet1.json"
 
 let () = main ()
