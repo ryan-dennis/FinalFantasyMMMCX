@@ -22,32 +22,35 @@
           "Fire"
         ]
       },
-      "sprite": [],
+      "sprite": [
+        "testsprite",
+        "testsprite"
+      ],
       "magic": {
         "spell chance": 64,
         "spell list": [
           {
-            "name": "ICE3",
+            "name": "icicle",
             "source": "ICE3"
           },
           {
-            "name": "LIT3",
+            "name": "bright",
             "source": "LIT3"
           },
           {
-            "name": "CUR4",
+            "name": "heal",
             "source": "CUR4"
           },
           {
-            "name": "FIR3",
+            "name": "burn",
             "source": "FIR3"
           },
           {
-            "name": "ICE2",
+            "name": "icicle 2",
             "source": "ICE2"
           },
           {
-            "name": "NUKE",
+            "name": "bomb",
             "source": "NUKE"
           }
         ]
@@ -56,15 +59,15 @@
         "skill chance": 64,
         "skill list": [
           {
-            "name": "INFERNO",
+            "name": "fire",
             "source": "INFERNO"
           },
           {
-            "name": "SWIRL",
+            "name": "pool",
             "source": "SWIRL"
           },
           {
-            "name": "TORNADO",
+            "name": "air",
             "source": "TORNADO"
           }
         ]

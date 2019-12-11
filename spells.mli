@@ -15,6 +15,10 @@ type spell
 (** [get_spell s] is the spell with name [s]. *)
 val get_spell : string -> spell
 
+(** [is_friendly sp] is whether the spell [sp] is a friendly spell (used on
+    teammates). *)
+val is_friendly : spell -> bool
+
 (** [is_valid_target st sp tar] is whether the target [tar] is a valid target
     for the spell [sp] in state [st]. *)
 val is_valid_target : State.t -> spell -> string -> bool

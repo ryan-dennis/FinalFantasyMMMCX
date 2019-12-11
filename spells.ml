@@ -129,8 +129,6 @@ let string_of_status status =
 let get_spell s =
   List.find (fun x -> x.sp_name = s) spell_list
 
-(** [is_friendly sp] is whether the spell [sp] is a friendly spell (used on
-    teammates). *)
 let is_friendly sp =
   match sp.sp_effect with
   | HPRec | FullHP | RestoreStatus | Pure | DefUp | StrUp | StrHitUp
