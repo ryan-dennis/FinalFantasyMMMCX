@@ -479,6 +479,115 @@ let color_clark = [
     "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";]); 
 ] 
 
+let color_chaos = [
+  ([" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";
+    " ";" ";" ";" ";" ";" ";],
+   ["yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";]);
+  ([" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";"▄";"▀";"▀";"▄";" ";
+    " ";" ";"▄";"█";"▀";" ";],
+   ["yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"white";"white";"white";"white";
+    "white";"white";"white";"white";"magenta";"magenta";"magenta";"magenta";]);
+  ([" ";" ";" ";" ";" ";" ";"▄";"▀";"▀";"▄";" ";"▄";"▀";" ";" ";"█";" ";" ";
+    "▄";" ";"█";"▀";" ";" ";],
+   ["magenta";"magenta";"magenta";"magenta";"magenta";"magenta";"magenta";
+    "magenta";"magenta";"magenta";"magenta";"white";"white";"white";"white";
+    "white";"white";"white";"magenta";"magenta";"magenta";"magenta";
+    "magenta";"magenta";]);
+  ([" ";" ";" ";" ";" ";" ";"█";" ";" ";"█";" ";"▀";"▄";" ";" ";"▀";"▄";" ";
+    "▀";"█";" ";" ";" ";" ";],
+   ["magenta";"magenta";"magenta";"magenta";"magenta";"magenta";"magenta";
+    "magenta";"magenta";"magenta";"magenta";"white";"white";"white";"white";
+    "white";"white";"white";"magenta";"magenta";"magenta";"magenta";
+    "magenta";"magenta";]);
+  (["▄";"▄";"▄";"▀";"▄";"▄";"▀";" ";" ";"█";" ";" ";"█";" ";" ";" ";"█";" ";
+    " ";" ";" ";" ";" ";" ";],
+   ["magenta";"magenta";"magenta";"magenta";"magenta";"magenta";"magenta";
+    "magenta";"magenta";"magenta";"magenta";"white";"white";"white";"white";
+    "white";"white";"white";"magenta";"magenta";"magenta";"magenta";
+    "magenta";"magenta";]);
+  (["▀";"▀";" ";" ";" ";"█";" ";" ";"▄";"▀";" ";" ";"▄";"▄";"▀";" ";"▀";"▀";
+    "▀";"█";" ";" ";" ";" ";],
+   ["magenta";"magenta";"magenta";"magenta";"magenta";"magenta";"magenta";
+    "magenta";"magenta";"magenta";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";]);
+  (["█";"▄";" ";" ";" ";"█";" ";" ";" ";"█";" ";"█";"▀";" ";" ";"▄";" ";" ";
+    "▀";"▀";"▀";"█";" ";" ";],
+   ["magenta";"magenta";"magenta";"magenta";"magenta";"magenta";"magenta";
+    "magenta";"magenta";"magenta";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"white";"white";"white";"white";
+    "white";"white";]);
+  ([" ";"▀";"▀";"▄";" ";"▄";"█";"▄";"▄";"▀";"▀";"█";" ";" ";"▄";"▀";" ";" ";
+    " ";" ";" ";"▀";"▄";" "],
+   ["magenta";"magenta";"magenta";"magenta";"magenta";"magenta";"magenta";
+    "magenta";"magenta";"magenta";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "white";"yellow";]); 
+  ([" ";" ";" ";" ";"█";"█";"▀";" ";" ";" ";" ";"█";"▄";" ";" ";" ";" ";
+    " ";"▄";"▄";"█";"▀";" ";"█";],
+   ["yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"white";"white";"white";"white";
+    "white";"yellow";]);
+  ([" ";" ";" ";"█";"▀";"█";"▄";"▄";"▄";" ";" ";" ";"▀";"▀";"█";" ";" ";" ";
+    " ";" ";" ";" ";" ";"█";],
+   ["yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";]);
+  ([" ";"▀";"█";"█";" ";" ";" ";" ";" ";"▀";"▄";"▄";" ";" ";" ";"▀";"▄";"▄";
+    "▀";"▀";"▀";"▀";"▀";" ";],
+   ["magenta";"magenta";"magenta";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";]);
+  (["▄";"▄";"▄";"▀";" ";" ";" ";" ";" ";" ";" ";" ";"▀";"▀";"█";"▀";"█";"█";
+    "▀";"▀";"▀";"▄";" ";" ";],
+   ["magenta";"magenta";"magenta";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";]); 
+  ([" ";"▀";"█";" ";" ";" ";" ";" ";" ";" ";" ";" ";" ";"▄";"▀";" ";" ";" ";
+    "█";"▄";" ";" ";"█";" ";],
+   ["magenta";"magenta";"magenta";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";]); 
+  (["▀";"█";"█";" ";" ";" ";" ";" ";" ";" ";" ";" ";"▀";"▄";" ";" ";" ";" ";
+    " ";"█";"▄";" ";"█";" ";],
+   ["magenta";"magenta";"magenta";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";]);
+  ([" ";"▀";"▄";" ";" ";" ";" ";" ";" ";" ";" ";" ";"▄";"▀";"▄";" ";" ";" ";
+    " ";"█";"▄";"▀";" ";" ";],
+   ["yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";]);
+  ([" ";" ";"▀";"█";"▄";"▀";"▀";"▀";"▄";"▄";"▀";"▀";" ";"▀";"▀";"█";"▀";"▀";
+    "▀";"▀";" ";" ";" ";" ";],
+   ["yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";]); 
+  ([" ";" ";"▄";"▀";" ";" ";" ";" ";" ";" ";"▀";"▀";"▄";"▄";"▄";"▄";"▀";" ";
+    " ";" ";" ";" ";" ";" ";],
+   ["yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";]); 
+  ([" ";"▀";"▄";"▄";"▄";"▄";"▄";"▄";"▄";"▀";"▄";"▄";"▄";"▀";" ";" ";" ";" ";
+    " ";" ";" ";" ";" ";" ";],
+   ["yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"white";
+    "white";"white";"yellow";"yellow";"white";"white";"white";"yellow";
+    "yellow";"yellow";"yellow";"yellow";"yellow";"yellow";"yellow";
+    "yellow";"yellow";])       
+]
+
 let get_color_sprite name = 
   if name = "Prof. Clarkson" then color_clark else 
-  if name = "Mutability" then color_mut else [([],[])]
+  if name = "Mutability" then color_mut else color_chaos
