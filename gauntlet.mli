@@ -89,5 +89,5 @@ val color_mut: (string list * string list) list
 (** [color_clark] is the colored sprite of the boss Prof. Clarkson *)
 val color_clark: (string list * string list) list
 
-(**[get_color_sprite name] is the colored sprite of the boss with [name] *)
+(**[get_color_sprite name] is the colored sprite of the boss [name]. *)
 val get_color_sprite: string -> (string list * string list) list
