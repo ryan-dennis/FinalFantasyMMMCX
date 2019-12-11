@@ -193,14 +193,14 @@ let magic_help g s spell ch =
   ANSITerminal.set_cursor 31 44;
   ANSITerminal.(print_string [white] "Enter the target for the spell: ");
   let sp_t = get_spell spell in
-  let tar = read_line () in
+  let tar = read_line () |> String.lowercase_ascii in
   let curr = get_current_fighter s in
   if is_valid_target s sp_t tar && 
      has_spell ch spell && 
      is_enough_mp sp_t ch s then 
     (let b = magic g s spell ch tar in
      let msg = (desc b) ^ "\n" in 
-     line_print msg [ANSITerminal.green] 46; minisleep 1.5 "";  new_st b)
+     line_print msg [ANSITerminal.green] 46; minisleep 1.5 ""; new_st b)
   else if not (has_spell ch spell) then 
     (line_print ("The " ^ curr ^ " does not have that spell! Pick another.\n\n")
        [ANSITerminal.red] 46; minisleep 1.5 ""; s)
@@ -214,8 +214,8 @@ let magic_help g s spell ch =
 (******************************************************************************* 
    RANDOM BUGS AND THOUGHTS:
    - add functionality to allow user to enter any case for target
-   - dead people
    - lockup after player selection
+   - ******DOCUMENT******
  *******************************************************************************)
 
 (** [mal_help ()] prints the response when a [Malformed] exception is 
@@ -392,7 +392,7 @@ let rec game_start f =
       List.map (fun x -> find_character x get_characters) game_party_names in
     let start = init_state gaunt game_party_chars in 
     ANSITerminal.(print_string [cyan] ("\n" ^ start_dialogue gaunt ^ "\n\n"));
-    print_string "> Press enter to continue "; wait_no_cursor (); 
+    minisleep 0.05 "> Press enter to continue "; wait_no_cursor (); 
     print_endline "";
     repl gaunt start 
   with Sys_error m -> reject "file"; print_string "> "; game_start (read_line ())
