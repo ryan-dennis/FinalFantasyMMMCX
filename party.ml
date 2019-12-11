@@ -314,13 +314,13 @@ let white_mage = {
   sprite = [
     "    ▄▄▄▄▄▀▀▀▀▀▄ ";
     "  ▄▀        ▄ █ ";
-    "▄▀▄█����████▄   ▀▄ ";
+    "▄▀▄█���██▄     ▀▄ ";
     " ▀▄ ▀▀▀  ▀█   █ ";
-    "   █ ▀   █  ▄▀ ";
+    "   █ ▀   █   ▄▀ ";
     " ▄██  ▄▄███   █ ";
     "█▄▄▄█▀▀▀▀▀▀▄▀ ▀▄";
-    "█▀  ██▀ ��   █  █";
-    "█▀  ██▄�� ��     █";
+    "█▀  ██▀     █  █";
+    "█▀  ██▄        █";
     "█▀  █▀█  ▄     █";
     " █   █▄▀██ ▄█ ▄█";
     "  ▀█████▀▀█████▀";
@@ -494,7 +494,7 @@ let skull = [
     "white";"white";"white";"white";"white";"white";"white";]);
   ([" ";"█";"█";"█";" ";" ";" ";" ";" ";" ";" ";"█";"█";"█";" ";" "],
    ["white";"white";"white";"white";"white";"white";"white";"white";"white";
-    "white";"white";"white";"white";"white";"white";"white";])                  
+    "white";"white";"white";"white";"white";"white";"white";]);                  
 ]
 
 
