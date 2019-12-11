@@ -1,12 +1,17 @@
 open Yojson.Basic.Util
 
+(** The type of boss. *)
 type boss_id = string
+(** The type of sprite. *)
 type sprite = string list
 
+(** Raised when an unknown boss is encountered. *)
 exception UnknownBoss of boss_id
 
+(** Raised when an invalid sprite is encountered. *)
 exception InvalidSprite of sprite
 
+(** The type of boss stats. *)
 type stats = {
   hp : int;
   agl : int;
@@ -51,6 +56,7 @@ type start = {
   start_dlg : string
 }
 
+(** The type of boss stats. *)
 type t = {
   start : start;
   final : boss_id;
@@ -118,18 +124,23 @@ let boss_of_json j = {
   next = j |> member "next boss" |> to_string
 }
 
+(** [from_json j] is the gauntlet that [j] represents. *)
 let from_json json = {
   start = json |> member "start" |> start_of_json;
   final = json |> member "final" |> to_string;
   bosses = json |> member "bosses" |> to_list |> List.map boss_of_json
 }
 
+(** [start_boss g] is the identifier of the starting boss in gauntlet
+    [g]. *)
 let start_boss glt =
   glt.start.start_id
 
+(** [start_dlg g] is the opening dialogue in gauntlet [g]. *)
 let start_dialogue glt =
   glt.start.start_dlg
 
+(** [final g] is the idenitifier of the final boss in gauntlet [g]. *)
 let final glt =
   glt.final
 
@@ -139,40 +150,54 @@ let find_boss glt b =
   | [] -> raise (UnknownBoss b)
   | h::t -> h
 
+(** [boss_stats g b] is the stats of boss [b] in gauntlet [g]. *)
 let boss_stats glt b =
   (find_boss glt b).stats
 
+(** [boss_num_of_hits g b] is the number of hits for boss [b] in gauntlet
+    [g]. *)
 let boss_num_of_hits glt b =
   ((find_boss glt b).stats).hits_per
 
+(** [boss_sprite g b] is the sprite of boss [b] in gauntlet [g]. *)
 let boss_sprite glt b =
   (find_boss glt b).sprite
 
+(** [boss_spell_chance g b] is the spell chance of boss [b] in gauntlet [g]. *)
 let boss_spell_chance glt b =
   (find_boss glt b).magic.spell_chance
 
+(** [boss_spells g b] is the list of spells of boss [b] in gauntlet [g]. *)
 let boss_spells glt b =
   match (find_boss glt b).magic.spell_list |> List.split with (src,_) -> src
 
+(** [boss_spell_name g b sp] is the boss-specific name of the spell [sp] used
+    by boss [b] in gauntlet [g]. *)
 let boss_spell_name glt b sp =
   match (find_boss glt b).magic.spell_list |> List.assoc_opt sp with
   | Some spellname -> spellname
   | None -> sp
 
+(** [boss_skill_chance g b] is the skill chance of boss [b] in gauntlet [g]. *)
 let boss_skill_chance glt b =
   (find_boss glt b).special.skill_chance
 
+(** [boss_skills g b] is the list of skills of boss [b] in gauntlet [g]. *)
 let boss_skills glt b =
   match (find_boss glt b).special.skill_list |> List.split with (src,_) -> src
 
+(** [boss_skill_name g b sk] is the boss-specific name of the skill [sk] used
+    by boss [b] in gauntlet [g]. *)
 let boss_skill_name glt b sk =
   match (find_boss glt b).special.skill_list |> List.assoc_opt sk with
   | Some skillname -> skillname
   | None -> sk
 
+(** [next g b] is the next boss after [b] in gauntlet [g]. *)
 let next glt b =
   (find_boss glt b).next
 
+(** [get_dlg g b] is the victory dialogue for boss [b] in gauntlet [g]. *)
 let dialogue glt b =
   (find_boss glt b).boss_dlg
 
