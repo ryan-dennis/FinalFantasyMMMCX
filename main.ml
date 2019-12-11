@@ -452,7 +452,9 @@ let main () =
   ANSITerminal.set_cursor 1 1;
   minisleep 0.05 "";
   let m = "\t\t\t\t\t\tPress enter to continue" in
+  minisleep 0.05 "";
   ANSITerminal.(print_string [default; Blink] m);
+  minisleep 0.05 "";
   wait_no_cursor ();
   (* minisleep 2.5 ""; *)
   game_start "gauntlet1.json"
